@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Alfred",
+    "lastname": "Pennyworth",
+    "phone": "1-867-5309"
+  },
+  {
+    "name": "Bugs",
+    "lastname": "Bunny",
+    "phone": "1-867-5309"
+  },
+  {
+    "name": "Daffy",
+    "lastname": "Duck",
+    "phone": "1-867-5309"
+  },
+  {
+    "name": "Elmer",
+    "lastname": "Fudd",
+    "phone": "1-867-5309"
+  },
+  {
+    "name": "Foghorn",
+    "lastname": "Leghorn",
+    "phone": "1-867-5309"
+  }
+]

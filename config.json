@@ -1,0 +1,15 @@
+{
+  "impostors": 1,
+  "ingenors": 2,
+  "scientists": 1,
+  "tasks": 3,
+  "max_given": 2,
+  "ip": "172.20.10.10",
+  "names": {
+    "impostor": "Imposteur",
+    "scientist": "Scientifique",
+    "ingenior": "Ingenieur",
+    "crewmate": "Membre de l'équipe"
+  },
+  "max_dead_check": 4
+}

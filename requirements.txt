@@ -1,0 +1,2 @@
+future~=0.18.2
+pyairmore~=0.2.1a1
