@@ -1,9 +1,9 @@
-Carte.odt
+misc/Carte.odt
 players.json
-Tâches règles.odt
-Règles.odt
-map (1).png
-Paroles chant.txt
+misc/Tâches règles.odt
+misc/Règles.odt
+misc/map (1).png
+misc/Paroles chant.txt
 /.idea/
 /__pycache__/
 /venv/
