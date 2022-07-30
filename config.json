@@ -3,13 +3,20 @@
   "ingenors": 2,
   "scientists": 1,
   "tasks": 3,
-  "max_given": 2,
+  "max_task_given": 2,
   "ip": "172.20.10.10",
   "names": {
     "impostor": "Imposteur",
     "scientist": "Scientifique",
     "ingenior": "Ingenieur",
-    "crewmate": "Membre de l'équipe"
+    "crewmate": "Membre de l'équipe",
+    "title": "Among Us Réel"
   },
-  "max_dead_check": 4
+  "max_dead_check": 4,
+  "game_master": true,
+  "show_dead_roles": false,
+  "discussion_time": 120,
+  "vote_time": 30,
+  "task_list": "task-exemple",
+  "manager_type": "sms"
 }

@@ -13,17 +13,11 @@ service = MessagingService(session)  # create a MessagingService object
 
 
 last_messages = {}
-
-
-default_messages = [
-    "Nous vous souhaitons une bonne partie !",
-    "Tout les mélenchonistes sont morts, les zémouriens ont gagné !\nMerci de vous rendre immédiatement au point de rendez-vous !\n",
-    "Merci de vous rendre immédiatement au point de rendez vous !",
-    "Votre tâche"
-]
+sent_messages = {}
 
 
 def send_sms(phone_number: str, message: str):
+    sent_messages[phone_number] = message
     service.send_message(phone_number, message)
     print("SMS sent to {}".format(phone_number))
 
@@ -42,7 +36,7 @@ def get_new_messages(players: list):
 
         if message.phone not in last_messages:
             last_messages[message.phone] = message
-        elif message.datetime != last_messages[message.phone].datetime and not is_sentence(message.content):
+        elif message.datetime != last_messages[message.phone].datetime and not is_sentence(message.content) and sent_messages[message.phone] != message.content:
             print("New message from {}: {}".format(message.phone, message.content))
             last_messages[message.phone] = message
             new_messages.append(message)
