@@ -76,6 +76,16 @@ def config_config():
     voteTimeLabel.grid(10, 0)
     voteTimeEntry.grid(10, 1)
     
+    minWarnLabel = Label(settingsFrame, text="Minutes avant l'avertissement d'inactivité")
+    minWarnEntry = Entry(settingsFrame, value=str(config["min_before_inactiv_warn"]))
+    minWarnLabel.grid(11, 0)
+    minWarnLabel.grid(11, 1)
+    
+    maxWarnsLabel = Label(settingsFrame, text="Nombre d'avertissements d'inactivité avant la mise en pause de la partie")
+    maxWarnsEntry = Entry(settingsFrame, value=str(config["max_warns"]))
+    maxWarnsLabel.grid(12, 0)
+    maxWarnsEntry.grid(12, 1)
+    
     # TODO: faire un système de liste
     managerTypeLabel = Label(settingsFrame, text="Type de gestion des joueurs: ")
     managerTypeEntry = Entry(settingsFrame, value=str(config["manager_type"]))
@@ -83,7 +93,7 @@ def config_config():
     managerTypeEntry.grid(11, 1)
     
     # TODO: faire un système de liste
-    taskListLabel = Label(settingsFrame, text="Nombre de tâches par personne: ")
+    taskListLabel = Label(settingsFrame, text="Liste de tâches utilisée: ")
     taskListEntry = Entry(settingsFrame, value=str(config["task_list"]))
     taskListLabel.grid(12, 0)
     taskListEntry.grid(12, 1)

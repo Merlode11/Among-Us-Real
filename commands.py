@@ -46,6 +46,9 @@ class Command:
                   
             send_sms(player.phone, "Vous ne pouvez pas utiliser cette commande car vous n'êtes pas" + perm + " !")
             return True
+        if game.pause and self.name != "help":
+            send_sms(player.phone, "La partie est actuellement en pause. Vous ne pouvez pas faire de commandes")
+            
         self.execute(player, message, game)
         return True
 

@@ -1,15 +1,17 @@
-from ipaddress import IPv4Address  # for your IP address
+from ipaddress import IPv4Address  
 import json
-from pyairmore.request import AirmoreSession  # to create an AirmoreSession
-from pyairmore.services.messaging import MessagingService  # to send messages
+from pyairmore.request import AirmoreSession
+from pyairmore.services.messaging import MessagingService
+from tkinter import messagebox
 
 with open("config.json", "r") as f:
     config = json.load(f)
 
-ip = IPv4Address(config["ip"])  # let's create an IP address object# now create a session
-session = AirmoreSession(ip)  # create a session
+ip = IPv4Address(config["ip"])
 
-service = MessagingService(session)  # create a MessagingService object
+session = AirmoreSession(ip) 
+
+service = MessagingService(session)
 
 
 last_messages = {}
@@ -22,8 +24,10 @@ def send_sms(phone_number: str, message: str):
     print("SMS sent to {}".format(phone_number))
 
 
-def get_new_messages(players: list):
+def get_new_messages(game):
+    players = game.players
     global last_messages
+    global sent_messages
     messages = service.fetch_message_history()
     new_messages = []
 
@@ -31,20 +35,18 @@ def get_new_messages(players: list):
         if message.phone not in [p.phone for p in players]:
             continue
 
-        if is_sentence(message.content):
-            continue
-
         if message.phone not in last_messages:
             last_messages[message.phone] = message
-        elif message.datetime != last_messages[message.phone].datetime and not is_sentence(message.content) and sent_messages[message.phone] != message.content:
+        elif message.datetime != last_messages[message.phone].datetime and sent_messages[message.phone] != message.content:
             print("New message from {}: {}".format(message.phone, message.content))
             last_messages[message.phone] = message
             new_messages.append(message)
+            player.last_message = message.datetime
+            if player.warnings >= 1: 
+                if game.pause and player.warnings >= self.config["max_warns"]:
+                    game.pause = False
+                    game.send_message_to_all(f"{player.name} {player.lastname} a refait surface, plus besoin de s'inquiéter. La partie reprend !")
+                    if game.config.game_master:
+                        messagebox.showinfo("La partie reprend", f"{player.name} {player.lastname} a refait surface. La partie reprends")
+                player.warnings = 0
     return new_messages
-
-
-def is_sentence(message: str):
-    for sentence in default_messages:
-        if sentence in message:
-            return True
-    return False

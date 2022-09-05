@@ -18,5 +18,7 @@
   "discussion_time": 120,
   "vote_time": 30,
   "task_list": "task-exemple",
-  "manager_type": "sms"
+  "manager_type": "sms",
+  "min_before_inactiv_warn": 5,
+  "max_warns": 3
 }

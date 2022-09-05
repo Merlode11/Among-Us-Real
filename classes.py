@@ -1,4 +1,5 @@
 import json
+import time
 from tkinter import messagebox
 from smsManager import send_sms, get_new_messages
 from commands import commands
@@ -12,6 +13,8 @@ class Player:
         self.role: str = ""
         self.dead: bool = False
         self.asks: int = 0
+        self.last_message = 0
+        self.inactive_warnings = 0
 
     def __repr__(self):
         
@@ -19,12 +22,13 @@ class Player:
     def get_str(self, game):
         if game.game_master: 
             if self.dead:
-                return f"☠ {self.name} {self.lastname} ({self.role}): {self.phone}"
-            return f"{self.name} {self.lastname} ({self.role}): {self.phone}"
+                return f"☠ {self.name} {self.lastname} ({game.config["names"][self.role]}): {self.phone}"
+            return f"{self.name} {self.lastname} ({game.config["names"][self.role]}): {self.phone}"
         else: 
            if self.dead and not game.config["show_dead_roles"]:
-                return f"{self.name} {self.lastname}: {self.phone}"
-            
+                return f"☠️ {self.name} {self.lastname}: {self.phone}"
+           elif self.dead:
+                return f"☠️ {self.name} {self.lastname} ({game.config["names"][self.role]}): {self.phone}"
             return f"{self.name} {self.lastname}: {self.phone}" 
 
     def finished_all_tasks(self):
@@ -86,6 +90,7 @@ class Game:
         self.meeting: int = None
 
         self.game_master: bool = self.config["game_master"]
+        self.pause = False
 
     def define_roles(self):
         random.shuffle(self.players)
@@ -135,7 +140,7 @@ class Game:
             self.send_messages.append(message)
             # send_sms(player.phone, message)
 
-    def send_message_to_all(self, message: str):
+    def (self, message: str):
         for player in self.players:
             self.send_messages.append(message)
             send_sms(player.phone, message)
@@ -162,7 +167,7 @@ class Game:
         from threading import Timer
 
         def test():
-            new = get_new_messages(self.players)
+            new = get_new_messages(self)
             if len(new) > 0:
                 for msg in new:
                     if msg.content in self.send_messages:
@@ -174,6 +179,16 @@ class Game:
                     string = "Nouveau message de " + joueur.name + " " + joueur.lastname + " (" + joueur.phone + ") :\n"
                     string += msg.content
                     messagebox.showinfo(f"Message de {msg.phone}", string)
+            for player in self.players:
+                if player.last_message + self.config["min_before_inactiv_warn"]*60 < time.now():
+                    if player.warnings >= self.config["max_warns"]:
+                        self.send_message_to_all(f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config["min_before_inactiv_warn"]*player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur")
+                        self.pause = True
+                        messagebox.showerror("Un joueur ne répond pas", f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config["min_before_inactiv_warn"]*player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur. Un message a été envoyé à tout le monde."
+                    else:
+                        send_sms(player.phone, f"Il y a un problème ? Nous n'avons pas reçu de message depuis {self.config["min_before_inactiv_warn"]*player.warnings} minutes. Si tout va bien, renvoie un message pour que nous soyons sûr que tout va bien.")
+                        messagebox.showwarning("Sans nouvelles d'un joueur", f"{player.name} {player.lastname} n'a plus envoyé de messages depuis {self.config["min_before_inactiv_warn"]*player.warnings} minutes. Un message d'avertissement lui a été envoyé. Une procédure d'urgence aura lieu automatiquement si on n'a pas de nouvelles dans {self.config["max_warns"]-player.warnings * self.config["min_before_inactiv_warn"]} minutes")
+                    player.warnings += 1
             if self.receive:
                 Timer(2, test).start()
 
