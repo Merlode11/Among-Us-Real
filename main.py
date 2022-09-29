@@ -2,7 +2,9 @@ import json
 from tkinter import *
 from tkinter import messagebox, ttk
 from game import start_game
-from os.path import exists
+import os
+from config_config import config_config
+from player_config import player_config
 
 
 def main():
@@ -16,10 +18,13 @@ def main():
     label_title = Label(window, text="Menu principal", font=("Arial", 30))
     label_title.pack(fill=X)
 
-    if not exists("players.json"):
-        with open("players.json", "w") as f:
-            json.dump([], f)
-    if not exists("config.json"):
+    if not os.path.exists("players.json"):
+        if not os.path.exists("players-exemple.json"):
+            with open("players.json", "w") as f:
+                json.dump([], f)
+        else:
+            os.rename("players-exemple.json", "players.json")
+    if not os.path.exists("config.json"):
         with open("config.json", "w") as f:
             json.dump({
                 "impostors": 1,
@@ -60,7 +65,7 @@ def main():
     def show_config():
         clear_frame(editsFrame)
         playerLabel = Label(editsFrame, text=f"{len(players)} joueurs")
-        playerButton = Button(editsFrame, text=f"Modifier")
+        playerButton = Button(editsFrame, text=f"Modifier", command=player_config)
         playerLabel.grid(row=0, column=0)
         playerButton.grid(row=0, column=1)
 
@@ -76,7 +81,7 @@ def main():
 
     editsFrame.pack(fill=X)
 
-    configButton = Button(window, text="Modifier les paramètres")
+    configButton = Button(window, text="Modifier les paramètres", command=config_config)
     configButton.pack(fill=X)
 
     ttk.Separator(window, orient="horizontal").pack(fill="x")
