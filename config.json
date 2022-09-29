@@ -17,7 +17,7 @@
   "show_dead_roles": false,
   "discussion_time": 120,
   "vote_time": 30,
-  "task_list": "task-exemple",
+  "task_list": "tasks-exemple",
   "manager_type": "sms",
   "min_before_inactiv_warn": 5,
   "max_warns": 3
