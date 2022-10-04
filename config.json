@@ -1,24 +1,24 @@
 {
-  "impostors": 1,
-  "ingenors": 2,
-  "scientists": 1,
-  "tasks": 3,
-  "max_task_given": 2,
-  "ip": "172.20.10.10",
-  "names": {
-    "impostor": "Imposteur",
-    "scientist": "Scientifique",
-    "ingenior": "Ingenieur",
-    "crewmate": "Membre de l'équipe",
-    "title": "Among Us Réel"
-  },
-  "max_dead_check": 4,
-  "game_master": true,
-  "show_dead_roles": false,
-  "discussion_time": 120,
-  "vote_time": 30,
-  "task_list": "tasks-exemple",
-  "manager_type": "sms",
-  "min_before_inactiv_warn": 5,
-  "max_warns": 3
+    "impostors": 2,
+    "ingeniors": 2,
+    "scientists": 1,
+    "tasks": 3,
+    "max_task_given": 2,
+    "ip": "172.20.10.10",
+    "names": {
+        "impostor": "Imposteur",
+        "scientist": "Scientifique",
+        "ingenior": "Ingenieur",
+        "crewmate": "Membre de l'équipe",
+        "title": "Among Us Réel"
+    },
+    "max_dead_check": 4,
+    "game_master": "1",
+    "show_dead_roles": "0",
+    "discussion_time": 120,
+    "vote_time": 30,
+    "task_list": "tasks-exemple",
+    "manager_type": "sms",
+    "min_before_inactiv_warn": 5,
+    "max_warns": 3
 }

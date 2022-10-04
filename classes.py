@@ -1,5 +1,5 @@
 import json
-import time
+import datetime
 from tkinter import messagebox
 from smsManager import send_sms, get_new_messages
 from commands import commands
@@ -28,9 +28,9 @@ class Player:
             return f"{self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
         else:
             if self.dead and not game.config["show_dead_roles"]:
-                return f"☠️ {self.name} {self.lastname}: {self.phone}"
+                return f"☠ {self.name} {self.lastname}: {self.phone}"
             elif self.dead:
-                return f"☠️ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
+                return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
         return f"{self.name} {self.lastname}: {self.phone}"
 
     def finished_all_tasks(self):
@@ -90,7 +90,7 @@ class Game:
         self.done_tasks: list = []
         self.receive: bool = True
         self.send_messages: list = []
-        self.meeting: int = None
+        self.meeting: bool = False
 
         self.game_master: bool = self.config["game_master"]
         self.pause: bool = False
@@ -107,10 +107,10 @@ class Game:
         for player in self.impostors:
             player.role = "impostor"
 
-        for i in range(self.config["ingenors"]):
+        for i in range(self.config["ingeniors"]):
             self.crewmates[i].role = "ingenior"
         for i in range(self.config["scientists"]):
-            self.crewmates[i + self.config["ingenors"]].role = "scientist"
+            self.crewmates[i + self.config["ingeniors"]].role = "scientist"
 
         self.players = sorted(self.players, key=lambda joueur: joueur.name)
 
@@ -184,7 +184,7 @@ class Game:
                     string += msg.content
                     messagebox.showinfo(f"Message de {msg.phone}", string)
             for player in self.players:
-                if player.last_message + self.config["min_before_inactiv_warn"] * 60 < time.now():
+                if player.last_message + self.config["min_before_inactiv_warn"] * 60 < datetime.date.today():
                     if player.warnings >= self.config["max_warns"]:
                         self.send_message_to_all(
                             f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur")

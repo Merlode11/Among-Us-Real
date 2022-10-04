@@ -1,5 +1,6 @@
 from tkinter import messagebox, ttk
 from smsManager import send_sms
+from collections.abc import Callable
 
 
 class Command:
@@ -9,13 +10,15 @@ class Command:
                  aliases: list,
                  usage: str,
                  exemple: str,
+                 execute: Callable,
                  permission: str = None):
-        self.name = name
-        self.description = description
-        self.aliases = aliases
-        self.usage = usage
-        self.exemple = exemple
-        self.permission = permission
+        self.name: str = name
+        self.description: str = description
+        self.aliases: list = aliases
+        self.usage: str = usage
+        self.exemple: str = exemple
+        self.permission: str = permission
+        self.execute: Callable = execute
 
     def get_help(self, config: dict = None):
         """
@@ -32,9 +35,6 @@ class Command:
                 string += self.permission
         string += "\nUtilisation:" + self.usage + " (" + self.exemple + ")"
         return string
-
-    def execute(self, player, message):
-        pass
 
     def run(self, player, message, game):
         # Check permission
@@ -55,7 +55,7 @@ class Command:
 commands: list = []
 
 
-def task_func(command, player, message, game):
+def task_func(command, player, message, game) -> None:
     try:
         task_number = int(message.split(" ")[1])
         task = player.tasks[task_number - 1]
@@ -63,15 +63,14 @@ def task_func(command, player, message, game):
         string += f"Lieu: {task.location}\n"
         string += f"Description: {task.description}\n"
         send_sms(player.phone, string)
-    except:
+    except (Exception,):
         send_sms(player.phone, "Veuillez entrer un numéro de tâche valide !")
 
 
-task = Command("task", "Permet de voir la description d'une tâche", ["tâche", "détail", "detail", "task", "tache"],
-               "task NOMBRE", "task 1")
-task.execute = task_func
-
-commands.append(task)
+commands.append(
+    Command("task", "Permet de voir la description d'une tâche", ["tâche", "détail", "detail", "task", "tache"],
+            "task NOMBRE", "task 1", task_func)
+)
 
 
 def info_func(command, player, message, game):
@@ -94,11 +93,8 @@ def info_func(command, player, message, game):
     send_sms(player.phone, string)
 
 
-info = Command("info", "Permet de voir les tâches restantes", ["restant", "last", "reste"], "info", "info")
-
-info.execute = info_func
-
-commands.append(info)
+commands.append(
+    Command("info", "Permet de voir les tâches restantes", ["restant", "last", "reste"], "info", "info", info_func))
 
 
 def deads_func(command, player, message, game):
@@ -117,12 +113,10 @@ def deads_func(command, player, message, game):
         send_sms(player.phone, states)
 
 
-deads = Command("deads", "Voir les états de chaque joueur", ["view", "states", "états", "morts"], "deads", "deads",
-                "scientist")
-
-deads.execute = deads_func
-
-commands.append(deads)
+commands.append(
+    Command("deads", "Voir les états de chaque joueur", ["view", "states", "états", "morts"], "deads", "deads",
+            deads_func,
+            "scientist"))
 
 
 def mort_func(command, player, message, game):
@@ -144,14 +138,12 @@ def mort_func(command, player, message, game):
                 return
             else:
                 send_sms(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
-        except:
+        except (Exception,):
             send_sms(player.phone, "Veuillez entrer un joueur valide !")
 
 
-mort = Command("mort", "Annonce à l'organisateur la découverte d'un corps", ["death", "cadavre", "corps"],
-               "mort PERSONNE", "mort 1")
-
-mort.execute = mort_func
+commands.append(Command("mort", "Annonce à l'organisateur la découverte d'un corps", ["death", "cadavre", "corps"],
+                        "mort PERSONNE", "mort 1", mort_func))
 
 
 def done_func(command, player, message, game):
@@ -166,15 +158,12 @@ def done_func(command, player, message, game):
             send_sms(player.phone, f"Votre tâche {task.name} a été confirmée comme faite !")
             messagebox.showinfo("Succès",
                                 f"{player.name} {player.lastname} a confirmé avoir réalisé la tâche {task.name} ! Son message est :\n {message}")
-    except:
+    except (Exception,):
         send_sms(player.phone, "Veuillez entrer un numéro de tâche valide !")
 
 
-done = Command("done", "Valide une tâche comme faite", ["fait", "réalisé"], "done NOMBRE", "done 1")
-
-done.execute = done_func
-
-commands.append(done)
+commands.append(
+    Command("done", "Valide une tâche comme faite", ["fait", "réalisé"], "done NOMBRE", "done 1", done_func))
 
 
 def help_func(command, player, message, game):
@@ -194,9 +183,6 @@ def help_func(command, player, message, game):
         send_sms(player.phone, string)
 
 
-help_cmd = Command("help", "Obtenir toutes les commandes et de l'aide pour chacune",
-                   ["aide", "commandes", "commande", "commands", "command"], "help (COMMANDE)", "help help")
-
-help_cmd.execute = help_func
-
-commands.append(help_cmd)
+commands.append(Command("help", "Obtenir toutes les commandes et de l'aide pour chacune",
+                        ["aide", "commandes", "commande", "commands", "command"], "help (COMMANDE)", "help help",
+                        help_func))
