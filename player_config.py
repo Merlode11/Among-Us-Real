@@ -17,20 +17,20 @@ def player_config():
         with open("players.json", "r") as file:
             players = json.load(file)
 
-    playersFrame = Frame(window, bg="#f5f5f5")
+    players_frame = Frame(window, bg="#f5f5f5")
 
     for player in players:
-        playerFrame = Frame(playersFrame, bg="#f5f5f5")
-        playerLabel = Label(playerFrame, text=f"{player['name']} {player['lastname']}")
-        playerLabel.pack(side=LEFT)
-        editButton = Button(playerFrame, text="Modifier", command=lambda joueur=player: edit_player(joueur))
-        editButton.pack(side=RIGHT)
-        playerFrame.pack(fill=X)
+        player_frame = Frame(players_frame, bg="#f5f5f5")
+        player_label = Label(player_frame, text=f"{player['name']} {player['lastname']}")
+        player_label.pack(side=LEFT)
+        edit_button = Button(player_frame, text="Modifier", command=lambda joueur=player: edit_player(joueur))
+        edit_button.pack(side=RIGHT)
+        player_frame.pack(fill=X)
 
-    playersFrame.pack(fill=X)
+    players_frame.pack(fill=X)
 
-    addButton = Button(window, text="Ajouter un joueur", command=add_player)
-    addButton.pack(side=BOTTOM)
+    add_button = Button(window, text="Ajouter un joueur", command=add_player)
+    add_button.pack(side=BOTTOM)
 
     window.mainloop()
 
@@ -38,9 +38,9 @@ def player_config():
 def edit_player(player: dict):
     def save_player():
         new_player = {
-            "name": nameEntry.get(),
-            "lastname": lastnameEntry.get(),
-            "phone": phoneEntry.get(),
+            "name": name_entry.get(),
+            "lastname": lastname_entry.get(),
+            "phone": phone_entry.get(),
         }
         players = []
         if os.path.exists("players.json"):
@@ -58,29 +58,29 @@ def edit_player(player: dict):
     window.configure(background='#f5f5f5')
     window.iconbitmap("amongus.ico")
 
-    namesFrame = Frame(window, bg="#f5f5f5")
-    nameLabel = Label(namesFrame, text="Prénom: ")
-    nameEntry = Entry(namesFrame)
-    nameEntry.insert(0, player["name"])
-    nameLabel.grid(row=0, column=0)
-    nameEntry.grid(row=0, column=1)
+    names_frame = Frame(window, bg="#f5f5f5")
+    name_label = Label(names_frame, text="Prénom: ")
+    name_entry = Entry(names_frame)
+    name_entry.insert(0, player["name"])
+    name_label.grid(row=0, column=0)
+    name_entry.grid(row=0, column=1)
 
-    lastnameLabel = Label(namesFrame, text="Nom de famille: ")
-    lastnameEntry = Entry(namesFrame)
-    lastnameEntry.insert(0, player["lastname"])
-    lastnameLabel.grid(row=1, column=0)
-    lastnameEntry.grid(row=1, column=1)
+    lastname_label = Label(names_frame, text="Nom de famille: ")
+    lastname_entry = Entry(names_frame)
+    lastname_entry.insert(0, player["lastname"])
+    lastname_label.grid(row=1, column=0)
+    lastname_entry.grid(row=1, column=1)
 
-    phoneLabel = Label(namesFrame, text="Numéro de téléphone: ")
-    phoneEntry = Entry(namesFrame)
-    phoneEntry.insert(0, player["phone"])
-    phoneLabel.grid(row=2, column=0)
-    phoneEntry.grid(row=2, column=1)
+    phone_label = Label(names_frame, text="Numéro de téléphone: ")
+    phone_entry = Entry(names_frame)
+    phone_entry.insert(0, player["phone"])
+    phone_label.grid(row=2, column=0)
+    phone_entry.grid(row=2, column=1)
 
-    namesFrame.pack(fill=X)
+    names_frame.pack(fill=X)
 
-    saveButton = Button(window, text="Enregistrer", command=save_player)
-    saveButton.pack(side=BOTTOM)
+    save_button = Button(window, text="Enregistrer", command=save_player)
+    save_button.pack(side=BOTTOM)
 
     window.mainloop()
 
@@ -88,11 +88,10 @@ def edit_player(player: dict):
 def add_player():
 
     def save_player():
-        # TODO: Save in DB
         player = {
-            "name": nameEntry.get(),
-            "lastname": lastnameEntry.get(),
-            "phone": phoneEntry.get()
+            "name": name_entry.get(),
+            "lastname": lastname_entry.get(),
+            "phone": phone_entry.get()
         }
         players = []
         if os.path.exists("players.json"):
@@ -111,25 +110,25 @@ def add_player():
     window.configure(background='#f5f5f5')
     window.iconbitmap("amongus.ico")
 
-    namesFrame = Frame(window, bg="#f5f5f5")
-    nameLabel = Label(namesFrame, text="Nom: ")
-    nameEntry = Entry(namesFrame)
-    nameLabel.grid(row=0, column=0)
-    nameEntry.grid(row=0, column=1)
+    names_frame = Frame(window, bg="#f5f5f5")
+    name_label = Label(names_frame, text="Nom: ")
+    name_entry = Entry(names_frame)
+    name_label.grid(row=0, column=0)
+    name_entry.grid(row=0, column=1)
 
-    lastnameLabel = Label(namesFrame, text="Nom de famille: ")
-    lastnameEntry = Entry(namesFrame)
-    lastnameLabel.grid(row=1, column=0)
-    lastnameEntry.grid(row=1, column=1)
+    lastname_label = Label(names_frame, text="Nom de famille: ")
+    lastname_entry = Entry(names_frame)
+    lastname_label.grid(row=1, column=0)
+    lastname_entry.grid(row=1, column=1)
 
-    phoneLabel = Label(namesFrame, text="Numéro de téléphone: ")
-    phoneEntry = Entry(namesFrame)
-    phoneLabel.grid(row=2, column=0)
-    phoneEntry.grid(row=2, column=1)
+    phone_label = Label(names_frame, text="Numéro de téléphone: ")
+    phone_entry = Entry(names_frame)
+    phone_label.grid(row=2, column=0)
+    phone_entry.grid(row=2, column=1)
 
-    namesFrame.pack(fill=X)
+    names_frame.pack(fill=X)
 
-    saveButton = Button(window, text="Ajouter", command=save_player)
-    saveButton.pack(side=BOTTOM)
+    save_button = Button(window, text="Ajouter", command=save_player)
+    save_button.pack(side=BOTTOM)
 
     window.mainloop()

@@ -11,6 +11,7 @@ from classes import Game, Player, Task
 
 def start_game(game_master: bool = None):
     game = Game()
+
     if game_master is None:
         game_master = game_master
     else:
@@ -23,6 +24,11 @@ def start_game(game_master: bool = None):
     window.configure(background='#f5f5f5')
     window.iconbitmap("amongus.ico")
     window.state("zoomed")
+
+    # Check if the configuration is correct with the players
+    if game.config["impostors"] + game.config["ingeniors"] + game.config["scientists"] > len(game.players):
+        messagebox.showerror("Erreur", "Le nombre de joueurs est insuffisant pour la configuration choisie")
+        return window.destroy()
 
     label_title = Label(window, text=game.config["names"]["title"], font=("Arial", 30))
     label_title.pack(fill=X)

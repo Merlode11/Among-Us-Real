@@ -77,7 +77,7 @@ class Game:
             self.config = json.load(f)
 
         self.tasks: list = []
-        with open(r"/taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
+        with open(r"./taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
             data = json.load(f)
             self.tasks = [Task(task["name"], task["description"], task["type"], task["location"], task.get("other")) for
                           task in data]

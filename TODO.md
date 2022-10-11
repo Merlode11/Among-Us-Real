@@ -23,7 +23,7 @@
    2. [ ] Modifier les paramètres
    3. [ ] Modifier les tâches
    4. [ ] Modifier les joueurs
-5. [x] Faire un fichier setup.bat
+5. [x] Faire un fichier start.bat
 6. [ ] Faire un système sans maître du jeu
    - Cacher les rôles des joueurs
    - Cacher les tâches

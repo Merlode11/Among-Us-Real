@@ -109,7 +109,8 @@ def main():
         :return: None
         """
         window.destroy()
-        start_game(game_master)
+        result = start_game(game_master)
+        main()
 
     window.mainloop()
 
