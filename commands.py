@@ -55,7 +55,10 @@ class Command:
 commands: list = []
 
 
-def task_func(command, player, message, game) -> None:
+def task_func(command: Command, player: SMSPlayer, message: str, game: Game) -> None:
+    """
+    Commande permettant d'avoir plus d'informations sur la tâche à effectuer
+    """
     try:
         task_number = int(message.split(" ")[1])
         task = player.tasks[task_number - 1]
@@ -73,7 +76,10 @@ commands.append(
 )
 
 
-def info_func(command, player, message, game):
+def info_func(command: Command, player: SMSPlayer, message: str, game: Game) -> None:
+    """
+    Donne les informations sur les tâches du joueur
+    """
     remining = 0
     done = 0
     string = ""
@@ -94,10 +100,14 @@ def info_func(command, player, message, game):
 
 
 commands.append(
-    Command("info", "Permet de voir les tâches restantes", ["restant", "last", "reste"], "info", "info", info_func))
+    Command("info", "Permet de voir les tâches restantes", ["restant", "last", "reste"], "info", "info", info_func)
+)
 
 
-def deads_func(command, player, message, game):
+def deads_func(command: Command, player: SMSPlayer, message: str, game: Game) -> None:
+    """
+    Commande qui renvoie l'état des personnes pour le rôle "Scientifique"
+    """
     if player.asks >= game.config["max_dead_check"]:
         send_sms(player.phone, "Vous avez utilisé toutes vos demandes !")
     else:
@@ -116,10 +126,14 @@ def deads_func(command, player, message, game):
 commands.append(
     Command("deads", "Voir les états de chaque joueur", ["view", "states", "états", "morts"], "deads", "deads",
             deads_func,
-            "scientist"))
+            "scientist")
+)
 
 
-def mort_func(command, player, message, game):
+def mort_func(command: Command, player: SMSPlayer, message: str, game: Game) -> None:
+    """
+    Commande pour signaler une personne morte
+    """
     if game.game_master:
         response = messagebox.askokcancel("Mort détecté",
                                           f"{player.name} {player.lastname} découvert un corps ! Son message est :\n {message}")
@@ -146,7 +160,10 @@ commands.append(Command("mort", "Annonce à l'organisateur la découverte d'un c
                         "mort PERSONNE", "mort 1", mort_func))
 
 
-def done_func(command, player, message, game):
+def done_func(command: Command, player: SMSPlayer, message: str, game: Game) -> None:
+    """
+    Commande pour déclarer qu'une tâche a été effectuée
+    """
     try:
         task_number = int(message.split(" ")[1])
         task = player.tasks[task_number - 1]
@@ -156,17 +173,22 @@ def done_func(command, player, message, game):
             task.done = True
             game.done_tasks.append(task)
             send_sms(player.phone, f"Votre tâche {task.name} a été confirmée comme faite !")
-            messagebox.showinfo("Succès",
+            if game.game_master:
+                messagebox.showinfo("Succès",
                                 f"{player.name} {player.lastname} a confirmé avoir réalisé la tâche {task.name} ! Son message est :\n {message}")
     except (Exception,):
         send_sms(player.phone, "Veuillez entrer un numéro de tâche valide !")
 
 
 commands.append(
-    Command("done", "Valide une tâche comme faite", ["fait", "réalisé"], "done NOMBRE", "done 1", done_func))
+    Command("done", "Valide une tâche comme faite", ["fait", "réalisé"], "done NOMBRE", "done 1", done_func)
+)
 
 
-def help_func(command, player, message, game):
+def help_func(command: Command, player: SMSPlayer, message: str, game: Game) -> None:
+    """
+    Commande qui renvoie toutes les commandes disponibles
+    """
     if len(message.split(" ")) == 1:
         string = "Voici toutes les commandes disponibles:\n"
         for command in commands:
@@ -185,4 +207,11 @@ def help_func(command, player, message, game):
 
 commands.append(Command("help", "Obtenir toutes les commandes et de l'aide pour chacune",
                         ["aide", "commandes", "commande", "commands", "command"], "help (COMMANDE)", "help help",
-                        help_func))
+                        help_func)
+)
+
+
+def sos_funct(command: Command, player: SMSPlayer, message: str, game: Game) -> None:
+    game.pause = True
+    if game.game_master:
+        messagebox.showerror(f"{player.name} {player.lastname} demande de l'aide !", f"Le joueur {player.name} {player.lastname} a envoyé une commande d'urgence ! Un message a été envoyé à tous les joueurs et le jeu a été mis en pause !")

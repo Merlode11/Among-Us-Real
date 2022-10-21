@@ -19,12 +19,18 @@ sent_messages = {}
 
 
 def send_sms(phone_number: str, message: str):
+    """
+    Envoye un SMS au numéro de téléphone spécifié
+    """
     sent_messages[phone_number] = message
     service.send_message(phone_number, message)
     print("SMS sent to {}".format(phone_number))
 
 
-def get_new_messages(game):
+def get_new_messages(game) -> list:
+    """
+    Renvoie tous les nouveaux messages detectés
+    """
     players = game.players
     global last_messages
     global sent_messages

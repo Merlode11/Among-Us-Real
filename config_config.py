@@ -5,8 +5,14 @@ from tkinter import messagebox, ttk
 
 
 def config_config():
-    def save_config(close=False):
-        new_config = {
+    """
+    Affiche la fenêtre de configuration des paramètres
+    """
+    def save_config(close: bool = False):
+        """
+        Sauvegarde la configuration dans le fichier JSON de configuration
+        """
+        new_config: dict = {
             "impostors": int(impostors_entry.get()),
             "ingeniors": int(ingeniors_entry.get()),
             "scientists": int(scientists_entry.get()),

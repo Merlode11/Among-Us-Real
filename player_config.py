@@ -5,6 +5,9 @@ from tkinter import messagebox, ttk
 
 
 def player_config():
+    """
+    Affiche la fenêtre de configuration des joueurs pour la partie en mode SMS
+    """
     window = Tk()
     window.title("Configurer les joueurs")
     window.geometry("800x600")
@@ -18,6 +21,8 @@ def player_config():
             players = json.load(file)
 
     players_frame = Frame(window, bg="#f5f5f5")
+    
+    # TODO: Passer l'affichage des joueurs sous une fonction pour la modification de la fenêtre en cas de changement 
 
     for player in players:
         player_frame = Frame(players_frame, bg="#f5f5f5")
@@ -36,7 +41,13 @@ def player_config():
 
 
 def edit_player(player: dict):
+    """
+    Modifie un joueur déjà créé
+    """
     def save_player():
+        """
+        Enregistrer le joueur modifié dans le fichier JSON correspondant
+        """
         new_player = {
             "name": name_entry.get(),
             "lastname": lastname_entry.get(),
@@ -86,8 +97,13 @@ def edit_player(player: dict):
 
 
 def add_player():
-
+    """
+    Fenêtre pour ajouter un joueur dans la liste des joueurs
+    """
     def save_player():
+        """
+        Sauvegarde le nouveau joueur dans le fichier JSON
+        """
         player = {
             "name": name_entry.get(),
             "lastname": lastname_entry.get(),

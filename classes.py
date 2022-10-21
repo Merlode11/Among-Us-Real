@@ -18,10 +18,14 @@ class Player:
         self.last_message: int = 0
         self.warnings: int = 0
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """
+        Affiche la classe Player telle qu'elle doit être déclarée pour ce joueur
+        :return: str: Le string de l'affichage
+        """
         return f"Player({self.name}, {self.lastname}, {self.phone})"
 
-    def get_str(self, game):
+    def __str__(self, game):
         if game.game_master:
             if self.dead:
                 return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
@@ -33,12 +37,20 @@ class Player:
                 return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
         return f"{self.name} {self.lastname}: {self.phone}"
 
-    def finished_all_tasks(self):
+    def finished_all_tasks(self) -> bool:
+        """
+        Renvoie si le joueur a fini toutes ses tâches
+        :return: bool: True s'il a fini toutes ses tâches, False sinon
+        """
         finished = 0
         for task in self.tasks:
             if task.done:
                 finished += 1
         return finished == len(self.tasks)
+
+class SMSPlayer(Player):
+    pass
+
 
 
 class Task:
@@ -95,7 +107,10 @@ class Game:
         self.game_master: bool = self.config["game_master"]
         self.pause: bool = False
 
-    def define_roles(self):
+    def define_roles(self) -> None:
+        """
+        Défini les rôles de chacun des participants
+        """
         random.shuffle(self.players)
         for i in range(self.config["impostors"]):
             self.impostors.append(self.players[i])
@@ -115,6 +130,9 @@ class Game:
         self.players = sorted(self.players, key=lambda joueur: joueur.name)
 
     def define_tasks(self):
+        """
+        Défini les tâches du joueur pour chaque participant
+        """
         for player in self.players:
             random.shuffle(self.tasks)
             for i in range(self.config["tasks"]):
@@ -143,14 +161,50 @@ class Game:
             self.send_messages.append(message)
             # send_sms(player.phone, message)
 
-    def send_message_to_all(self, message: str):
+
+class SMSGame(Game):
+    def send_role(player: SMSPlayer):
+        """
+        Envoie un sms au joueur indiquant son role et ses tâches
+        :param player: SMSPlayer: Le joueur avec son numéro de téléphone
+        """
+        message = f"Bonjour {player.name} {player.lastname},\n"
+            message += "Vous êtes un " + self.config["names"][player.role].upper()
+            if player.role == "impostor":
+                impostors = " ".join([(joueur.name + " " + joueur.lastname) for joueur in self.impostors])
+                message += " avec " + impostors + "\n\n"
+            else:
+                message += "\n\n"
+            message += "Vos tâches sont:\n"
+            for i in range(len(player.tasks)):
+                task = player.tasks[i]
+                message += f"{i + 1}: {task.name} ({task.classe})\n"
+            message += "\n"
+            message += "Pour voir toutes les commandes, vous pouvez taper \"help\"\n"
+            message += "Nous vous souhaitons une bonne partie !"
+
+            self.send_messages.append(message)
+            send_sms(player.phone, message)
+    
+    
+    def send_message_to_all(self, message: str) -> None:
+        """
+        Envoie un message à tous les joueurs
+        :param message: str: Le message à envoyer
+        """
         for player in self.players:
             self.send_messages.append(message)
             send_sms(player.phone, message)
 
         messagebox.showinfo("Succès", "Le message a été envoyé à tout le monde !")
 
-    def check_command(self, player, message):
+    def check_command(self, player: SMSPlayer, message: str) -> bool:
+        """
+        Vérifie si jamais le message reçu est une commande, ou un message validant une tâche. Si c’est le cas, on l'exécute
+        :param player: SMSPlayer: Le joueur qui a envoyé le message
+        :param message: str: le contenu du message reçu
+        :return: bool: Si jamais le message était bien une commande
+        """
         message = message.lower()
         for cmd in commands:
             if message.startswith(tuple([cmd.name] + cmd.aliases)):
@@ -168,9 +222,12 @@ class Game:
         return False
 
     def start_recieve_sms(self):
+        """
+        Active la vérification périodique de la réception des messages
+        """
         from threading import Timer
 
-        def test():
+        def recieve():
             new = get_new_messages(self)
             if len(new) > 0:
                 for msg in new:
@@ -199,6 +256,7 @@ class Game:
                                                f"{player.name} {player.lastname} n'a plus envoyé de messages depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Un message d'avertissement lui a été envoyé. Une procédure d'urgence aura lieu automatiquement si on n'a pas de nouvelles dans {self.config['max_warns'] - player.warnings * self.config['min_before_inactiv_warn']} minutes")
                     player.warnings += 1
             if self.receive:
-                Timer(2, test).start()
+                Timer(2, receive).start()
 
-        test()
+        receive()
+    

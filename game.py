@@ -10,6 +10,9 @@ from classes import Game, Player, Task
 
 
 def start_game(game_master: bool = None):
+    """
+    Démare une partie en type SMS. Affiche la fenêtre du jeu
+    """
     game = Game()
 
     if game_master is None:
@@ -367,6 +370,9 @@ def start_game(game_master: bool = None):
         sender.mainloop()
 
     def send_message_window(player: Player):
+        """
+        Affiche la fenêtre d'envoi de message à un joueur spécifique
+        """
         sender = Tk()
         sender.title("Envoyer un message")
         sender.geometry("500x100")
@@ -383,6 +389,9 @@ def start_game(game_master: bool = None):
         messageEntry.focus_set()
 
         def send_message():
+            """
+            Envoyer le message entré
+            """
             message = messageEntry.get()
             game.send_messages.append(message)
             send_sms(player.phone, message)

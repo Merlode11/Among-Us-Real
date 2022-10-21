@@ -8,6 +8,9 @@ from player_config import player_config
 
 
 def main():
+    """
+    Affichage de la fenêtre d'accueil
+    """
     window = Tk()
     window.title("Menu principal")
     window.geometry("800x600")
@@ -63,6 +66,9 @@ def main():
         tasks = []
 
     def show_config():
+        """
+        Affiche dans la fenêtre la configuration actuelle de la partie
+        """
         clear_frame(edits_frame)
         player_label = Label(edits_frame, text=f"{len(players)} joueurs")
         player_button = Button(edits_frame, text=f"Modifier", command=player_config)
@@ -104,7 +110,7 @@ def main():
 
     def begin_game(game_master):
         """
-        Begin a game
+        Commencer une partie
         :param game_master: bool: If the game master is playing
         :return: None
         """
