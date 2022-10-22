@@ -45,11 +45,12 @@ def get_new_messages(game) -> list:
             last_messages[message.phone] = message
         elif message.datetime != last_messages[message.phone].datetime and sent_messages[message.phone] != message.content:
             print("New message from {}: {}".format(message.phone, message.content))
+            player = [p for p in players if p.phone == message.phone][0]
             last_messages[message.phone] = message
             new_messages.append(message)
             player.last_message = message.datetime
             if player.warnings >= 1: 
-                if game.pause and player.warnings >= self.config["max_warns"]:
+                if game.pause and player.warnings >= game.config["max_warns"]:
                     game.pause = False
                     game.send_message_to_all(f"{player.name} {player.lastname} a refait surface, plus besoin de s'inquiéter. La partie reprend !")
                     if game.config.game_master:

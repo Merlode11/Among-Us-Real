@@ -25,7 +25,7 @@ class Player:
         """
         return f"Player({self.name}, {self.lastname}, {self.phone})"
 
-    def __str__(self, game):
+    def get_str(self, game):
         if game.game_master:
             if self.dead:
                 return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
@@ -48,9 +48,9 @@ class Player:
                 finished += 1
         return finished == len(self.tasks)
 
+
 class SMSPlayer(Player):
     pass
-
 
 
 class Task:
@@ -129,7 +129,7 @@ class Game:
 
         self.players = sorted(self.players, key=lambda joueur: joueur.name)
 
-    def define_tasks(self):
+    def define_tasks(self) -> None:
         """
         Défini les tâches du joueur pour chaque participant
         """
@@ -163,30 +163,29 @@ class Game:
 
 
 class SMSGame(Game):
-    def send_role(player: SMSPlayer):
+    def send_role(self, player: SMSPlayer) -> None:
         """
         Envoie un sms au joueur indiquant son role et ses tâches
         :param player: SMSPlayer: Le joueur avec son numéro de téléphone
         """
         message = f"Bonjour {player.name} {player.lastname},\n"
-            message += "Vous êtes un " + self.config["names"][player.role].upper()
-            if player.role == "impostor":
-                impostors = " ".join([(joueur.name + " " + joueur.lastname) for joueur in self.impostors])
-                message += " avec " + impostors + "\n\n"
-            else:
-                message += "\n\n"
-            message += "Vos tâches sont:\n"
-            for i in range(len(player.tasks)):
-                task = player.tasks[i]
-                message += f"{i + 1}: {task.name} ({task.classe})\n"
-            message += "\n"
-            message += "Pour voir toutes les commandes, vous pouvez taper \"help\"\n"
-            message += "Nous vous souhaitons une bonne partie !"
+        message += "Vous êtes un " + self.config["names"][player.role].upper()
+        if player.role == "impostor":
+            impostors = " ".join([(joueur.name + " " + joueur.lastname) for joueur in self.impostors])
+            message += " avec " + impostors + "\n\n"
+        else:
+            message += "\n\n"
+        message += "Vos tâches sont:\n"
+        for i in range(len(player.tasks)):
+            task = player.tasks[i]
+            message += f"{i + 1}: {task.name} ({task.classe})\n"
+        message += "\n"
+        message += "Pour voir toutes les commandes, vous pouvez taper \"help\"\n"
+        message += "Nous vous souhaitons une bonne partie !"
 
-            self.send_messages.append(message)
-            send_sms(player.phone, message)
-    
-    
+        self.send_messages.append(message)
+        send_sms(player.phone, message)
+
     def send_message_to_all(self, message: str) -> None:
         """
         Envoie un message à tous les joueurs
@@ -200,7 +199,7 @@ class SMSGame(Game):
 
     def check_command(self, player: SMSPlayer, message: str) -> bool:
         """
-        Vérifie si jamais le message reçu est une commande, ou un message validant une tâche. Si c’est le cas, on l'exécute
+        Vérifie si jamais le message reçu est une commande ou un message validant une tâche. Si c’est le cas, on l'exécute
         :param player: SMSPlayer: Le joueur qui a envoyé le message
         :param message: str: le contenu du message reçu
         :return: bool: Si jamais le message était bien une commande
@@ -255,8 +254,6 @@ class SMSGame(Game):
                         messagebox.showwarning("Sans nouvelles d'un joueur",
                                                f"{player.name} {player.lastname} n'a plus envoyé de messages depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Un message d'avertissement lui a été envoyé. Une procédure d'urgence aura lieu automatiquement si on n'a pas de nouvelles dans {self.config['max_warns'] - player.warnings * self.config['min_before_inactiv_warn']} minutes")
                     player.warnings += 1
-            if self.receive:
-                Timer(2, receive).start()
-
-        receive()
-    
+                if self.receive:
+                    Timer(2, recieve).start()
+            recieve()

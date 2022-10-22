@@ -87,7 +87,7 @@ def config_config():
     max_task_given_label.grid(row=4, column=0)
     max_task_given_entry.grid(row=4, column=1)
 
-    ip_label = Label(settings_frame, text="Adresse IP d'Airemore: ")
+    ip_label = Label(settings_frame, text="Adresse IP d'Airemore (vide si non utilisé): ")
     ip_entry = Entry(settings_frame)
     ip_entry.insert(0, config["ip"])
     ip_label.grid(row=5, column=0)
@@ -199,3 +199,7 @@ def config_config():
     save_button_close.pack(side=BOTTOM)
 
     window.mainloop()
+
+
+if __name__ == "__main__":
+    config_config()

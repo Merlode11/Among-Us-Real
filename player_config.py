@@ -148,3 +148,7 @@ def add_player():
     save_button.pack(side=BOTTOM)
 
     window.mainloop()
+
+
+if __name__ == "__main__":
+    player_config()

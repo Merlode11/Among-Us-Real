@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import json
-import random
 from tkinter import *
 from tkinter import messagebox, ttk
-from smsManager import send_sms, get_new_messages
-from classes import Game, Player, Task
+from smsManager import send_sms
+from classes import SMSGame, SMSPlayer, Task
+from utils import clear_frame
 
 
 def start_game(game_master: bool = None):
     """
     Démare une partie en type SMS. Affiche la fenêtre du jeu
     """
-    game = Game()
+    game = SMSGame()
 
     if game_master is None:
         game_master = game_master
@@ -57,7 +56,7 @@ def start_game(game_master: bool = None):
 
     window.protocol("WM_DELETE_WINDOW", closing)
 
-    def kill_player(player: Player):
+    def kill_player(player: SMSPlayer):
         """
         Tuer un joueur
         :param player: Player: Joueur à tuer
@@ -83,7 +82,7 @@ def start_game(game_master: bool = None):
 
             if response:
                 window.destroy()
-                main()
+                start_game(game_master)
             else:
                 window.destroy()
         elif len(game.impostors) == 0:
@@ -95,13 +94,13 @@ def start_game(game_master: bool = None):
                                                                                       "Voulez-vous recommencer ?")
             if response:
                 window.destroy()
-                main()
+                start_game(game_master)
             else:
                 window.destroy()
         else:
             send_sms(player.phone, "Vous avez été confirmé comme en tant que mort par le maître du jeu !")
 
-    def reborn_player(player: Player):
+    def reborn_player(player: SMSPlayer):
         """
         Réanimer un joueur
         :param player: Player: Joueur à réanimer
@@ -125,7 +124,7 @@ def start_game(game_master: bool = None):
         clear_frame(play_frame)
         for player in game.players:
             perso_frame = Frame(play_frame, width=800, height=100, bg="#f5f5f5", highlightbackground="#000000",
-                               highlightthickness=1)
+                                highlightthickness=1)
             bg = "#a9a9a9" if player.dead and game_master else "#f5f5f5"
             fg = "#000000"
             if player.role == "crewmate":
@@ -144,7 +143,7 @@ def start_game(game_master: bool = None):
             label_player.pack()
 
             send_message = Button(perso_frame, text="Envoyer un message",
-                                 command=lambda joueur=player: send_message_window(joueur))
+                                  command=lambda joueur=player: send_message_window(joueur))
             send_message.pack(anchor="e", expand=YES, side=RIGHT)
 
             task_button = Button(perso_frame, text="Tâches", command=lambda joueur=player: show_tasks(joueur))
@@ -162,7 +161,8 @@ def start_game(game_master: bool = None):
             dead_button.pack(anchor="e", expand=YES, side=RIGHT)
             perso_frame.pack(fill=BOTH, expand=True)
 
-            reborn_button = Button(perso_frame, text="Réapparaître", command=lambda joueur=player: reborn_player(joueur))
+            reborn_button = Button(perso_frame, text="Réapparaître",
+                                   command=lambda joueur=player: reborn_player(joueur))
             if not player.dead:
                 reborn_button.configure(state="disabled")
             reborn_button.pack(anchor="e", expand=YES, side=RIGHT)
@@ -174,7 +174,8 @@ def start_game(game_master: bool = None):
         reunion_button = Button(play_frame, text="Réunion", command=lambda: game.send_message_to_all(
             "Une réunion a été demandée.\nMerci de vous rendre immédiatement au point de rendez vous !"))
         reunion_button.pack(expand=YES, side=LEFT)
-        send_all_message_button = Button(play_frame, text="Envoyer un message", command=lambda: send_message_all_window())
+        send_all_message_button = Button(play_frame, text="Envoyer un message",
+                                         command=lambda: send_message_all_window())
         send_all_message_button.pack(expand=YES, side=LEFT)
         play_frame.pack()
 
@@ -189,10 +190,10 @@ def start_game(game_master: bool = None):
     tasks_progress_bar.config(value=len(game.done_tasks) / game.given_tasks * 100)
     tasks_progress.pack(fill=X, side=BOTTOM)
 
-    def show_tasks(player: Player):
+    def show_tasks(player: SMSPlayer):
         """
         Affiche une fenêtre avec les tâches du joueur
-        :param player: Player: Joueur dont on veut afficher les tâches
+        :param player: SMSPlayer: Joueur dont on veut afficher les tâches
         :return:
         """
         task_window = Tk()
@@ -263,7 +264,7 @@ def start_game(game_master: bool = None):
                                                             "Voulez-vous recommencer ?")
                 if response:
                     window.destroy()
-                    main()
+                    start_game(game_master)
                 else:
                     window.destroy()
             if player.finished_all_tasks():
@@ -369,7 +370,7 @@ def start_game(game_master: bool = None):
 
         sender.mainloop()
 
-    def send_message_window(player: Player):
+    def send_message_window(player: SMSPlayer):
         """
         Affiche la fenêtre d'envoi de message à un joueur spécifique
         """
@@ -408,13 +409,5 @@ def start_game(game_master: bool = None):
     window.mainloop()
 
 
-def clear_frame(frame: Frame):
-    """
-    Clear all entries in a frame
-    :param frame: Frame: Frame to clear
-    :return: None
-    """
-    for widget in frame.winfo_children():
-        if widget.winfo_class() == "Frame":
-            clear_frame(widget)
-        widget.destroy()
+if __name__ == '__main__':
+    start_game()

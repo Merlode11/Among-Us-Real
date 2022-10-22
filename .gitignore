@@ -7,4 +7,5 @@ misc/Paroles chant.txt
 /.idea/
 /__pycache__/
 /venv/
-tasks.json
+/taskList/*
+/ShellMS/

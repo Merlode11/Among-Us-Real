@@ -1,10 +1,11 @@
 import json
 from tkinter import *
 from tkinter import messagebox, ttk
-from game import start_game
+from SMSgame import start_game as start_game_sms
 import os
 from config_config import config_config
 from player_config import player_config
+from utils import clear_frame
 
 
 def main():
@@ -115,22 +116,10 @@ def main():
         :return: None
         """
         window.destroy()
-        result = start_game(game_master)
+        result = start_game_sms(game_master)
         main()
 
     window.mainloop()
-
-
-def clear_frame(frame: Frame):
-    """
-    Clear all entries in a frame
-    :param frame: Frame: Frame to clear
-    :return: None
-    """
-    for widget in frame.winfo_children():
-        if widget.winfo_class() == "Frame":
-            clear_frame(widget)
-        widget.destroy()
 
 
 if __name__ == "__main__":
