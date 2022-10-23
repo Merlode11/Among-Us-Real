@@ -1,4 +1,4 @@
-from tkinter import Frame
+from tkinter import Frame, OptionMenu, StringVar, IntVar
 
 
 def clear_frame(frame: Frame):
