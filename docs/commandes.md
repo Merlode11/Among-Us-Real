@@ -1,6 +1,6 @@
 # Les commandes par message
 
-Ce logiciel propose des commandes pour les SMS afin de rensre le jeu plus simple à jouer.
+Ce logiciel propose des commandes utilisant les SMS afin de rendre le jeu plus simple à jouer.
 
 ## Côté joueur
 
@@ -14,14 +14,14 @@ Vous recevrez quelques secondes plus tard un message de retour avec les informat
 
 ### La commande d'aide
 
-Une commande regroupant toutes les autres commandes existe. Il s'agit de la commande `aide`. Une fis envoyée, elle vous donnera toutes les commandes qui sont disponibles dans le jeu
+Une commande regroupant toutes les autres commandes existe. Il s'agit de la commande `aide`. Une fois envoyée, elle vous donnera toutes les commandes qui sont disponibles dans le jeu
 
 ## Côté développeur
 
 Les commandes peuvent être trouvées dans le fichier `commands.py`.
 
-Pour créer une commande, il faut en premier lieu créer une fonction de ce que fera la commande avec comme argument `(command, player, message, game)`.
-Une fois cela fait, vous pouvez créer une variable pour mettre un Objet de type `Command` à l'intérieur. Il faut évidemment donner toutes les informations nécessaires:
+Pour créer une commande, il faut créer une nouvelle classe du type `NomCommand` en héritage à la class command. 
+En l'instanciant la commande, il faut mettre ses paramètres suivant:
 
 - `name`: le nom de la commande
 - `description`: la description de ce que la commande fait
@@ -29,9 +29,12 @@ Une fois cela fait, vous pouvez créer une variable pour mettre un Objet de type
 - `usage`: montre comment la commande s'utilise
 - `exemple`: montre un exemple de l'utilisation de la commande
 
-Vous pourrez ensuite renseigner la fonction que vous avez créé juste avant en la mettant dans a fonction `execute`:
-```py
-cmd.execute = cmd_func
-```
+Vous pouvez ainsi ajouter la méthode `execute` avec ce que fait la commande.
 
-Une fois tout cela fait, vous pourrez ajouter à la liste `commands` votre nouvelle commande
+Une fois tout cela fait, vous pourrez ajouter à la liste `commands` la classe instanciée (`commands.append(NomCommand())`)
+
+
+## Les commandes disponibles de base
+
+#### Aide
+La commande aide affiche toutes les commandes disponibles au joueur

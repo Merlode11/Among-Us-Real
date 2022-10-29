@@ -45,7 +45,27 @@ def task_config():
     manageButton.grid(row=0, column=2)
 
     choiceListFrame.pack(fill=X, anchor=N)
-
+    
+    editTaskFrame = Frame(window, bg="#f5f5f5")
+    
+    def refresh_tasks(): 
+        clear_frame(editTaskFrame)
+        with open(f"taskList/{name}.json", "r", encoding="utf-8") as file: 
+            tasks: list = json.load(file)
+        for i in range(len(tasks)): 
+            task = tasks[i]
+            taskFrame = Frame(editTaskFrame, bg="#f5f5f5")
+            taskLabel = Label(taskFrame, text=tasks["name"])
+            editButton = Button(taskFrame, text="Modifier", command=lambda t=task: edit_task(t))
+            deleteButton = Button(taskFrame, text="Supprimer", command= lambda t=task: delete_task(t))
+            taskLabel.grid(row=i, column=0)
+            editButton.grid(row=i, column=1)
+            deleteButton.grid(row=i, column=2)
+            taskName.pack(fill=X)
+    
+    refresh_tasks()
+    editTaskFrame.pack(fill=X)
+    
     window.mainloop()
 
 
@@ -69,7 +89,10 @@ def create_task_list() -> None:
 
     nameFrame.pack(fill=X)
 
-    def save_list():
+    def save_list() -> None:
+        """
+        Enregistrer la liste et fermer ma fenêtre 
+        """
         name = nameEntry.get()
         if name == "":
             messagebox.showerror("Erreur", "Le nom de la liste ne peut pas être vide", parent=window)
@@ -90,6 +113,9 @@ def create_task_list() -> None:
 
 
 def manage_list_names():
+    """
+    Gérer les listes, modifier le nom, en créer, supprimer
+    """
     window = Tk()
     window.title("Gérer les noms de liste")
     window.geometry("400x600")

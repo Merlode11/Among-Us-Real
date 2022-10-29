@@ -19,7 +19,7 @@
    5. [ ] Créer une documentation pour les taches
    6. [ ] Créer une documentation pour le support SMS
 4. [x] Créer un menu de départ pour:
-   1. [ ] Lancer une partie
+   1. [x] Lancer une partie
    2. [ ] Modifier les paramètres
    3. [ ] Modifier les tâches
    4. [ ] Modifier les joueurs
