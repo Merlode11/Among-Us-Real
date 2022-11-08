@@ -5,7 +5,7 @@ from tkinter import messagebox, ttk
 from utils import YesNoButton, VerticalScrolledFrame, IntEntry, TimerEntry
 
 
-def config_config():
+def config_settings():
     """
     Affiche la fenêtre de configuration des paramètres
     """
@@ -61,7 +61,7 @@ def config_config():
     settings_frame = Frame(frame, bg="#f5f5f5")
 
     impostors_label = Label(settings_frame, text="Nombre d'imposteurs: ")
-    impostors_entry = IntEntry(settings_frame)
+    impostors_entry = IntEntry(settings_frame, value=config["impostors"], min_value=1, max_value=10)
     impostors_entry.set_value(config["impostors"])
     impostors_label.grid(row=0, column=0)
     impostors_entry.grid(row=0, column=1)

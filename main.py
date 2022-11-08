@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import messagebox, ttk
 from SMSgame import start_game as start_game_sms
 import os
-from config_config import config_config
+from config_settings import config_settings
 from player_config import player_config
 from utils import clear_frame
 
@@ -88,7 +88,7 @@ def main():
 
     edits_frame.pack(fill=X)
 
-    config_button = Button(window, text="Modifier les paramètres", command=config_config)
+    config_button = Button(window, text="Modifier les paramètres", command=config_settings)
     config_button.pack(fill=X)
 
     ttk.Separator(window, orient="horizontal").pack(fill="x")

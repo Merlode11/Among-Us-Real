@@ -113,9 +113,8 @@ class YesNoButton(Button):
         return self.value
 
 
-# class IntEntry with validation (only numbers) and a default value and button betweeen the entry to increment or decrement the value by 1
 class IntEntry(Frame):
-    def __init__(self, master, value: int = 0, minimum: int = 0, maximum: int = 10, **kwargs):
+    def __init__(self, master, value: int = 0, min_value: int = 0, max_value: int = 10, **kwargs):
         def _validate(val):
             if val == "":
                 return True
@@ -125,11 +124,16 @@ class IntEntry(Frame):
             except ValueError:
                 return False
 
+        # **kwargs without value, min_value and max_value
+        kwargs.pop("value", None)
+        kwargs.pop("min_value", None)
+        kwargs.pop("max_value", None)
+        super().__init__(master, **kwargs)
         super().__init__(master, **kwargs)
 
         self.value: int = value
-        self.minimum: int = minimum
-        self.maximum: int = maximum
+        self.min_value: int = min_value
+        self.max_value: int = max_value
         self.string_var = StringVar(value=str(value))
 
         self.button_minus = Button(self, text="-", command=self._decrement)
@@ -137,6 +141,7 @@ class IntEntry(Frame):
 
         self.entry = Entry(self, width=5, textvariable=self.string_var)
         self.entry.pack(side=LEFT)
+        self.set_value(value)
 
         self.entry.bind("<FocusOut>", self._on_focus_out)
         self.entry.bind("<Return>", self._on_focus_out)
@@ -146,14 +151,12 @@ class IntEntry(Frame):
         self.button_plus.pack(side=LEFT)
 
     def _increment(self):
-        if self.value < self.maximum:
-            self.value += 1
-            self.string_var.set(str(self.value))
+        if self.value < self.max_value:
+            self.set_value(self.value + 1)
 
     def _decrement(self):
-        if self.value > self.minimum:
-            self.value -= 1
-            self.string_var.set(str(self.value))
+        if self.value > self.min_value:
+            self.set_value(self.value - 1)
 
     def _on_focus_out(self, event):
         if self.string_var.get() == "":
@@ -165,12 +168,11 @@ class IntEntry(Frame):
         except ValueError:
             self.value = 0
         self.string_var.set(str(self.value))
-        if self.value > self.maximum:
-            self.value = self.maximum
-            self.string_var.set(str(self.value))
-        elif self.value < self.minimum:
-            self.value = self.minimum
-            self.string_var.set(str(self.value))
+        if self.value > self.max_value:
+            self.set_value(self.max_value)
+
+        elif self.value < self.min_value:
+            self.set_value(self.min_value)
 
     def get_value(self):
         return self.value
@@ -178,6 +180,8 @@ class IntEntry(Frame):
     def set_value(self, value):
         self.value = value
         self.string_var.set(str(self.value))
+        self.entry.delete(0, END)
+        self.entry.insert(0, str(self.value))
 
 
 # class TimerEntry with entry for minutes and seconds
@@ -203,6 +207,8 @@ class TimerEntry(Frame):
         self.entry_minutes = Entry(self, width=2, textvariable=self.string_var_minutes)
         self.entry_minutes.config(validate="key", validatecommand=(self.register(_validate), "%P"))
         self.entry_minutes.pack(side=LEFT)
+        self.entry_minutes.delete(0, END)
+        self.entry_minutes.insert(0, str(minutes))
 
         self.entry_minutes.bind("<FocusOut>", self._on_focus_out)
         self.entry_minutes.bind("<Return>", self._on_focus_out)
@@ -213,6 +219,8 @@ class TimerEntry(Frame):
         self.entry_seconds = Entry(self, width=2, textvariable=self.string_var_seconds)
         self.entry_seconds.config(validate="key", validatecommand=(self.register(_validate), "%P"))
         self.entry_seconds.pack(side=LEFT)
+        self.entry_seconds.delete(0, END)
+        self.entry_seconds.insert(0, str(seconds))
 
         self.entry_seconds.bind("<FocusOut>", self._on_focus_out)
         self.entry_seconds.bind("<Return>", self._on_focus_out)
@@ -260,10 +268,14 @@ class TimerEntry(Frame):
     def set_value_minutes(self, value):
         self.minutes = value
         self.string_var_minutes.set(str(self.minutes))
+        self.entry_minutes.delete(0, END)
+        self.entry_minutes.insert(0, str(self.minutes))
 
     def set_value_seconds(self, value):
         self.seconds = value
         self.string_var_seconds.set(str(self.seconds))
+        self.entry_seconds.delete(0, END)
+        self.entry_seconds.insert(0, str(self.seconds))
 
     def get_total_seconds(self):
         return self.minutes * 60 + self.seconds
@@ -273,6 +285,10 @@ class TimerEntry(Frame):
         self.seconds = value % 60
         self.string_var_minutes.set(str(self.minutes))
         self.string_var_seconds.set(str(self.seconds))
+        self.entry_minutes.delete(0, END)
+        self.entry_minutes.insert(0, str(self.minutes))
+        self.entry_seconds.delete(0, END)
+        self.entry_seconds.insert(0, str(self.seconds))
 
     def add_seconds(self, seconds: int):
         self.set_total_seconds(self.get_total_seconds())

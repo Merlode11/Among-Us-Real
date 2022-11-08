@@ -9,7 +9,7 @@ with open("config.json", "r") as f:
 
 ip = IPv4Address(config["ip"])
 
-session = AirmoreSession(ip) 
+session = AirmoreSession(ip)
 
 service = MessagingService(session)
 

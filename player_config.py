@@ -17,13 +17,6 @@ def player_config():
     window.iconbitmap("assets/img/amongus.ico")
 
     canva_frame = Frame(window, bg="#f5f5f5")
-    # players_canva = Canvas(canva_frame, bg="#f5f5f5")
-    #
-    # scroll = ttk.Scrollbar(players_canva, orient=VERTICAL, command=players_canva.yview)
-    # scroll.pack(side=RIGHT, fill=Y)
-    #
-    # players_canva.configure(yscrollcommand=scroll.set)
-    # players_frame = Frame(canva_frame)
 
     players_frame = VerticalScrolledFrame(canva_frame, width=window.winfo_width(), height=window.winfo_width())
 
@@ -45,6 +38,9 @@ def player_config():
             play_button = Button(player_frame, text="Joue" if player.get("play", True) else "Ne joue pas", command=lambda joueur=player: edit_play(joueur))
             play_button.pack(side=RIGHT)
             player_frame.pack(fill=X, anchor=N, expand=True)
+
+        add_button = Button(players_frame, text="Ajouter un joueur", command=lambda: add_player())
+        add_button.pack(side=BOTTOM)
 
     show_players()
 
@@ -228,12 +224,6 @@ def player_config():
 
         add_window.mainloop()
 
-    add_button = Button(players_frame, text="Ajouter un joueur", command=add_player)
-    add_button.pack(side=BOTTOM)
-
-    # players_canva.pack(side=LEFT, fill=BOTH, expand=True)
-    # players_canva.create_window((0, 0), window=players_frame, anchor="n")
-    # players_canva.bind("<Configure>", lambda e: players_canva.configure(scrollregion=players_canva.bbox("all")))
     players_frame.pack(fill=X)
     canva_frame.pack(fill=BOTH, expand=True)
 
