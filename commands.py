@@ -1,14 +1,14 @@
-from tkinter import messagebox, ttk
+from tkinter import messagebox
 from smsManager import send_sms
-from collections.abc import Callable
-from classes import SMSGame, SMSPlayer
-import re # Importation du module pour faire des tests d'expressions régulières
+import classes
+import re  # Importation du module pour faire des tests d'expressions régulières
 
 
 class Command:
     """
     Initialisation de la classe commande
     """
+
     def __init__(self,
                  name: str,
                  description: str,
@@ -41,12 +41,12 @@ class Command:
         string += "\nUtilisation:" + self.usage + " (" + self.exemple + ")"
         return string
 
-    def run(self, player: SMSPlayer, message: str, game: SMSGame) -> bool:
+    def run(self, player, message: str, game) -> bool:
         """
         Exécute la commande avec une vérification du rôle et de la partie
-        :param player: SMSPlayer: Le joueur qui a effecuté la commande
+        :param player: Le joueur qui a effecuté la commande
         :param message: str: Le string envoyé par le message
-        :param game: SMSGame: La partie
+        :param game: La partie
         :return: bool: Renvoie la bonne utilisation de la commande
         """
         # Check permission
@@ -64,12 +64,12 @@ class Command:
             self.execute(player, message, game)
             return True
 
-    def execute(self, player: SMSPlayer, message: str, game: SMSGame):
+    def execute(self, player, message: str, game):
         """
         Exécute la commande
-        :param player: SMSPlayer: Le joueur qui a effecuté la commande
+        :param player: Le joueur qui a effecuté la commande
         :param message: str: Le string envoyé par le message
-        :param game: SMSGame: La partie
+        :param game: La partie
         """
         pass
 
@@ -81,17 +81,18 @@ class TaskCommand(Command):
     """
     Affiche plus d'informations sur une tâche demandée
     """
+
     def __init__(self):
         super().__init__("task", "Permet de voir la description d'une tâche",
                          ["tâche", "détail", "detail", "task", "tache"],
                          "task NOMBRE", "task 1")
 
-    def execute(self, player: SMSPlayer, message: str, game: SMSGame) -> None:
+    def execute(self, player, message: str, game) -> None:
         """
         Commande permettant d'avoir plus d'informations sur la tâche à effectuer
-        :param player: SMSPlayer: Le joueur qui a exécuté la commande
+        :param player: Le joueur qui a exécuté la commande
         :param message: str: Le message envoyé par le joueur
-        :param game: SMSGame: La partie
+        :param game: La partie
         """
         try:
             task_number = int(message.split(" ")[1])
@@ -111,15 +112,16 @@ class InfoCommand(Command):
     """
     Affiche les informations sur les tâches restantes
     """
+
     def __init__(self):
         super().__init__("info", "Permet de voir les tâches restantes", ["restant", "last", "reste"], "info", "info")
 
-    def execute(self, player: SMSPlayer, message: str, game: SMSGame) -> None:
+    def execute(self, player, message: str, game) -> None:
         """
         Commande permettant d'avoir plus d'informations sur la tâche à effectuer
-        :param player: SMSPlayer: Le joueur qui a exécuté la commande
+        :param player: Le joueur qui a exécuté la commande
         :param message: str: Le message envoyé par le joueur
-        :param game: SMSGame: La partie
+        :param game: La partie
         """
         remining = 0
         done = 0
@@ -135,9 +137,8 @@ class InfoCommand(Command):
         if done == len(player.tasks):
             string += "Vous avez accompli toutes vos tâches !\n"
 
-        string += f"Il reste {len(game.done_tasks)}/{game.given_tasks} tâche pour les {game.config["names"][
-            "crewmate"]}."
-        
+        string += f"Il reste {len(game.done_tasks)}/{game.given_tasks} tâche pour les {game.config['names']['crewmate']}."
+
         string += f"\nVotre identifiant est {player.id}."
         send_sms(player.phone, string)
 
@@ -149,17 +150,18 @@ class DeadsCommand(Command):
     """
     Affiche pour chaque joueur si jamais il est en vie ou non
     """
+
     def __init__(self):
         super().__init__("deads", "Voir les états de chaque joueur", ["view", "states", "états", "morts"], "deads",
                          "deads",
                          "scientist")
 
-    def execute(self, player: SMSPlayer, message: str, game: SMSGame) -> None:
+    def execute(self, player, message: str, game) -> None:
         """
         Commande qui renvoie l'état des personnes pour le rôle "Scientifique"
-        :param player: SMSPlayer: Le joueur qui a exécuté la commande
+        :param player: Le joueur qui a exécuté la commande
         :param message: str: Le message envoyé par le joueur
-        :param game: SMSGame: La partie
+        :param game: La partie
         """
         if player.asks >= game.config["max_dead_check"]:
             send_sms(player.phone, "Vous avez utilisé toutes vos demandes !")
@@ -183,16 +185,17 @@ class MortCommand(Command):
     """
     Acte comme le signalement d'un cadavre par la personne
     """
+
     def __init__(self):
         super().__init__("mort", "Annonce à l'organisateur la découverte d'un corps", ["death", "cadavre", "corps"],
                          "mort PERSONNE", "mort 1")
 
-    def execute(self, player: SMSPlayer, message: str, game: SMSGame) -> None:
+    def execute(self, player, message: str, game) -> None:
         """
         Commande pour signaler une personne morte
-        :param player: SMSPlayer: Le joueur qui a exécuté la commande
+        :param player: Le joueur qui a exécuté la commande
         :param message: str: Le message envoyé par le joueur
-        :param game: SMSGame: La partie
+        :param game: La partie
         """
         if game.game_master:
             response = messagebox.askokcancel("Mort détecté",
@@ -205,7 +208,7 @@ class MortCommand(Command):
         else:
             dead_str = message.split(" ")[1:]
             try:
-                dead_id = dead_str[0] - 1
+                dead_id = int(dead_str[0]) - 1
                 dead = game.players[dead_id]
                 if not dead.dead:
                     send_sms(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
@@ -223,15 +226,16 @@ class DoneCommand(Command):
     """
     Valide une tâche comme effectuée
     """
+
     def __init__(self):
         super().__init__("done", "Valide une tâche comme faite", ["fait", "réalisé"], "done NOMBRE", "done 1")
 
-    def execute(self, player: SMSPlayer, message: str, game: SMSGame) -> None:
+    def execute(self, player, message: str, game) -> None:
         """
         Commande pour déclarer qu'une tâche a été effectuée
-        :param player: SMSPlayer: Le joueur qui a exécuté la commande
+        :param player: Le joueur qui a exécuté la commande
         :param message: str: Le message envoyé par le joueur
-        :param game: SMSGame: La partie
+        :param game: La partie
         """
         try:
             task_number = int(message.split(" ")[1])
@@ -256,16 +260,17 @@ class HelpCommand(Command):
     """
     Affiche la page d'aide pour toutes les commandes ou pour une commande spécifique
     """
+
     def __init__(self):
         super().__init__("help", "Obtenir toutes les commandes et de l'aide pour chacune",
                          ["aide", "commandes", "commande", "commands", "command"], "help (COMMANDE)", "help help")
 
-    def execute(self, player: SMSPlayer, message: str, game: SMSGame) -> None:
+    def execute(self, player, message: str, game) -> None:
         """
         Commande qui renvoie toutes les commandes disponibles
-        :param player: SMSPlayer: Le joueur qui a exécuté la commande
+        :param player: Le joueur qui a exécuté la commande
         :param message: str: Le message envoyé par le joueur
-        :param game: SMSGame: La partie
+        :param game: La partie
         """
         if len(message.split(" ")) == 1:
             string = "Voici toutes les commandes disponibles:\n"
@@ -286,38 +291,43 @@ class HelpCommand(Command):
 commands.append(HelpCommand())
 
 
-class SOSCommand(Command): 
+class SOSCommand(Command):
     """
     Permet aux joueurs de demander de l'aide aux autres joueurs en cas de problèmes urgent
     """
+
     def __init__(self):
         super().__init__(
-            "sos", 
-            "Commande d'URGENCE pour signaler que vous avez un problème", 
+            "sos",
+            "Commande d'URGENCE pour signaler que vous avez un problème",
             ["urgence", "problème", "prob", "problem"],
             "sos (LOCALISATION - MESSAGE)",
             "sos maison problème de jambe")
-    
-    def execute(self, player: SMSPlayer, message: str, game: SMSGame) -> None:
+
+    def execute(self, player, message: str, game) -> None:
         """
         Commande qui demande de l'aide aux autres joueurs
-        :param player: SMSPlayer: Le joueur qui a exécuté la commande
+        :param player: Le joueur qui a exécuté la commande
         :param message: str: Le message envoyé par le joueur
-        :param game: SMSGame: La partie
+        :param game: La partie
         """
-        game.send_message_to_all(f"{player.name} {player.lasname} a besoin d'aide en URGENCE ! Son message:\n{" ".join(message.split(" ")[1:])}")
+        game.send_message_to_all(
+            f"{player.name} {player.lastname} a besoin d'aide en URGENCE ! Son message:\n{' '.join(message.split(' ')[1:])}")
         game.pause = True
         code = game.set_pause_game()
-        send_sms(player.phone, f"Votre demande d'aide a bien été transmise aux autres joueurs. Le code pour rétablir la partie normalement est '{code}'")
+        send_sms(player.phone,
+                 f"Votre demande d'aide a bien été transmise aux autres joueurs. Le code pour rétablir la partie normalement est '{code}'")
         if game.game_master:
-            messagebox.showerror(f"{player.name} {player.lasname} a besoin d'aide", f"{player.name} {player.lasname} a demandé de l'aide en URGENCE avec la commande SOS. Son message:\n{" ".join(message.split(" ")[1:])}\n\nUn message a été envoyé à tous les joueurs pour aller l'aider et la partie a été mise en pause")
+            messagebox.showerror(f"{player.name} {player.lastname} a besoin d'aide",
+                                 f"{player.name} {player.lastname} a demandé de l'aide en URGENCE avec la commande SOS. Son message:\n{' '.join(message.split(' ')[1:])}\n\nUn message a été envoyé à tous les joueurs pour aller l'aider et la partie a été mise en pause")
 
 
-class KillCommand(Command): 
+class KillCommand(Command):
     """
     Permet aux imposteurs de tuer une personne
     """
-    def __init__(self): 
+
+    def __init__(self):
         super().__init__(
             "kill",
             "Tuer une personne, si elle est à côté de vous",
@@ -325,45 +335,45 @@ class KillCommand(Command):
             "kill PERSONNE",
             "kill Merlode",
             "impostor"
-            )
-    
-    def execute(self, player: SMSPlayer, message: str, game: SMSGame): 
+        )
+
+    def execute(self, player, message: str, game):
         """
         Tuer une personne 
         """
         player_id = re.match(r"/\d{3}/g", message.split(" ")[1])
         to_kill_player = None
-        for joueur in game.players: 
-            if joueur.id == player_id: 
+        for joueur in game.players:
+            if joueur.id == player_id:
                 to_kill_player = joueur
-        if to_kill_player: 
+        if to_kill_player:
             pass
         else:
-            send_sms(player.phone, "Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.")
-        
+            send_sms(player.phone,
+                     "Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.")
 
 
-def parse_player(message: str, game: SMSGame) -> SMSPlayer or None or str: 
+def parse_player(message: str, game) -> object:
     """
     Trouve un joueur donné un argument dans une commande
     :param message: str: Le message envoyé par le joueur
-    :param game: SMSGame: La partie
-    :return: SMSPlayer or None or str: Le joueur si trouvé
+    :param game: La partie
+    :return or None or str: Le joueur si trouvé
     """
-    try: 
+    try:
         player_id = int(message.split(" ")[1])
         player = game.players[player_id - 1]
         return player
-    except (Exception,): 
+    except (Exception,):
         player_name = message.split(" ")[1].lower()
         found_players = []
-        for player in game.players: 
-            if player.name.lower() == player_name or player.lastname.lower() == player_name: 
+        for player in game.players:
+            if player.name.lower() == player_name or player.lastname.lower() == player_name:
                 found_players.append(player)
-        
-        if len(found_players) == 1: 
+
+        if len(found_players) == 1:
             return found_players[0]
         elif len(found_players) == 0:
             return None
-        else: 
+        else:
             return "multiple"

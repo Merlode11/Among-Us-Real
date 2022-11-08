@@ -10,17 +10,17 @@ def task_config():
     Affiche la fenêtre de configuration des tâches
     :return:
     """
+
     def manage_names():
         manage_list_names()
         print("manage names")
-
 
     window = Tk()
     window.title("Configurer les tâches")
     window.geometry("800x600")
     window.resizable(True, True)
     window.configure(background='#f5f5f5')
-    window.iconbitmap("amongus.ico")
+    window.iconbitmap("assets/img/amongus.ico")
 
     choiceListFrame = Frame(window, bg="#f5f5f5")
     choiceLabel = Label(choiceListFrame, text="Sélectionnez la liste à modifier")
@@ -45,27 +45,27 @@ def task_config():
     manageButton.grid(row=0, column=2)
 
     choiceListFrame.pack(fill=X, anchor=N)
-    
+
     editTaskFrame = Frame(window, bg="#f5f5f5")
-    
-    def refresh_tasks(): 
+
+    def refresh_tasks():
         clear_frame(editTaskFrame)
-        with open(f"taskList/{name}.json", "r", encoding="utf-8") as file: 
+        with open(f"taskList/{config['task_list']}.json", "r", encoding="utf-8") as file:
             tasks: list = json.load(file)
-        for i in range(len(tasks)): 
+        for i in range(len(tasks)):
             task = tasks[i]
             taskFrame = Frame(editTaskFrame, bg="#f5f5f5")
-            taskLabel = Label(taskFrame, text=tasks["name"])
+            taskLabel = Label(taskFrame, text=task["name"])
             editButton = Button(taskFrame, text="Modifier", command=lambda t=task: edit_task(t))
-            deleteButton = Button(taskFrame, text="Supprimer", command= lambda t=task: delete_task(t))
+            deleteButton = Button(taskFrame, text="Supprimer", command=lambda t=task: delete_task(t))
             taskLabel.grid(row=i, column=0)
             editButton.grid(row=i, column=1)
             deleteButton.grid(row=i, column=2)
-            taskName.pack(fill=X)
-    
+            taskFrame.pack(fill=X)
+
     refresh_tasks()
     editTaskFrame.pack(fill=X)
-    
+
     window.mainloop()
 
 
@@ -79,7 +79,7 @@ def create_task_list() -> None:
     window.geometry("400x100")
     window.resizable(True, True)
     window.configure(background='#f5f5f5')
-    window.iconbitmap("amongus.ico")
+    window.iconbitmap("assets/img/amongus.ico")
 
     nameFrame = Frame(window, bg="#f5f5f5")
     nameLabel = Label(nameFrame, text="Nom de la liste: ")
@@ -89,7 +89,7 @@ def create_task_list() -> None:
 
     nameFrame.pack(fill=X)
 
-    def save_list() -> None:
+    def save_list() -> str or None:
         """
         Enregistrer la liste et fermer ma fenêtre 
         """
@@ -121,7 +121,7 @@ def manage_list_names():
     window.geometry("400x600")
     window.resizable(True, True)
     window.configure(background='#f5f5f5')
-    window.iconbitmap("amongus.ico")
+    window.iconbitmap("assets/img/amongus.ico")
 
     nameFrame = Frame(window, bg="#f5f5f5")
     titre = Label(nameFrame, text="Listes de tâches disponibles")
@@ -134,6 +134,7 @@ def manage_list_names():
         Affiche la liste des listes de tâches disponibles
         :return:
         """
+
         def change_list(name: str) -> None:
             """
             Change la liste de tâches effective pour le jeu
@@ -156,7 +157,7 @@ def manage_list_names():
             edit_window.geometry("400x100")
             edit_window.resizable(True, True)
             edit_window.configure(background='#f5f5f5')
-            edit_window.iconbitmap("amongus.ico")
+            edit_window.iconbitmap("assets/img/amongus.ico")
 
             name_frame = Frame(edit_window, bg="#f5f5f5")
             nameLabel = Label(name_frame, text="Nom de la liste: ")
@@ -218,7 +219,8 @@ def manage_list_names():
             else:
                 label.config(fg="red")
 
-            choose = Button(listFrame, text="Choisir", command=lambda task_name=task: change_list(f"{task_name}"), state=DISABLED if task == config["task_list"] else NORMAL)
+            choose = Button(listFrame, text="Choisir", command=lambda task_name=task: change_list(f"{task_name}"),
+                            state=DISABLED if task == config["task_list"] else NORMAL)
             choose.grid(row=i + 1, column=1)
             edit = Button(listFrame, text="Modifier", command=lambda task_name=task: edit_list_name(f"{task_name}"))
             edit.grid(row=i + 1, column=2)

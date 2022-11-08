@@ -4,7 +4,9 @@
 from tkinter import *
 from tkinter import messagebox, ttk
 from smsManager import send_sms
-from classes import SMSGame, SMSPlayer, Task
+import classes
+
+SMSGame, SMSPlayer, Task = classes.SMSGame, classes.SMSPlayer, classes.Task
 from utils import clear_frame
 
 
@@ -24,7 +26,7 @@ def start_game(game_master: bool = None):
     window.geometry("800x600")
     window.resizable(True, True)
     window.configure(background='#f5f5f5')
-    window.iconbitmap("amongus.ico")
+    window.iconbitmap("assets/img/amongus.ico")
     window.state("zoomed")
 
     # Check if the configuration is correct with the players
@@ -201,7 +203,7 @@ def start_game(game_master: bool = None):
         task_window.geometry("500x500")
         task_window.resizable(True, True)
         task_window.configure(background="white")
-        task_window.iconbitmap("amongus.ico")
+        task_window.iconbitmap("assets/img/amongus.ico")
         task_window.focus_force()
 
         tasks_frame = Frame(task_window, bg="white")
@@ -295,7 +297,7 @@ def start_game(game_master: bool = None):
             details.title(f"{task.name} ({task.classe})")
             details.geometry("500x250")
             details.resizable(True, True)
-            details.iconbitmap("amongus.ico")
+            details.iconbitmap("assets/img/amongus.ico")
             details.configure(background="white")
             Label(details, text=task.description, bg="white", font="Arial 12",
                   wraplength=300, justify="center").pack()
@@ -348,7 +350,7 @@ def start_game(game_master: bool = None):
         sender.geometry("500x100")
         sender.resizable(True, True)
         sender.configure(background="white")
-        sender.iconbitmap("amongus.ico")
+        sender.iconbitmap("assets/img/amongus.ico")
         sender.focus_force()
 
         message_frame = Frame(sender, bg="white")
@@ -379,7 +381,7 @@ def start_game(game_master: bool = None):
         sender.geometry("500x100")
         sender.resizable(True, True)
         sender.configure(background="white")
-        sender.iconbitmap("amongus.ico")
+        sender.iconbitmap("assets/img/amongus.ico")
         sender.focus_force()
 
         messageFrame = Frame(sender, bg="white")

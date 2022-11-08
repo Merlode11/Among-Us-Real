@@ -17,7 +17,7 @@ def main():
     window.geometry("800x600")
     window.resizable(True, True)
     window.configure(background='#f5f5f5')
-    window.iconbitmap("amongus.ico")
+    window.iconbitmap("assets/img/amongus.ico")
 
     label_title = Label(window, text="Menu principal", font=("Arial", 30))
     label_title.pack(fill=X)

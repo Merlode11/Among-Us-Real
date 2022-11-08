@@ -6,114 +6,10 @@ from commands import commands
 import random
 
 
-class Player:
-    def __init__(self):
-        self.tasks: list = []
-        self.role: str = ""
-        self.dead: bool = False
-        self.asks: int = 0
-        self.last_message: int = 0
-        self.warnings: int = 0
-        self.id: str = "0"
-
-    def __repr__(self) -> str:
-        """
-        Affiche la classe Player telle qu'elle doit être déclarée pour ce joueur
-        :return: str: Le string de l'affichage
-        """
-        return f"Player()"
-
-    def get_str(self, game: Game):
-        pass
-
-    def finished_all_tasks(self) -> bool:
-        """
-        Renvoie si le joueur a fini toutes ses tâches
-        :return: bool: True s'il a fini toutes ses tâches, False sinon
-        """
-        finished = 0
-        for task in self.tasks:
-            if task.done:
-                finished += 1
-        return finished == len(self.tasks)
-
-
-class SMSPlayer(Player):
-    def __init__(self, name: str, lastname: str, phone: str):
-        self.name: str = name
-        self.lastname: str = lastname
-        self.phone: str = phone
-
-    def get_str(self, game: SMSGame) -> str:
-            if game.game_master:
-                if self.dead:
-                    return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
-                return f"{self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
-            else:
-                if self.dead and not game.config["show_dead_roles"]:
-                    return f"☠ {self.name} {self.lastname}: {self.phone}"
-                elif self.dead:
-                    return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
-            return f"{self.name} {self.lastname}: {self.phone}"
-
-
-class WebPlayer(Player): 
-    def __init__(self, ip: str, nickname: str, color: str): 
-        self.ip: str = ip
-        self.nickname: str = nickname
-        self.color: str = color
-        
-    def get_str(self, game: WEBGame) -> str:
-            if game.game_master:
-                if self.dead:
-                    return f"☠ {self.nickname} ({self.ip}), {game.config['names'][self.role]}"
-                return f"{self.nickname} ({self.ip}), {game.config['names'][self.role]}"
-            else:
-                if self.dead and not game.config["show_dead_roles"]:
-                    return f"☠ {self.nickname} ({self.ip})"
-                elif self.dead:
-                    return f"☠ {self.nickname} ({self.ip}), {game.config['names'][self.role]}"
-            return f"{self.nickname} ({self.ip})"
-
-class Task:
-    def __init__(self, name: str, description: str, classe: str, location: str, other: dict = None):
-        self.name: str = name
-        self.description: str = description
-        self.classe: str = classe
-        self.location: str = location
-        self.done: bool = False
-        self.other: dict = other
-        self.nb_given: int = 0
-        self.success: int = 0
-
-        if self.other and self.other.get("questions"):
-            random.shuffle(self.other["questions"])
-            questions = []
-            for i in range(3):
-                questions.append(self.other["questions"][i])
-            self.other["questions"] = questions
-
-    def __repr__(self):
-        return f"{self.name} ({self.classe}): {self.description} | {self.location}"
-
-    def __str__(self):
-        return f"{self.name} ({self.classe})"
-
-
 class Game:
     def __init__(self):
-        with open("players.json", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            self.players = [Player(player["name"], player["lastname"], player["phone"]) for player in data if
-                            player.get("play", True)]
-        used_id = []
-        for player in self.players: 
-            player_id = random.randint(0, 999)
-            while player_id in used_id: 
-                player_id = random.randint(0, 999)
-            used_id.append(player_id)
-            player.id = f"{player_id:^3}" # TODO: Remplir l'entier par des 0 pour avoir un identifiant de 3 chiffres
-            
+        self.players: list = []
+        self.import_players()
 
         with open("config.json", "r", encoding='utf-8') as f:
             self.config = json.load(f)
@@ -175,11 +71,11 @@ class Game:
             if player.role != "impostor":
                 self.given_tasks += self.config["tasks"]
             self.send_role(player)
-    
-    def send_role(self, player: Player):
+
+    def send_role(self, player):
         pass
-    
-    def set_pause_game(self): 
+
+    def set_pause_game(self):
         """
         Définir le code d'arrêt de la partie
         """
@@ -188,9 +84,25 @@ class Game:
         self.unpause_code = code_str
         return code_str
 
+    def import_players(self):
+        pass
+
 
 class SMSGame(Game):
-    def send_role(self, player: SMSPlayer) -> None:
+    def import_players(self):
+        with open("players.json", "r", encoding='utf-8') as f:
+            data = json.load(f)
+            self.players = [SMSPlayer(player["name"], player["lastname"], player["phone"]) for player in data if
+                            player.get("play", True)]
+            used_id = []
+        for player in self.players:
+            player_id = random.randint(0, 999)
+            while player_id in used_id:
+                player_id = random.randint(0, 999)
+            used_id.append(player_id)
+            player.id = f"{player_id:03}"
+
+    def send_role(self, player) -> None:
         """
         Envoie un sms au joueur indiquant son role et ses tâches
         :param player: SMSPlayer: Le joueur avec son numéro de téléphone
@@ -223,11 +135,11 @@ class SMSGame(Game):
         for player in self.players:
             self.send_messages.append(message)
             send_sms(player.phone, message)
-            
+
         if self.game_master:
             messagebox.showinfo("Succès", "Le message a été envoyé à tout le monde !")
 
-    def check_command(self, player: SMSPlayer, message: str) -> bool:
+    def check_command(self, player, message: str) -> bool:
         """
         Vérifie si jamais le message reçu est une commande ou un message validant une tâche. Si c’est le cas, on l'exécute
         :param player: SMSPlayer: Le joueur qui a envoyé le message
@@ -277,19 +189,121 @@ class SMSGame(Game):
                         self.pause = True
                         if self.game_master:
                             messagebox.showerror("Un joueur ne répond pas",
-                                             f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur. Un message a été envoyé à tout le monde.")
+                                                 f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur. Un message a été envoyé à tout le monde.")
 
                     else:
                         send_sms(player.phone,
                                  f"Il y a un problème ? Nous n'avons pas reçu de message depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Si tout va bien, renvoie un message pour que nous soyons sûr que tout va bien.")
                         if self.game_master:
                             messagebox.showwarning("Sans nouvelles d'un joueur",
-                                               f"{player.name} {player.lastname} n'a plus envoyé de messages depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Un message d'avertissement lui a été envoyé. Une procédure d'urgence aura lieu automatiquement si on n'a pas de nouvelles dans {self.config['max_warns'] - player.warnings * self.config['min_before_inactiv_warn']} minutes")
+                                                   f"{player.name} {player.lastname} n'a plus envoyé de messages depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Un message d'avertissement lui a été envoyé. Une procédure d'urgence aura lieu automatiquement si on n'a pas de nouvelles dans {self.config['max_warns'] - player.warnings * self.config['min_before_inactiv_warn']} minutes")
                     player.warnings += 1
                 if self.receive:
                     Timer(2, recieve).start()
             recieve()
 
 
-class WebGame(Game): 
-    pass
+class WebGame(Game):
+    def __init__(self, ip: str, port: int):
+        super().__init__()
+        self.ip = ip
+        self.port = port
+        self.server = None
+        self.receive = False
+
+
+class Player:
+    def __init__(self):
+        self.tasks: list = []
+        self.role: str = ""
+        self.dead: bool = False
+        self.asks: int = 0
+        self.last_message: int = 0
+        self.warnings: int = 0
+        self.id: str = "0"
+
+    def __repr__(self) -> str:
+        """
+        Affiche la classe Player telle qu'elle doit être déclarée pour ce joueur
+        :return: str: Le string de l'affichage
+        """
+        return f"Player()"
+
+    def get_str(self, game: Game):
+        pass
+
+    def finished_all_tasks(self) -> bool:
+        """
+        Renvoie si le joueur a fini toutes ses tâches
+        :return: bool: True s'il a fini toutes ses tâches, False sinon
+        """
+        finished = 0
+        for task in self.tasks:
+            if task.done:
+                finished += 1
+        return finished == len(self.tasks)
+
+
+class SMSPlayer(Player):
+    def __init__(self, name: str, lastname: str, phone: str):
+        super().__init__()
+        self.name: str = name
+        self.lastname: str = lastname
+        self.phone: str = phone
+
+    def get_str(self, game: SMSGame) -> str:
+        if game.game_master:
+            if self.dead:
+                return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
+            return f"{self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
+        else:
+            if self.dead and not game.config["show_dead_roles"]:
+                return f"☠ {self.name} {self.lastname}: {self.phone}"
+            elif self.dead:
+                return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
+        return f"{self.name} {self.lastname}: {self.phone}"
+
+
+class WebPlayer(Player):
+    def __init__(self, ip: str, nickname: str, color: str):
+        super().__init__()
+        self.ip: str = ip
+        self.nickname: str = nickname
+        self.color: str = color
+
+    def get_str(self, game: WebGame) -> str:
+        if game.game_master:
+            if self.dead:
+                return f"☠ {self.nickname} ({self.ip}), {game.config['names'][self.role]}"
+            return f"{self.nickname} ({self.ip}), {game.config['names'][self.role]}"
+        else:
+            if self.dead and not game.config["show_dead_roles"]:
+                return f"☠ {self.nickname} ({self.ip})"
+            elif self.dead:
+                return f"☠ {self.nickname} ({self.ip}), {game.config['names'][self.role]}"
+        return f"{self.nickname} ({self.ip})"
+
+
+class Task:
+    def __init__(self, name: str, description: str, classe: str, location: str, other: dict = None):
+        self.name: str = name
+        self.description: str = description
+        self.classe: str = classe
+        self.location: str = location
+        self.done: bool = False
+        self.other: dict = other
+        self.nb_given: int = 0
+        self.success: int = 0
+
+        if self.other and self.other.get("questions"):
+            random.shuffle(self.other["questions"])
+            questions = []
+            for i in range(3):
+                questions.append(self.other["questions"][i])
+            self.other["questions"] = questions
+
+    def __repr__(self):
+        return f"{self.name} ({self.classe}): {self.description} | {self.location}"
+
+    def __str__(self):
+        return f"{self.name} ({self.classe})"
