@@ -12,6 +12,7 @@ def config_settings():
     def save_config(close: bool = False):
         """
         Sauvegarde la configuration dans le fichier JSON de configuration
+        :param close: bool: True si la fenêtre doit être fermée après la sauvegarde
         """
         new_config: dict = {
             "impostors": int(impostors_entry.get_value()),
@@ -53,6 +54,9 @@ def config_settings():
     with open("config.json", "r", encoding='utf-8') as f:
         config = json.load(f)
 
+    with open("players.json", "r", encoding='utf-8') as f:
+        players = json.load(f)
+
     label_title = Label(window, text="Paramètres", font=("Arial", 30))
     label_title.pack(fill=X)
 
@@ -60,6 +64,7 @@ def config_settings():
 
     settings_frame = Frame(frame, bg="#f5f5f5")
 
+    # Nombre d'imposteurs:
     impostors_label = Label(settings_frame, text="Nombre d'imposteurs: ")
     impostors_entry = IntEntry(settings_frame, value=config["impostors"], min_value=1, max_value=10)
     impostors_entry.set_value(config["impostors"])
@@ -206,4 +211,4 @@ def config_settings():
 
 
 if __name__ == "__main__":
-    config_config()
+    config_settings()

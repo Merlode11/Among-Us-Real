@@ -18,6 +18,35 @@ def clear_frame(frame: Frame):
         widget.destroy()
 
 
+def recommanded_impostors(nb_players: int) -> int:
+    """
+    Return the number of impostors recommanded for a number of players
+    :param nb_players: int: Number of players
+    :return: int: Number of impostors
+    """
+
+    """
+    Nombre recommandé par joueur:
+    4: 1
+    5: 1
+    6: 1
+    7: 1
+    8: 2
+    9: 2
+    10: 2
+    Others: formule
+    """
+    if nb_players < 4:
+        return 0
+    elif nb_players < 8:
+        return 1
+    elif nb_players < 11:
+        return 2
+    else:
+        return nb_players // 4
+
+
+
 class VerticalScrolledFrame:
     """
     Code issu du Gist GitHub https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531
@@ -325,4 +354,7 @@ def show_timer(remining: int, title: str):
 
 
 if __name__ == "__main__":
-    print(show_timer(10, "Vote"))
+    # print recommended impostors
+    for i in range(4, 20):
+        print(f"{i} players: {recommanded_impostors(i)} impostors")
+    # print(show_timer(10, "Vote"))
