@@ -2,7 +2,7 @@ import json
 import os
 from tkinter import *
 from tkinter import messagebox
-from utils import clear_frame
+from utils import clear_frame, ScrollableTagsEntry
 
 
 def task_config():
@@ -22,8 +22,8 @@ def task_config():
     window.configure(background='#f5f5f5')
     window.iconbitmap("assets/img/amongus.ico")
 
-    choiceListFrame = Frame(window, bg="#f5f5f5")
-    choiceLabel = Label(choiceListFrame, text="Sélectionnez la liste à modifier")
+    choice_list_frame = Frame(window, bg="#f5f5f5")
+    choice_label = Label(choice_list_frame, text="Sélectionnez la liste à modifier")
 
     with open("config.json", "r", encoding='utf8') as file:
         config = json.load(file)
@@ -32,39 +32,90 @@ def task_config():
     if len(tasks) == 0:
         create_task_list()
 
-    if config["tasks"] not in tasks:
-        config["tasks"] = tasks[0]
+    if config["task_list"] not in tasks:
+        config["task_list"] = tasks[0]
 
     choice = StringVar()
     choice.set(config["task_list"])
-    choiceList = OptionMenu(choiceListFrame, choice, *tasks)
-    choiceLabel.grid(row=0, column=0)
-    choiceList.grid(row=0, column=1)
+    choice_list = OptionMenu(choice_list_frame, choice, *tasks)
+    choice_label.grid(row=0, column=0)
+    choice_list.grid(row=0, column=1)
 
-    manageButton = Button(choiceListFrame, text="Gérer", command=manage_names)
-    manageButton.grid(row=0, column=2)
+    manage_button = Button(choice_list_frame, text="Gérer", command=manage_names)
+    manage_button.grid(row=0, column=2)
 
-    choiceListFrame.pack(fill=X, anchor=N)
+    choice_list_frame.pack(fill=X, anchor=N)
 
-    editTaskFrame = Frame(window, bg="#f5f5f5")
+    edit_task_frame = Frame(window, bg="#f5f5f5")
+
+    with open(f"taskList/{config['task_list']}.json", "r", encoding="utf-8") as file:
+        tasks_list: list = json.load(file)
+
+    def edit_task(task: dict):
+        """
+        Affiche la fenêtre pour éditer une tâche
+        :param task: La tâche à éditer
+        :return:
+        """
+        edit_window = Tk()
+        edit_window.title("Éditer une tâche")
+        edit_window.geometry("400x100")
+        edit_window.resizable(True, True)
+        edit_window.configure(background='#f5f5f5')
+        edit_window.iconbitmap("assets/img/amongus.ico")
+
+        name_frame = Frame(edit_window, bg="#f5f5f5")
+        name_label = Label(name_frame, text="Nom de la tâche: ")
+        name_entry = Entry(name_frame)
+        name_label.grid(row=0, column=0)
+        name_entry.grid(row=0, column=1)
+
+        keywords_label = Label(name_frame, text="Mots-clés: ")
+        keywords = ScrollableTagsEntry(name_frame)
+        keywords_label.grid(row=1, column=0)
+        keywords.grid(row=1, column=1)
+
+        name_frame.pack(fill=X)
+
+        def save_task() -> str or None:
+            """
+            Enregistrer la tâche et fermer ma fenêtre
+            """
+            name = name_entry.get()
+            if name == "":
+                messagebox.showerror("Erreur", "Le nom de la tâche ne peut pas être vide", parent=edit_window)
+                return
+            if name in [tache["name"] for tache in tasks_list]:
+                messagebox.showerror("Erreur", "Une tâche avec ce nom existe déjà", parent=edit_window)
+                return
+            task["name"] = name
+            edit_window.destroy()
+            return name
+
+        save_button = Button(edit_window, text="Enregistrer", command=save_task)
+        save_button.pack(side=BOTTOM)
+
+        edit_window.mainloop()
+        return None
 
     def refresh_tasks():
-        clear_frame(editTaskFrame)
+        clear_frame(edit_task_frame)
         with open(f"taskList/{config['task_list']}.json", "r", encoding="utf-8") as file:
-            tasks: list = json.load(file)
-        for i in range(len(tasks)):
-            task = tasks[i]
-            taskFrame = Frame(editTaskFrame, bg="#f5f5f5")
-            taskLabel = Label(taskFrame, text=task["name"])
-            editButton = Button(taskFrame, text="Modifier", command=lambda t=task: edit_task(t))
-            deleteButton = Button(taskFrame, text="Supprimer", command=lambda t=task: delete_task(t))
-            taskLabel.grid(row=i, column=0)
-            editButton.grid(row=i, column=1)
-            deleteButton.grid(row=i, column=2)
-            taskFrame.pack(fill=X)
+            tasks_list: list = json.load(file)
+        for i in range(len(tasks_list)):
+            task = tasks_list[i]
+            task_frame = Frame(edit_task_frame, bg="#f5f5f5")
+            task_label = Label(task_frame, text=task["name"])
+            edit_button = Button(task_frame, text="Modifier", command=lambda t=task: edit_task(t))
+            delete_button = Button(task_frame, text="Supprimer", command=lambda t=task: print(t))
+            task_label.grid(row=i, column=0)
+            edit_button.grid(row=i, column=1)
+            delete_button.grid(row=i, column=2)
+            task_frame.pack(fill=X)
 
     refresh_tasks()
-    editTaskFrame.pack(fill=X)
+
+    edit_task_frame.pack(fill=X)
 
     window.mainloop()
 
@@ -81,19 +132,19 @@ def create_task_list() -> None:
     window.configure(background='#f5f5f5')
     window.iconbitmap("assets/img/amongus.ico")
 
-    nameFrame = Frame(window, bg="#f5f5f5")
-    nameLabel = Label(nameFrame, text="Nom de la liste: ")
-    nameEntry = Entry(nameFrame)
-    nameLabel.grid(row=0, column=0)
-    nameEntry.grid(row=0, column=1)
+    name_frame = Frame(window, bg="#f5f5f5")
+    name_label = Label(name_frame, text="Nom de la liste: ")
+    name_entry = Entry(name_frame)
+    name_label.grid(row=0, column=0)
+    name_entry.grid(row=0, column=1)
 
-    nameFrame.pack(fill=X)
+    name_frame.pack(fill=X)
 
     def save_list() -> str or None:
         """
         Enregistrer la liste et fermer ma fenêtre 
         """
-        name = nameEntry.get()
+        name = name_entry.get()
         if name == "":
             messagebox.showerror("Erreur", "Le nom de la liste ne peut pas être vide", parent=window)
             return
@@ -105,8 +156,8 @@ def create_task_list() -> None:
         window.destroy()
         return name
 
-    saveButton = Button(window, text="Enregistrer", command=save_list)
-    saveButton.pack(side=BOTTOM)
+    save_button = Button(window, text="Enregistrer", command=save_list)
+    save_button.pack(side=BOTTOM)
 
     window.mainloop()
     return None
@@ -123,11 +174,11 @@ def manage_list_names():
     window.configure(background='#f5f5f5')
     window.iconbitmap("assets/img/amongus.ico")
 
-    nameFrame = Frame(window, bg="#f5f5f5")
-    titre = Label(nameFrame, text="Listes de tâches disponibles")
+    name_frame = Frame(window, bg="#f5f5f5")
+    titre = Label(name_frame, text="Listes de tâches disponibles")
     titre.pack(fill=X, anchor=N)
 
-    listFrame = Frame(window, bg="#f5f5f5")
+    list_frame = Frame(window, bg="#f5f5f5")
 
     def refresh_list() -> None:
         """
@@ -159,21 +210,21 @@ def manage_list_names():
             edit_window.configure(background='#f5f5f5')
             edit_window.iconbitmap("assets/img/amongus.ico")
 
-            name_frame = Frame(edit_window, bg="#f5f5f5")
-            nameLabel = Label(name_frame, text="Nom de la liste: ")
-            nameEntry = Entry(name_frame)
-            nameEntry.insert(0, name)
-            nameLabel.grid(row=0, column=0)
-            nameEntry.grid(row=0, column=1)
+            edit_name_frame = Frame(edit_window, bg="#f5f5f5")
+            name_label = Label(edit_name_frame, text="Nom de la liste: ")
+            name_entry = Entry(edit_name_frame)
+            name_entry.insert(0, name)
+            name_label.grid(row=0, column=0)
+            name_entry.grid(row=0, column=1)
 
-            name_frame.pack(fill=X)
+            edit_name_frame.pack(fill=X)
 
             def save_list() -> None:
                 """
                 Enregistre le nouveau nom de la liste
                 :return:
                 """
-                new_name = nameEntry.get()
+                new_name = name_entry.get()
                 if new_name == "":
                     messagebox.showerror("Erreur", "Le nom de la liste ne peut pas être vide", parent=edit_window)
                     return
@@ -189,8 +240,8 @@ def manage_list_names():
                 edit_window.destroy()
                 refresh_list()
 
-            saveButton = Button(edit_window, text="Enregistrer", command=save_list)
-            saveButton.pack(side=BOTTOM)
+            save_button = Button(edit_window, text="Enregistrer", command=save_list)
+            save_button.pack(side=BOTTOM)
 
             edit_window.mainloop()
 
@@ -204,7 +255,7 @@ def manage_list_names():
                 os.remove(f"taskList/{name}.json")
                 refresh_list()
 
-        clear_frame(listFrame)
+        clear_frame(list_frame)
         with open("config.json", "r", encoding='utf8') as file:
             config = json.load(file)
 
@@ -212,19 +263,19 @@ def manage_list_names():
 
         for i in range(len(tasks)):
             task = tasks[i]
-            label = Label(listFrame, text=task)
+            label = Label(list_frame, text=task)
             label.grid(row=i + 1, column=0)
             if task == config["task_list"]:
                 label.config(fg="green")
             else:
                 label.config(fg="red")
 
-            choose = Button(listFrame, text="Choisir", command=lambda task_name=task: change_list(f"{task_name}"),
+            choose = Button(list_frame, text="Choisir", command=lambda task_name=task: change_list(f"{task_name}"),
                             state=DISABLED if task == config["task_list"] else NORMAL)
             choose.grid(row=i + 1, column=1)
-            edit = Button(listFrame, text="Modifier", command=lambda task_name=task: edit_list_name(f"{task_name}"))
+            edit = Button(list_frame, text="Modifier", command=lambda task_name=task: edit_list_name(f"{task_name}"))
             edit.grid(row=i + 1, column=2)
-            delete = Button(listFrame, text="Supprimer", command=lambda task_name=task: del_list(f"{task_name}"))
+            delete = Button(list_frame, text="Supprimer", command=lambda task_name=task: del_list(f"{task_name}"))
             delete.grid(row=i + 1, column=3)
         window.update()
 
@@ -236,14 +287,14 @@ def manage_list_names():
         print(create_task_list())
         refresh_list()
 
-    createButton = Button(nameFrame, text="Créer une liste", command=create_list)
-    createButton.pack(fill=X, anchor=N)
-    nameFrame.pack(fill=X, anchor=N)
+    create_button = Button(name_frame, text="Créer une liste", command=create_list)
+    create_button.pack(fill=X, anchor=N)
+    name_frame.pack(fill=X, anchor=N)
 
-    nameFrame.pack(fill=X)
+    name_frame.pack(fill=X)
 
     refresh_list()
-    listFrame.pack(fill=X)
+    list_frame.pack(fill=X)
 
     window.mainloop()
 

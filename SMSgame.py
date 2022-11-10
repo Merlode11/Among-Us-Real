@@ -6,7 +6,7 @@ from tkinter import messagebox, ttk
 from smsManager import send_sms
 import classes
 
-SMSGame, SMSPlayer, Task = classes.SMSGame, classes.SMSPlayer, classes.Task
+SMSGame, SMSPlayer, Task = classes.SMSGame, classes.SMSPlayer, classes.BasicTask
 from utils import clear_frame
 
 
@@ -246,7 +246,7 @@ def start_game(game_master: bool = None):
         def task_done(task: Task):
             """
             Marque une tâche comme faite
-            :param task: Task: Tâche à marquer comme faite
+            :param task: BasicTask: Tâche à marquer comme faite
             """
             task.done = True
             game.done_tasks.append(task)
@@ -278,7 +278,7 @@ def start_game(game_master: bool = None):
         def task_undone(task: Task):
             """
             Marque une tâche comme non faite
-            :param task: Task: Tâche à marquer comme non faite
+            :param task: BasicTask: Tâche à marquer comme non faite
             :return:
             """
             task.done = False

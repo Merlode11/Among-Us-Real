@@ -17,8 +17,9 @@ class Game:
         self.tasks: list = []
         with open(r"./taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
             data = json.load(f)
-            self.tasks = [Task(task["name"], task["description"], task["type"], task["location"], task.get("other")) for
-                          task in data]
+            self.tasks = [
+                BasicTask(task["name"], task["description"], task["type"], task["location"], task.get("other")) for
+                task in data]
 
         self.given_tasks: int = 0
 
@@ -63,8 +64,8 @@ class Game:
         for player in self.players:
             random.shuffle(self.tasks)
             for i in range(self.config["tasks"]):
-                player.tasks.append(Task(self.tasks[i].name, self.tasks[i].description, self.tasks[i].classe,
-                                         self.tasks[i].location, self.tasks[i].other))
+                player.tasks.append(BasicTask(self.tasks[i].name, self.tasks[i].description, self.tasks[i].classe,
+                                              self.tasks[i].location, self.tasks[i].other))
                 self.tasks[i].nb_given += 1
                 if self.tasks[i].nb_given >= self.config["max_task_given"]:
                     del self.tasks[i]
@@ -284,7 +285,9 @@ class WebPlayer(Player):
         return f"{self.nickname} ({self.ip})"
 
 
-class Task:
+class BasicTask:
+    type: str = "basic"
+
     def __init__(self, name: str, description: str, classe: str, location: str, other: dict = None):
         self.name: str = name
         self.description: str = description
@@ -307,3 +310,64 @@ class Task:
 
     def __str__(self):
         return f"{self.name} ({self.classe})"
+
+
+class ValidateBasicTask(BasicTask):
+    type: str = "validate_basic"
+
+    def __init__(self, name: str, description: str, classe: str, location: str, valid_keywords: list):
+        super().__init__(name, description, classe, location, {})
+        self.keywords: list = valid_keywords
+
+    def __repr__(self):
+        return f"ValidateBasicTask({self.name}, {self.description}, {self.classe}, {self.location}, {self.other})"
+
+    def __str__(self):
+        return f"Valide la tâche {self.name} ({self.classe})"
+
+
+class ActivateBasicTask(BasicTask):
+    type: str = "activate_basic"
+
+    def __init__(self, name: str, description: str, classe: str, location: str, activ_keywords: list, message: str):
+        super().__init__(name, description, classe, location, {})
+        self.activ_keywords: list = activ_keywords
+        self.message: str = message
+
+    def __repr__(self):
+        return f"ActivateBasicTask({self.name}, {self.description}, {self.classe}, {self.location}, {self.other})"
+
+    def __str__(self):
+        return f"Active la tâche {self.name} ({self.classe})"
+
+
+class ActivValidTask(ValidateBasicTask):
+    type: str = "activ_valid"
+
+    def __init__(self, name: str, description: str, classe: str, location: str, valid_keywords: list,
+                 activ_keywords: list, message: str):
+        super().__init__(name, description, classe, location, valid_keywords)
+        self.activ_keywords: list = activ_keywords
+        self.message: str = message
+
+    def __repr__(self):
+        return f"ActivValidTask({self.name}, {self.description}, {self.classe}, {self.location}, {self.other})"
+
+    def __str__(self):
+        return f"Active et valide la tâche {self.name} ({self.classe})"
+
+
+
+class CustomValidateTask(BasicTask):
+    type: str = "custom_validate"
+
+    def __init__(self, name: str, description: str, classe: str, location: str, valid_keywords: list, message: str):
+        super().__init__(name, description, classe, location, {})
+        self.keywords: list = valid_keywords
+        self.message: str = message
+
+    def __repr__(self):
+        return f"CustomValidateTask({self.name}, {self.description}, {self.classe}, {self.location}, {self.other})"
+
+    def __str__(self):
+        return f"Valide la tâche {self.name} ({self.classe})"

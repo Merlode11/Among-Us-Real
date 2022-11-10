@@ -323,7 +323,110 @@ class TimerEntry(Frame):
         self.set_total_seconds(self.get_total_seconds())
 
 
+
+class ScrollableTagsEntry(Frame):
+    # An Entry to enter tags
+    # The tags are displayed in a listbox and can be deleted by double-clicking on them or by pressing the delete key on the keyboard while the listbox is selected (focus)
+    # The listbox is scrollable
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+
+        self.string_var = StringVar()
+        self.entry = Entry(self, textvariable=self.string_var)
+        self.entry.pack(side=LEFT, fill=BOTH, expand=True)
+
+        self.scrollbar = Scrollbar(self, orient=VERTICAL)
+        self.scrollbar.pack(side=RIGHT, fill=Y)
+
+        self.listbox = Listbox(self, yscrollcommand=self.scrollbar.set)
+        self.listbox.pack(side=LEFT, fill=BOTH, expand=True)
+
+        self.scrollbar.config(command=self.listbox.yview)
+
+        self.entry.bind("<Return>", self._on_return)
+        self.listbox.bind("<Double-Button-1>", self._on_double_click)
+        self.listbox.bind("<Delete>", self._on_delete)
+
+        self.listbox.bind("<FocusIn>", self._on_focus_in)
+        self.listbox.bind("<FocusOut>", self._on_focus_out)
+
+        self.listbox.bind("<Button-1>", self._on_click)
+        self.listbox.bind("<Button-3>", self._on_click)
+
+        self.listbox.bind("<Key>", self._on_key)
+
+        self.listbox.bind("<MouseWheel>", self._on_mouse_wheel)
+        self.listbox.bind("<Button-4>", self._on_mouse_wheel)
+        self.listbox.bind("<Button-5>", self._on_mouse_wheel)
+
+        self.listbox.bind("<Up>", self._on_up)
+        self.listbox.bind("<Down>", self._on_down)
+
+    def _on_return(self, event):
+        self._add_tag()
+
+    def _on_double_click(self, event):
+        self._delete_tag()
+
+    def _on_delete(self, event):
+        self._delete_tag()
+
+    def _on_focus_in(self, event):
+        self.entry.config(state=DISABLED)
+
+    def _on_focus_out(self, event):
+        self.entry.config(state=NORMAL)
+
+    def _on_click(self, event):
+        self.entry.focus()
+
+    def _on_key(self, event):
+        self.entry.focus()
+
+    def _on_mouse_wheel(self, event):
+        self.entry.focus()
+
+    def _on_up(self, event):
+        self.entry.focus()
+
+    def _on_down(self, event):
+        self.entry.focus()
+
+    def _add_tag(self):
+        tag = self.string_var.get()
+        if tag:
+            self.listbox.insert(END, tag)
+            self.string_var.set("")
+            self.entry.focus()
+
+    def _delete_tag(self):
+        index = self.listbox.curselection()
+        if index:
+            self.listbox.delete(index)
+            self.entry.focus()
+
+    def get_tags(self):
+        return self.listbox.get(0, END)
+
+    def set_tags(self, tags: list):
+        self.listbox.delete(0, END)
+        for tag in tags:
+            self.listbox.insert(END, tag)
+
+    def clear(self):
+        self.listbox.delete(0, END)
+        self.string_var.set("")
+        self.entry.focus()
+
+    def focus(self):
+        self.entry.focus()
+
+    def get(self):
+        return self.string_var.get()
+
+
 def show_timer(remining: int, title: str):
+    approx_time = remining // 5
     root = Tk()
     root.title("Timer")
     root.geometry("200x100")
@@ -341,6 +444,14 @@ def show_timer(remining: int, title: str):
         remining -= 1
         minutes, seconds = divmod(remining, 60)
         timer.config(text=f"{minutes:02d}:{seconds:02d}")
+        if remining <= approx_time:
+            if remining == approx_time:
+                # playsound("/assets/sounds/5min.mp3")
+                pass
+            if remining % 2 == 0:
+                timer.config(fg="red")
+            else:
+                timer.config(fg="black")
         root.update()
         time.sleep(1)
     else:
@@ -355,6 +466,7 @@ def show_timer(remining: int, title: str):
 
 if __name__ == "__main__":
     # print recommended impostors
-    for i in range(4, 20):
-        print(f"{i} players: {recommanded_impostors(i)} impostors")
-    # print(show_timer(10, "Vote"))
+    # for i in range(4, 20):
+    #    print(f"{i} players: {recommanded_impostors(i)} impostors")
+    print(show_timer(60, "Vote"))
+
