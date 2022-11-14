@@ -46,7 +46,6 @@ def recommanded_impostors(nb_players: int) -> int:
         return nb_players // 4
 
 
-
 class VerticalScrolledFrame:
     """
     Code issu du Gist GitHub https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531
@@ -323,7 +322,6 @@ class TimerEntry(Frame):
         self.set_total_seconds(self.get_total_seconds())
 
 
-
 class ScrollableTagsEntry(Frame):
     # An Entry to enter tags
     # The tags are displayed in a listbox and can be deleted by double-clicking on them or by pressing the delete key on the keyboard while the listbox is selected (focus)
@@ -469,4 +467,3 @@ if __name__ == "__main__":
     # for i in range(4, 20):
     #    print(f"{i} players: {recommanded_impostors(i)} impostors")
     print(show_timer(60, "Vote"))
-

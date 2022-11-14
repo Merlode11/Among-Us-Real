@@ -4,6 +4,7 @@ from tkinter import messagebox
 from smsManager import send_sms, get_new_messages
 from commands import commands
 import random
+from tkinter import *
 
 
 class Game:
@@ -85,17 +86,24 @@ class Game:
         self.unpause_code = code_str
         return code_str
 
+    def start_meeting(self):
+        window = Tk()
+        window.title("Réunion")
+        window.geometry("500x500")
+
+
     def import_players(self):
         pass
 
 
 class SMSGame(Game):
     def import_players(self):
+        used_passwords: list = []
+        used_id: list = []
         with open("players.json", "r", encoding='utf-8') as f:
             data = json.load(f)
-            self.players = [SMSPlayer(player["name"], player["lastname"], player["phone"]) for player in data if
-                            player.get("play", True)]
-            used_id = []
+            self.players = [SMSPlayer(player["name"], player["lastname"], player["phone"], used_passwords, used_id)
+                            for player in data if player.get("play", True)]
         for player in self.players:
             player_id = random.randint(0, 999)
             while player_id in used_id:
@@ -214,7 +222,7 @@ class WebGame(Game):
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, used_passwords: list):
         self.tasks: list = []
         self.role: str = ""
         self.dead: bool = False
@@ -222,6 +230,11 @@ class Player:
         self.last_message: int = 0
         self.warnings: int = 0
         self.id: str = "0"
+
+        self.password: str = "".join([str(random.randint(0, 9)) for _ in range(8)])
+        while self.password in used_passwords:
+            self.password = "".join([str(random.randint(0, 9)) for _ in range(8)])
+        used_passwords.append(self.password)
 
     def __repr__(self) -> str:
         """
@@ -246,8 +259,8 @@ class Player:
 
 
 class SMSPlayer(Player):
-    def __init__(self, name: str, lastname: str, phone: str):
-        super().__init__()
+    def __init__(self, name: str, lastname: str, phone: str, used_passwords: list, used_ids: list):
+        super().__init__(used_passwords)
         self.name: str = name
         self.lastname: str = lastname
         self.phone: str = phone
@@ -266,11 +279,12 @@ class SMSPlayer(Player):
 
 
 class WebPlayer(Player):
-    def __init__(self, ip: str, nickname: str, color: str):
-        super().__init__()
+    def __init__(self, ip: str, nickname: str, color: str, used_passwords: list):
+        super().__init__(used_passwords)
         self.ip: str = ip
         self.nickname: str = nickname
         self.color: str = color
+        self.id: str = color
 
     def get_str(self, game: WebGame) -> str:
         if game.game_master:
