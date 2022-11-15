@@ -13,8 +13,8 @@
         "title": "Among Us Réel"
     },
     "max_dead_check": 4,
-    "game_master": "1",
-    "show_dead_roles": "0",
+    "game_master": false,
+    "show_dead_roles": false,
     "discussion_time": 120,
     "vote_time": 30,
     "task_list": "tasks-exemple",

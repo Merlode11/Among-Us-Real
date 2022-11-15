@@ -428,8 +428,9 @@ def show_timer(remining: int, title: str):
     root = Tk()
     root.title("Timer")
     root.geometry("200x100")
-    root.resizable(True, True)
+    root.resizable(False, False)
     root.state("zoomed")
+    root.iconbitmap("assets/img/amongus.ico")
 
     title = Label(root, text=title, font=("Arial", 100))
     title.pack(fill=BOTH, expand=True, padx=10)

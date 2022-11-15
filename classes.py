@@ -5,6 +5,7 @@ from smsManager import send_sms, get_new_messages
 from commands import commands
 import random
 from tkinter import *
+from utils import clear_frame, VerticalScrolledFrame, show_timer
 
 
 class Game:
@@ -90,10 +91,95 @@ class Game:
         window = Tk()
         window.title("Réunion")
         window.geometry("500x500")
+        window.resizable(False, False)
+        window.state("zoomed")
+        window.iconbitmap("assets/img/amongus.ico")
+        window.config(background="#2F3136")
 
+        Label(window, text="Réunion", font=("Arial", 30), bg="#2F3136", fg="white").pack()
+        Label(window, text="Veuillez choisir un joueur à éliminer", font=("Arial", 20), bg="#2F3136", fg="white").pack()
+        Label(window, text="ou appuyer sur le bouton pour passer", font=("Arial", 20), bg="#2F3136", fg="white").pack()
+        Label(window, text="à la prochaine étape", font=("Arial", 20), bg="#2F3136", fg="white").pack()
+
+        players_here_frame = VerticalScrolledFrame(window, bg="#2F3136")
+        here_users = []
+
+        def show_players():
+            clear_frame(players_here_frame)
+            print(self.players)
+            for player in self.players:
+                print(player.name, ":", player.password)
+                if player in here_users:
+                    color = "green"
+                else:
+                    color = "red"
+                if player.dead:
+                    Label(players_here_frame, text=player.get_str(self), font=("Arial", 20, "italic"), bg="#2F3136", fg=color).pack()
+                else:
+                    Label(players_here_frame, text=player.get_str(self), font=("Arial", 20), bg="#2F3136", fg=color).pack()
+
+        def present(password: str):
+            for player in self.players:
+                if player.password == password:
+                    if player in here_users:
+                        messagebox.showerror("Erreur", "Vous êtes déjà présent")
+                    else:
+                        here_users.append(player)
+                    show_players()
+                    present_entry.delete(0, END)
+
+                    if len(here_users) == len(self.players):
+                        window.destroy()
+                        show_timer(self.config.get("discussion_time", 0), "Discussion")
+                        vote_string = "C'est le moment de voter ! Votez pour le joueur à éliminer:"
+                        vote_string += "\n0 - Passer à la prochaine étape (skip)"
+                        for i in range(len(self.players)):
+                            player = self.players[i]
+                            if not player.dead:
+                                vote_string += f"\n{i + 1} - {player.name}"
+                        vote_string += f"\n\nVotez avec la commande 'vote NUMERO'"
+                        self.send_info(vote_string)
+                        show_timer(self.config.get("vote_time", 0), "Vote")
+                    return
+            else:
+                messagebox.showerror("Erreur", "Mot de passe incorrect")
+
+        Label(window, text="", bg="#2F3136").pack()
+        present_label = Label(window, text="Indiquer que vous êtes présent :", font=("Arial", 20), bg="#2F3136", fg="white")
+        present_entry = Entry(window, font=("Arial", 20), bg="#4f5259", fg="white")
+        present_button = Button(window, text="Valider", font=("Arial", 20), bg="#2F3136", fg="white", command=lambda: present(present_entry.get()))
+        present_label.pack()
+        present_entry.pack()
+        present_button.pack()
+
+        present_entry.bind("<Return>", lambda event: present(present_entry.get()))
+
+        show_players()
+
+        Label(window, text="", bg="#2F3136").pack()
+
+        players_here_frame.pack()
+
+        window.mainloop()
 
     def import_players(self):
-        pass
+        used_passwords: list = []
+        used_id: list = []
+        with open("players.json", "r", encoding='utf-8') as f:
+            data = json.load(f)
+            self.players = [SMSPlayer(player["name"], player["lastname"], player["phone"], used_passwords, used_id)
+                            for player in data if player.get("play", True)]
+        for player in self.players:
+            player_id = random.randint(0, 999)
+            while player_id in used_id:
+                player_id = random.randint(0, 999)
+            used_id.append(player_id)
+            player.id = f"{player_id:03}"
+
+    def send_info(self, message: str):
+        print("Envoie de l'information")
+        for player in self.players:
+            print(player.name, ":", message)
 
 
 class SMSGame(Game):
@@ -370,8 +456,6 @@ class ActivValidTask(ValidateBasicTask):
     def __str__(self):
         return f"Active et valide la tâche {self.name} ({self.classe})"
 
-
-
 class CustomValidateTask(BasicTask):
     type: str = "custom_validate"
 
@@ -385,3 +469,8 @@ class CustomValidateTask(BasicTask):
 
     def __str__(self):
         return f"Valide la tâche {self.name} ({self.classe})"
+
+
+if __name__ == "__main__":
+    game = Game()
+    game.start_meeting()

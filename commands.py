@@ -1,6 +1,5 @@
 from tkinter import messagebox
 from smsManager import send_sms
-import classes
 import re  # Importation du module pour faire des tests d'expressions régulières
 
 
