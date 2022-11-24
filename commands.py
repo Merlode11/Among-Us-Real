@@ -352,12 +352,53 @@ class KillCommand(Command):
                      "Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.")
 
 
-def parse_player(message: str, game) -> object:
+commands.append(KillCommand())
+
+
+class VoteCommand(Command):
+    def __init__(self):
+        super(VoteCommand, self).__init__(
+            "vote",
+            "Voter pour une personne durant les phases de meeting",
+            ["voter", "voté", "votée", "votés"],
+            "vote PERSONNE",
+            "vote 1"
+        )
+
+    def execute(self, player, message: str, game):
+        """
+        Voter pour une personne
+        """
+        if not game.meeting:
+            send_sms(player.phone, "Il n'y a pas de meeting en cours !")
+            return
+        else:
+            if player.id in game.meeting_votes.keys():
+                send_sms(player.phone, "Vous avez déjà voté !")
+                return
+            else:
+                voted_player = parse_player(message, game)
+                if voted_player == "multiple":
+                    send_sms(player.phone, "Plusieurs joueurs ont été trouvés avec ce nom !")
+                    return
+                elif voted_player is None:
+                    send_sms(player.phone, "Aucun joueur n'a été trouvé avec ce nom !")
+                    return
+                else:
+                    game.meeting_votes[player.id] = voted_player.id
+                    send_sms(player.phone, f"Vous avez voté pour {voted_player.name} {voted_player.lastname} !")
+                    return
+
+
+commands.append(VoteCommand())
+
+
+def parse_player(message: str, game):
     """
     Trouve un joueur donné un argument dans une commande
     :param message: str: Le message envoyé par le joueur
     :param game: La partie
-    :return or None or str: Le joueur si trouvé
+    :return SMSPlayer or None or str: Le joueur si trouvé
     """
     try:
         player_id = int(message.split(" ")[1])
