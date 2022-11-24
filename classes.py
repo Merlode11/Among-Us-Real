@@ -32,6 +32,7 @@ class Game:
         self.receive: bool = True
         self.send_messages: list = []
         self.meeting: bool = False
+        self.meeting_votes: dict = {}
 
         self.game_master: bool = self.config["game_master"]
         self.pause: bool = False
@@ -354,14 +355,14 @@ class SMSPlayer(Player):
     def get_str(self, game: SMSGame) -> str:
         if game.game_master:
             if self.dead:
-                return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
-            return f"{self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
+                return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {show_phone_number(self.phone)}"
+            return f"{self.name} {self.lastname} ({game.config['names'][self.role]}): {show_phone_number(self.phone)}"
         else:
             if self.dead and not game.config["show_dead_roles"]:
-                return f"☠ {self.name} {self.lastname}: {self.phone}"
+                return f"☠ {self.name} {self.lastname}: {show_phone_number(self.phone)}"
             elif self.dead:
-                return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {self.phone}"
-        return f"{self.name} {self.lastname}: {self.phone}"
+                return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): {show_phone_number(self.phone)}"
+        return f"{self.name} {self.lastname}: {show_phone_number(self.phone)}"
 
 
 class WebPlayer(Player):
@@ -471,6 +472,12 @@ class CustomValidateTask(BasicTask):
         return f"Valide la tâche {self.name} ({self.classe})"
 
 
+# Show a phone number with "+33768330645" and "0768330645"
+def show_phone_number(number: str) -> str:
+    if number.startswith("+"):
+        return f"{number[:3]} {number[3]} {number[4:6]} {number[6:8]} {number[8:10]} {number[10:]}"
+    return f"{number[:2]} {number[2:4]} {number[4:6]} {number[6:8]} {number[8:]}"
+
+
 if __name__ == "__main__":
-    game = Game()
-    game.start_meeting()
+    print(show_phone_number("+33768330645"))
