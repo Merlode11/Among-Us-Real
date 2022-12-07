@@ -1,7 +1,8 @@
 import json
 from tkinter import *
 from tkinter import messagebox, ttk
-from SMSgame import start_game as start_game_sms
+# from SMSgame import start_game as start_game_sms
+from sms_game_class import SMSGame
 import os
 from config_settings import config_settings
 from player_config import player_config
@@ -66,13 +67,20 @@ def main():
     except FileNotFoundError:
         tasks = []
 
+    def config_players():
+        player_config()
+        with open("players.json", "r", encoding="utf-8") as f:
+            players = json.load(f)
+        show_config()
+
     def show_config():
         """
         Affiche dans la fenêtre la configuration actuelle de la partie
         """
+        play_players = [player for player in players if player["play"]]
         clear_frame(edits_frame)
-        player_label = Label(edits_frame, text=f"{len(players)} joueurs")
-        player_button = Button(edits_frame, text=f"Modifier", command=player_config)
+        player_label = Label(edits_frame, text=f"Joueurs ({len(play_players)}/{len(players)})")
+        player_button = Button(edits_frame, text=f"Modifier", command=config_players)
         player_label.grid(row=0, column=0)
         player_button.grid(row=0, column=1)
 
@@ -96,27 +104,27 @@ def main():
     type_label = Label(window, text="Type de gestionnaire du jeu: " + config["manager_type"])
     type_label.pack(fill=X)
 
-    play_normal_button = Button(window, text="Lancer une partie", command=lambda: begin_game(False))
+    play_normal_button = Button(window, text="Lancer une partie", command=lambda: begin_game())
     play_normal_button.pack(fill=X)
 
     other_plays_frame = Frame(window, bg="#f5f5f5")
 
-    game_master_play_button = Button(other_plays_frame, text="Jouer (avec maître du jeu)")
+    game_master_play_button = Button(other_plays_frame, text="Jouer (avec maître du jeu)", command=lambda: begin_game(True))
     game_master_play_button.grid(row=0, column=0)
 
-    without_game_master_button = Button(other_plays_frame, text="Jouer (sans maître du jeu)")
+    without_game_master_button = Button(other_plays_frame, text="Jouer (sans maître du jeu)", command=lambda: begin_game(False))
     without_game_master_button.grid(row=0, column=1)
 
     other_plays_frame.pack(fill=X)
 
-    def begin_game(game_master):
+    def begin_game(game_master: bool or None = None):
         """
         Commencer une partie
         :param game_master: bool: If the game master is playing
         :return: None
         """
         window.destroy()
-        result = start_game_sms(game_master)
+        result = SMSGame(game_master)
         main()
 
     window.mainloop()
