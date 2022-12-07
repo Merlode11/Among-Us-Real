@@ -1,5 +1,5 @@
 from tkinter import messagebox
-from smsManager import send_sms
+from airmore_sms_manager import send_sms
 import re  # Importation du module pour faire des tests d'expressions régulières
 
 
@@ -58,6 +58,9 @@ class Command:
             return True
         elif game.pause and self.name not in ["help", "sos"]:
             send_sms(player.phone, "La partie est actuellement en pause. Vous ne pouvez pas faire de commandes")
+            return True
+        elif game.meeting and self.name not in ["help", "sos"]:
+            send_sms(player.phone, "Une réunion est en cours. Vous ne pouvez pas faire de commandes")
             return True
         else:
             self.execute(player, message, game)
@@ -274,7 +277,7 @@ class HelpCommand(Command):
         if len(message.split(" ")) == 1:
             string = "Voici toutes les commandes disponibles:\n"
             for command in commands:
-                string += command.exemple + ": " + command.description
+                string += command.usage + ": " + command.description + "\n"
             send_sms(player.phone, string)
         else:
             command_str = message.split(" ")[1]
@@ -340,13 +343,19 @@ class KillCommand(Command):
         """
         Tuer une personne 
         """
-        player_id = re.match(r"/\d{3}/g", message.split(" ")[1])
+        player_id = re.match(r"\d{3}", message.split(" ")[1])
+        print(player_id[0])
         to_kill_player = None
         for joueur in game.players:
-            if joueur.id == player_id:
+            if joueur.id == player_id[0]:
                 to_kill_player = joueur
         if to_kill_player:
-            pass
+            if to_kill_player.id == player.id:
+                send_sms(player.phone, "Vous ne pouvez pas vous tuer vous-même")
+                return
+            else:
+                game.kill_player(to_kill_player)
+                send_sms(player.phone, f"Le joueur {to_kill_player.name} {to_kill_player.lastname} a bien été tué de votre part !")
         else:
             send_sms(player.phone,
                      "Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.")
@@ -369,31 +378,39 @@ class VoteCommand(Command):
         """
         Voter pour une personne
         """
-        if not game.meeting:
-            send_sms(player.phone, "Il n'y a pas de meeting en cours !")
+        if game.meeting != "vote":
+            send_sms(player.phone, "Il n'y a pas de période de vote en cours !")
             return
         else:
             if player.id in game.meeting_votes.keys():
                 send_sms(player.phone, "Vous avez déjà voté !")
                 return
             else:
-                voted_player = parse_player(message, game)
-                if voted_player == "multiple":
-                    send_sms(player.phone, "Plusieurs joueurs ont été trouvés avec ce nom !")
+                if message.split(" ")[1] == "0" or message.split(" ")[1] == "skip" or message.split(" ")[1] == "passer":
+                    game.meeting_votes[player.id] = "0"
+                    send_sms(player.phone, "Vous avez voté pour passer !")
+                voted_player: list = parse_player(message, game)
+                if len(voted_player) > 1:
+                    players_str = ""
+                    for i, player in enumerate(voted_player):
+                        players_str += f"{i + 1} - {player.name} {player.lastname}\n"
+                    send_sms(player.phone, f"Plusieurs joueurs ont été trouvés:\n{players_str}Veuillez réessayer en précisant le numéro du joueur:\nvote NUMERO")
                     return
-                elif voted_player is None:
+                elif voted_player is None or len(voted_player) == 0:
                     send_sms(player.phone, "Aucun joueur n'a été trouvé avec ce nom !")
                     return
                 else:
+                    voted_player = voted_player[0]
                     game.meeting_votes[player.id] = voted_player.id
                     send_sms(player.phone, f"Vous avez voté pour {voted_player.name} {voted_player.lastname} !")
+                    game.timer.show_players()
                     return
 
 
 commands.append(VoteCommand())
 
 
-def parse_player(message: str, game):
+def parse_player(message: str, game) -> list:
     """
     Trouve un joueur donné un argument dans une commande
     :param message: str: Le message envoyé par le joueur
@@ -403,17 +420,14 @@ def parse_player(message: str, game):
     try:
         player_id = int(message.split(" ")[1])
         player = game.players[player_id - 1]
-        return player
+        return [player]
     except (Exception,):
         player_name = message.split(" ")[1].lower()
         found_players = []
-        for player in game.players:
+        for i in range(game.players):
+            player = game.players[i]
             if player.name.lower() == player_name or player.lastname.lower() == player_name:
-                found_players.append(player)
+                player_with_id = (i + 1, player)
+                found_players.append(player_with_id)
 
-        if len(found_players) == 1:
-            return found_players[0]
-        elif len(found_players) == 0:
-            return None
-        else:
-            return "multiple"
+        return found_players

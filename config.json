@@ -1,10 +1,10 @@
 {
-    "impostors": 2,
-    "ingeniors": 2,
-    "scientists": 1,
+    "impostors": 1,
+    "ingeniors": 0,
+    "scientists": 0,
     "tasks": 3,
     "max_task_given": 2,
-    "ip": "172.20.10.10",
+    "ip": "192.168.0.24",
     "names": {
         "impostor": "Imposteur",
         "scientist": "Scientifique",
@@ -13,7 +13,7 @@
         "title": "Among Us Réel"
     },
     "max_dead_check": 4,
-    "game_master": false,
+    "game_master": true,
     "show_dead_roles": false,
     "discussion_time": 120,
     "vote_time": 30,

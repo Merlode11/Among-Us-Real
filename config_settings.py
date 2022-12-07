@@ -3,24 +3,42 @@ import os
 from tkinter import *
 from tkinter import messagebox, ttk
 from utils import YesNoButton, VerticalScrolledFrame, IntEntry, TimerEntry
+from check_devices import find_airmore_ip
 
 
 def config_settings():
     """
     Affiche la fenêtre de configuration des paramètres
     """
+
     def save_config(close: bool = False):
         """
         Sauvegarde la configuration dans le fichier JSON de configuration
         :param close: bool: True si la fenêtre doit être fermée après la sauvegarde
         """
+        # Add a regex validator for the IP address input
+        ip = ip_entry.get()
+        if not ip.count(".") == 3:
+            messagebox.showerror("Erreur", "L'adresse IP n'est pas valide")
+            ip_entry.focus()
+            return
+        for i in ip.split("."):
+            if not i.isdigit():
+                messagebox.showerror("Erreur", "L'adresse IP n'est pas valide")
+                ip_entry.focus()
+                return
+            if not 0 <= int(i) <= 255:
+                messagebox.showerror("Erreur", "L'adresse IP n'est pas valide")
+                ip_entry.focus()
+                return
+
         new_config: dict = {
             "impostors": int(impostors_entry.get_value()),
             "ingeniors": int(ingeniors_entry.get_value()),
             "scientists": int(scientists_entry.get_value()),
             "tasks": int(tasks_entry.get_value()),
             "max_task_given": int(max_task_given_entry.get_value()),
-            "ip": ip_entry.get(),
+            "ip": ip,
             "names": {
                 "impostor": impostor_name_entry.get(),
                 "scientist": scientist_name_entry.get(),
@@ -44,6 +62,51 @@ def config_settings():
         if close:
             window.destroy()
 
+    def found_ip():
+        """
+        Affiche l'adresse IP trouvée par le script de recherche d'adresse IP
+        """
+        # Show a loading animation while the script is running
+        founded_ip_window = Toplevel(window)
+        founded_ip_window.title("Adresses IP trouvées")
+        founded_ip_window.resizable(False, False)
+        founded_ip_window.grab_set()
+
+        loading_label = Label(founded_ip_window, text="Recherche en cours...")
+        loading_label.pack(pady=10)
+
+        loading_bar = ttk.Progressbar(founded_ip_window, orient=HORIZONTAL, length=200, mode="indeterminate")
+        loading_bar.pack(pady=10)
+        founded_ip_window.update()
+        loading_bar.start(5)
+
+        loading_label.update()
+
+        ips = find_airmore_ip()
+
+        if len(ips) == 0:
+            messagebox.showerror("Erreur", "Aucune adresse IP n'a été trouvée", parent=founded_ip_window)
+            founded_ip_window.destroy()
+        elif len(ips) == 1:
+            ip_entry.delete(0, END)
+            ip_entry.insert(0, ips[0])
+            founded_ip_window.destroy()
+        else:
+            ip_list = Listbox(founded_ip_window, width=20, height=10)
+            ip_list.pack()
+            for ip in ips:
+                ip_list.insert(END, ip)
+
+            def select_ip():
+                ip_entry.delete(0, END)
+                ip_entry.insert(0, ip_list.get(ACTIVE))
+                founded_ip_window.destroy()
+
+            Button(founded_ip_window, text="Sélectionner", command=select_ip).pack(pady=10)
+            founded_ip_window.bind("<Return>", lambda event: select_ip())
+            founded_ip_window.bind("<Escape>", lambda event: founded_ip_window.destroy())
+            founded_ip_window.mainloop()
+
     window = Tk()
     window.title("Configurer les paramètres")
     window.geometry("800x600")
@@ -57,6 +120,9 @@ def config_settings():
     with open("players.json", "r", encoding='utf-8') as f:
         players = json.load(f)
 
+    def set_recommended_imposters():
+        impostors_entry.set_value(int(0.4927 + 0.2481 * len(players)))
+
     label_title = Label(window, text="Paramètres", font=("Arial", 30))
     label_title.pack(fill=X)
 
@@ -68,8 +134,10 @@ def config_settings():
     impostors_label = Label(settings_frame, text="Nombre d'imposteurs: ")
     impostors_entry = IntEntry(settings_frame, value=config["impostors"], min_value=1, max_value=10)
     impostors_entry.set_value(config["impostors"])
+    impostors_recommanded_button = Button(settings_frame, text="Définir le nombre recommandé", command=set_recommended_imposters)
     impostors_label.grid(row=0, column=0)
     impostors_entry.grid(row=0, column=1)
+    impostors_recommanded_button.grid(row=0, column=2)
 
     ingeniors_label = Label(settings_frame, text="Nombre d'ingénieurs: ")
     ingeniors_entry = IntEntry(settings_frame)
@@ -98,8 +166,10 @@ def config_settings():
     ip_label = Label(settings_frame, text="Adresse IP d'Airemore (vide si non utilisé): ")
     ip_entry = Entry(settings_frame)
     ip_entry.insert(0, config["ip"])
+    foud_ip_button = Button(settings_frame, text="Trouver l'adresse IP", command=found_ip)
     ip_label.grid(row=5, column=0)
     ip_entry.grid(row=5, column=1)
+    foud_ip_button.grid(row=5, column=2)
 
     max_dead_check_label = Label(settings_frame, text="Nombre de consultations pour le scientifique: ")
     max_dead_check_entry = IntEntry(settings_frame)
@@ -180,7 +250,7 @@ def config_settings():
     scientist_name_label.grid(row=1, column=0)
     scientist_name_entry.grid(row=1, column=1)
 
-    ingenior_name_label = Label(names_frame, text="Imposteur: ")
+    ingenior_name_label = Label(names_frame, text="Ingénieur: ")
     ingenior_name_entry = Entry(names_frame)
     ingenior_name_entry.insert(0, config["names"]["ingenior"])
     ingenior_name_label.grid(row=2, column=0)
@@ -195,8 +265,8 @@ def config_settings():
     title_name_label = Label(names_frame, text="Nom du jeu: ")
     title_name_entry = Entry(names_frame)
     title_name_entry.insert(0, config["names"]["title"])
-    title_name_label.grid(row=0, column=0)
-    title_name_entry.grid(row=0, column=1)
+    title_name_label.grid(row=4, column=0)
+    title_name_entry.grid(row=4, column=1)
 
     names_frame.pack(fill=X)
 

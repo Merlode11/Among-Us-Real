@@ -3,7 +3,6 @@ from tkinter import *
 import time
 from playsound import playsound
 
-
 def clear_frame(frame: Frame):
     """
     Clear all entries in a frame
@@ -423,48 +422,75 @@ class ScrollableTagsEntry(Frame):
         return self.string_var.get()
 
 
-def show_timer(remining: int, title: str):
-    approx_time = remining // 5
-    root = Tk()
-    root.title("Timer")
-    root.geometry("200x100")
-    root.resizable(False, False)
-    root.state("zoomed")
-    root.iconbitmap("assets/img/amongus.ico")
+class Timer:
+    def __init__(self, remining: int, title: str, game):
+        self.game = game
+        approx_time = remining // 5
+        self.root = root = Tk()
+        root.title("Timer")
+        root.geometry("200x100")
+        root.resizable(False, False)
+        root.state("zoomed")
+        root.iconbitmap("assets/img/amongus.ico")
 
-    title = Label(root, text=title, font=("Arial", 100))
-    title.pack(fill=BOTH, expand=True, padx=10)
+        timer_frame = Frame(root)
 
-    minutes, seconds = divmod(remining, 60)
-    timer = Label(root, text=f"{minutes:02d}:{seconds:02d}", font=("Arial", 120))
-    timer.pack(fill=BOTH, expand=True, padx=10)
+        title = Label(timer_frame, text=title, font=("Arial", 50))
+        title.pack(fill=BOTH, expand=True, padx=10)
 
-    while remining > 0:
-        remining -= 1
         minutes, seconds = divmod(remining, 60)
-        timer.config(text=f"{minutes:02d}:{seconds:02d}")
-        if remining <= approx_time:
-            if remining == approx_time:
-                # playsound("/assets/sounds/5min.mp3")
-                pass
-            if remining % 2 == 0:
-                timer.config(fg="red")
-            else:
-                timer.config(fg="black")
-        root.update()
-        time.sleep(1)
-    else:
-        timer.config(text="00:00")
-        root.update()
-        playsound("assets/sounds/bip.mp3")
-        time.sleep(1)
-        root.destroy()
+        timer = Label(timer_frame, text=f"{minutes:02d}:{seconds:02d}", font=("Arial", 55))
+        timer.pack(fill=BOTH, expand=True, padx=10)
 
-    root.mainloop()
+        timer_frame.pack(fill=BOTH, expand=True)
+
+        self.players_frame = players_frame = VerticalScrolledFrame(root)
+        players_frame.pack(fill=BOTH, expand=True)
+
+        self.show_players()
+
+        while remining > 0:
+            remining -= 1
+            minutes, seconds = divmod(remining, 60)
+            timer.config(text=f"{minutes:02d}:{seconds:02d}")
+            if remining <= approx_time:
+                if remining == approx_time:
+                    playsound(r"assets/sounds/mid_time.mp3", block=False)
+                if remining % 2 == 0:
+                    timer.config(fg="red")
+                else:
+                    timer.config(fg="black")
+            root.update()
+            time.sleep(1)
+        else:
+            timer.config(text="00:00")
+            root.update()
+            playsound(r"assets/sounds/time_end.mp3")
+            time.sleep(1)
+            root.destroy()
+            return
+
+        root.mainloop()
+
+    def show_players(self):
+        players_frame = self.players_frame
+        game = self.game
+        # show players in a grid adapted to the number of players
+        players = game.players
+        for i, player in enumerate(players):
+            # set a border around the player frame
+            player_frame = Frame(players_frame, borderwidth=2, relief="groove")
+            player_frame.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+            player_name = Label(player_frame, text=player.get_str(game), font=("Arial", 20))
+            if game.meeting == "vote" and player.id in game.meeting_votes.keys():
+                player_name.config(fg="red")
+            player_name.pack(fill=BOTH, expand=True)
+
 
 
 if __name__ == "__main__":
     # print recommended impostors
     # for i in range(4, 20):
     #    print(f"{i} players: {recommanded_impostors(i)} impostors")
-    print(show_timer(60, "Vote"))
+    Timer(60, "Test", [])
+    print("Done")

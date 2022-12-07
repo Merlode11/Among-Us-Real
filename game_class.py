@@ -3,45 +3,17 @@
 
 from tkinter import *
 from tkinter import messagebox, ttk
-from smsManager import send_sms
-from classes import SMSGame, SMSPlayer, BasicTask
-from utils import clear_frame, VerticalScrolledFrame, show_timer
+
+from classes import Player, SMSPlayer, BasicTask
+from utils import clear_frame, VerticalScrolledFrame, Timer
 import json
 import random
 
 
 class Game:
     def __init__(self, game_master: bool = None):
-        self.players: list = []
-        self.import_players()
-
         with open("config.json", "r", encoding='utf-8') as f:
             self.config = json.load(f)
-
-        self.tasks: list = []
-        with open(r"./taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            self.tasks = [
-                BasicTask(task["name"], task["description"], task["type"], task["location"], task.get("other")) for
-                task in data]
-
-        self.given_tasks: int = 0
-
-        self.crewmates: list = []
-        self.impostors: list = []
-        self.dead_players: list = []
-        self.done_tasks: list = []
-        self.receive: bool = True
-        self.send_messages: list = []
-        self.meeting: bool = False
-        self.meeting_votes: dict = {}
-
-        if game_master is None:
-            self.game_master: bool = self.config["game_master"]
-        else:
-            self.game_master: bool = game_master
-        self.pause: bool = False
-        self.unpause_code: str = ""
 
         # Game window
         self.window = window = Tk()
@@ -51,7 +23,40 @@ class Game:
         window.iconbitmap("assets/img/amongus.ico")
         window.state("zoomed")
 
-        # Check if the configuration is correct with the players
+        self.players: list = []
+        self.import_players()
+
+        self.tasks: list = []
+        with open(r"./taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
+            data = json.load(f)
+            self.tasks = [
+                BasicTask(task["name"], task["description"], task["type"], task["location"], task.get("other")) for
+                task in data]
+
+        if len(self.tasks) < self.config["tasks"]:
+            messagebox.showerror("Erreur",
+                                 "Le nombre de tâches à donner est supérieur au nombre de tâches disponibles !", parent=window)
+            self.window.destroy()
+            return
+
+        self.given_tasks: int = 0
+
+        self.crewmates: list = []
+        self.impostors: list = []
+        self.dead_players: list = []
+        self.done_tasks: list = []
+        self.receive: bool = True
+        self.send_messages: list = []
+        self.meeting: str or None = None
+        self.meeting_votes: dict = {}
+
+        if game_master is None:
+            self.game_master: bool = self.config["game_master"]
+        else:
+            self.game_master: bool = game_master
+        self.pause: bool = False
+        self.unpause_code: str = ""
+
         if self.config["impostors"] + self.config["ingeniors"] + self.config["scientists"] > len(self.players):
             messagebox.showerror("Erreur", "Le nombre de joueurs est insuffisant pour la configuration choisie")
             window.destroy()
@@ -72,7 +77,7 @@ class Game:
             Fonction de fermeture de la fenêtre
             """
             if messagebox.askokcancel("Quitter", "Êtes vous sûr de quitter ?"):
-                self.send_info("La partie s'est interommpue brutalement.")
+                self.send_info_all("La partie s'est interommpue brutalement.")
                 self.receive = False
                 window.destroy()
                 exit(-1)
@@ -80,11 +85,13 @@ class Game:
         window.protocol("WM_DELETE_WINDOW", closing)
 
         self.__buttons_frame = global_buttons_frame = Frame(self.window, bg="#f5f5f5")
-        cadavre_button = Button(global_buttons_frame, text="Cadavre", font=("Arial", 15), command=lambda: self.send_info(
-            "Un cadavre a été signalé.\nMerci de vous rendre immédiatement au point de rendez vous !"))
+        cadavre_button = Button(global_buttons_frame, text="Cadavre", font=("Arial", 15),
+                                command=lambda: self.start_meeting(
+                                    "Un cadavre a été signalé."))
         cadavre_button.pack(expand=YES, side=LEFT)
-        reunion_button = Button(global_buttons_frame, text="Réunion", font=("Arial", 25), command=lambda: self.send_info(
-            "Une réunion a été demandée.\nMerci de vous rendre immédiatement au point de rendez vous !"))
+        reunion_button = Button(global_buttons_frame, text="Réunion", font=("Arial", 25),
+                                command=lambda: self.start_meeting(
+                                    "Une réunion a été demandée."))
         reunion_button.pack(expand=YES, side=LEFT)
         send_all_message_button = Button(global_buttons_frame, text="Envoyer un message à tous", font=("Arial", 15),
                                          command=lambda: self.send_message_all_window())
@@ -239,12 +246,12 @@ class Game:
                 self.__tasks_progress_bar.config(value=len(self.done_tasks) / self.given_tasks * 100)
                 self.__label_tasks.config(text=f"{len(self.done_tasks)}/{self.given_tasks} tâches données")
                 self.send_messages.append(f"Votre tâche {task.name} a été confirmée comme faite !")
-                send_sms(player.phone, f"Votre tâche {task.name} a été confirmée comme faite !")
+                self.send_info(player, f"Votre tâche {task.name} a été confirmée comme faite !")
 
                 if len(self.done_tasks) == self.given_tasks:
                     task_window.destroy()
                     self.__tasks_progress_bar.config(value=100)
-                    self.send_info(
+                    self.send_info_all(
                         "Les mélenchonnistes ont gagné car ils ont terminé toutes leurs tâches !\nMerci de vous rendre "
                         "immédiatement au point de rendez vous !")
                     response = messagebox.askyesno("Game Over", "Les mélenchonistes ont gagné !\n"
@@ -348,17 +355,17 @@ class Game:
 
         def send_message_to_all():
             message = message_entry.get()
-            self.send_info(message)
+            self.send_info_all(message)
             sender.destroy()
 
         sendButton = Button(message_frame, text="Envoyer", command=send_message_to_all)
         sendButton.pack(fill=X, expand=YES, side=BOTTOM)
 
-        message_entry.bind("<Return>", send_message_to_all())
+        message_entry.bind("<Return>", send_message_to_all)
 
         sender.mainloop()
 
-    def kill_player(self, player: SMSPlayer):
+    def kill_player(self, player: Player):
         """
         Tuer un joueur
         :param player: Player: Joueur à tuer
@@ -372,36 +379,40 @@ class Game:
             del self.impostors[self.impostors.index(player)]
 
         if len(self.crewmates) <= len(self.impostors):
-            self.send_info(
-                "Tout les " + self.config["names"]["crewmate"].lower() + " sont morts, les " + self.config["names"][
-                    "impostor"].lower() + " ont gagné !\nMerci de vous rendre immédiatement au point de rendez-vous !\n")
+            self.send_info_all(
+                "Tous les " + self.config["names"]["crewmate"].lower() + " sont morts, les " + self.config["names"][
+                    "impostor"].lower() + "s ont gagné !\nMerci de vous rendre immédiatement au point de rendez-vous !\n")
             self.show_players()
             response = messagebox.askyesno("Game Over",
                                            "Les " + self.config["names"]["impostor"].lower() + " ont gagné !\n"
                                                                                                "Tous les " +
                                            self.config["names"]["crewmate"].lower() + " ont été tués.\n"
-                                                                                      "Voulez-vous recommencer ?")
+                                                                                      "Voulez-vous recommencer ?", parent=self.window)
 
             if response:
                 self.window.destroy()
                 Game(self.game_master)
+                return
             else:
                 self.window.destroy()
+                return
         elif len(self.impostors) == 0:
             self.show_players()
             response = messagebox.askyesno("Game Over",
                                            "Les " + self.config["names"]["crewmate"].lower() + " ont gagné !\n"
                                                                                                "Tous les " +
-                                           self.config["names"]["impostor"].lower() + " ont été tués.\n"
-                                                                                      "Voulez-vous recommencer ?")
+                                           self.config["names"]["impostor"].lower() + "s ont été tués.\n"
+                                                                                      "Voulez-vous recommencer ?", parent=self.window)
             if response:
                 self.window.destroy()
                 Game(self.game_master)
+                return
             else:
                 self.window.destroy()
+                return
         else:
             self.show_players()
-            send_sms(player.phone, "Vous avez été confirmé comme en tant que mort par le maître du jeu !")
+            self.send_info(player, "Vous avez été confirmé comme en tant que mort par le maître du jeu !")
 
     def define_roles(self) -> None:
         """
@@ -444,7 +455,7 @@ class Game:
     def send_role(self, player):
         pass
 
-    def send_message_window(self, player: SMSPlayer):
+    def send_message_window(self, player: Player):
         """
         Affiche la fenêtre d'envoi de message à un joueur spécifique
         """
@@ -469,13 +480,13 @@ class Game:
             """
             message = messageEntry.get()
             self.send_messages.append(message)
-            send_sms(player.phone, message)
+            self.send_info(player, message)
             sender.destroy()
 
         sendButton = Button(messageFrame, text="Envoyer", command=send_message_player)
         sendButton.pack(fill=X, expand=YES, side=BOTTOM)
 
-        messageEntry.bind("<Return>", send_message_player())
+        messageEntry.bind("<Return>", send_message_player)
 
         sender.mainloop()
 
@@ -488,26 +499,32 @@ class Game:
         self.unpause_code = code_str
         return code_str
 
-    def start_meeting(self):
+    def start_meeting(self, message: str):
+        """
+        Démarre une réunion
+        :param message: str: Raison de la réunion
+        :return:
+        """
+        self.meeting = "discussion"
+        self.send_info_all(
+            message + "\nMerci de vous rendre immédiatement au point de rendez-vous !\nRappel de votre code de présence: {password}")
         window = Tk()
         window.title("Réunion")
         window.geometry("500x500")
         window.resizable(False, False)
         window.state("zoomed")
         window.iconbitmap("assets/img/amongus.ico")
-        window.config(background="#2F3136")
 
-        Label(window, text="Réunion", font=("Arial", 30), bg="#2F3136", fg="white").pack()
-        Label(window, text="Veuillez choisir un joueur à éliminer", font=("Arial", 20), bg="#2F3136", fg="white").pack()
-        Label(window, text="ou appuyer sur le bouton pour passer", font=("Arial", 20), bg="#2F3136", fg="white").pack()
-        Label(window, text="à la prochaine étape", font=("Arial", 20), bg="#2F3136", fg="white").pack()
+        Label(window, text="Réunion", font=("Arial", 30)).pack()
+        Label(window, text="Veuillez choisir un joueur à éliminer", font=("Arial", 20)).pack()
+        Label(window, text="ou appuyer sur le bouton pour passer", font=("Arial", 20)).pack()
+        Label(window, text="à la prochaine étape", font=("Arial", 20)).pack()
 
-        players_here_frame = VerticalScrolledFrame(window, bg="#2F3136")
+        players_here_frame = VerticalScrolledFrame(window)
         here_users = []
 
         def show_players():
             clear_frame(players_here_frame)
-            print(self.players)
             for player in self.players:
                 print(player.name, ":", player.password)
                 if player in here_users:
@@ -515,25 +532,29 @@ class Game:
                 else:
                     color = "red"
                 if player.dead:
-                    Label(players_here_frame, text=player.get_str(self), font=("Arial", 20, "italic"), bg="#2F3136",
+                    Label(players_here_frame, text=player.get_str(self), font=("Arial", 20, "italic"),
                           fg=color).pack()
                 else:
-                    Label(players_here_frame, text=player.get_str(self), font=("Arial", 20), bg="#2F3136",
+                    Label(players_here_frame, text=player.get_str(self), font=("Arial", 20),
                           fg=color).pack()
 
         def present(password: str):
             for player in self.players:
                 if player.password == password:
                     if player in here_users:
-                        messagebox.showerror("Erreur", "Vous êtes déjà présent")
+                        messagebox.showerror("Erreur", "Vous êtes déjà présent", parent=window)
                     else:
-                        here_users.append(player)
+                        # temporary for testing TODO: remove
+                        here_users.extend(self.players)
+                        # here_users.append(player)
                     show_players()
                     present_entry.delete(0, END)
 
                     if len(here_users) == len(self.players):
                         window.destroy()
-                        show_timer(self.config.get("discussion_time", 0), "Discussion")
+                        self.timer = Timer(self.config.get("discussion_time", 0), "Discussion", self)
+
+                        self.meeting = "vote"
                         vote_string = "C'est le moment de voter ! Votez pour le joueur à éliminer:"
                         vote_string += "\n0 - Passer à la prochaine étape (skip)"
                         for i in range(len(self.players)):
@@ -541,17 +562,50 @@ class Game:
                             if not player.dead:
                                 vote_string += f"\n{i + 1} - {player.name}"
                         vote_string += f"\n\nVotez avec la commande 'vote NUMERO'"
-                        self.send_info(vote_string)
-                        show_timer(self.config.get("vote_time", 0), "Vote")
+                        self.send_info_all(vote_string)
+                        self.timer = Timer(self.config.get("vote_time", 0), "Vote", self)
+
+                        # found killed player
+                        votes = {}
+                        for votes in self.meeting_votes.values():
+                            if votes in votes:
+                                votes[votes] += 1
+                            else:
+                                votes[votes] = 1
+
+                        voted_player_id = "0"
+                        for player_id, vote_number in votes.items():
+                            if vote_number > votes[voted_player_id]:
+                                voted_player_id = player_id
+
+                        killed_name = "Personne (skip)"
+                        if voted_player_id != "0":
+                            player = self.get_player(voted_player_id)
+                            self.kill_player(player)
+                            killed_name = player.name
+
+                        killed_window = Tk()
+                        killed_window.title("Élimination")
+                        killed_window.geometry("500x500")
+                        killed_window.resizable(False, False)
+                        killed_window.state("zoomed")
+                        killed_window.iconbitmap("assets/img/amongus.ico")
+
+                        Label(killed_window, text="Élimination", font=("Arial", 30)).pack(fill=BOTH, expand=True, padx=10)
+                        Label(killed_window, text=f"{killed_name} a été éliminé !", font=("Arial", 20)).pack(fill=BOTH, expand=True, padx=10)
+
+                        killed_window.after(10000, killed_window.destroy)
+                        killed_window.mainloop()
+
+                        self.meeting = None
                     return
             else:
                 messagebox.showerror("Erreur", "Mot de passe incorrect")
 
-        Label(window, text="", bg="#2F3136").pack()
-        present_label = Label(window, text="Indiquer que vous êtes présent :", font=("Arial", 20), bg="#2F3136",
-                              fg="white")
-        present_entry = Entry(window, font=("Arial", 20), bg="#4f5259", fg="white")
-        present_button = Button(window, text="Valider", font=("Arial", 20), bg="#2F3136", fg="white",
+        Label(window, text="", ).pack()
+        present_label = Label(window, text="Indiquer que vous êtes présent :", font=("Arial", 20))
+        present_entry = Entry(window, font=("Arial", 20))
+        present_button = Button(window, text="Valider", font=("Arial", 20),
                                 command=lambda: present(present_entry.get()))
         present_label.pack()
         present_entry.pack()
@@ -561,30 +615,34 @@ class Game:
 
         show_players()
 
-        Label(window, text="", bg="#2F3136").pack()
+        Label(window, text="").pack()
 
         players_here_frame.pack()
 
         window.mainloop()
 
-    def import_players(self):
-        used_passwords: list = []
-        used_id: list = []
-        with open("players.json", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            self.players = [SMSPlayer(player["name"], player["lastname"], player["phone"], used_passwords, used_id)
-                            for player in data if player.get("play", True)]
+    def get_player(self, player_id: str):
+        """
+        Récupérer un joueur à partir de son ID
+        :param player_id: str: ID du joueur
+        :return: Player: Joueur
+        """
         for player in self.players:
-            player_id = random.randint(0, 999)
-            while player_id in used_id:
-                player_id = random.randint(0, 999)
-            used_id.append(player_id)
-            player.id = f"{player_id:03}"
+            if player.id == player_id:
+                return player
+        else:
+            return None
 
-    def send_info(self, message: str):
+    def import_players(self):
+        pass
+
+    def send_info_all(self, message: str):
         print("Envoie de l'information")
         for player in self.players:
             print(player.name, ":", message)
+
+    def send_info(self, player: Player, message: str):
+        pass
 
 
 if __name__ == '__main__':
