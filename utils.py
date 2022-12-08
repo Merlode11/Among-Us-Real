@@ -1,48 +1,20 @@
-from tkinter import Frame, ttk
 from tkinter import *
 import time
 from playsound import playsound
 
-def clear_frame(frame: Frame):
+
+def clear_frame(frame: Widget):
     """
     Clear all entries in a frame
     :param frame: Frame: Frame to clear
     :return: None
     """
-    if isinstance(frame, VerticalScrolledFrame):
+    if isinstance(frame, VerticalScrolledFrame or HorizontalScrolledFrame):
         frame = frame.inner
     for widget in frame.winfo_children():
         if widget.winfo_class() == "Frame":
             clear_frame(widget)
         widget.destroy()
-
-
-def recommanded_impostors(nb_players: int) -> int:
-    """
-    Return the number of impostors recommanded for a number of players
-    :param nb_players: int: Number of players
-    :return: int: Number of impostors
-    """
-
-    """
-    Nombre recommandé par joueur:
-    4: 1
-    5: 1
-    6: 1
-    7: 1
-    8: 2
-    9: 2
-    10: 2
-    Others: formule
-    """
-    if nb_players < 4:
-        return 0
-    elif nb_players < 8:
-        return 1
-    elif nb_players < 11:
-        return 2
-    else:
-        return nb_players // 4
 
 
 class VerticalScrolledFrame:
@@ -117,6 +89,86 @@ class VerticalScrolledFrame:
     def __str__(self):
         return str(self.outer)
 
+
+class HorizontalScrolledFrame:
+    """
+    Code issu du Gist GitHub https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531
+    Une Frame horizontalement scrollable qui peut être traitée comme n'importe quelle autre Frame
+    ie elle a besoin d'un master et d'un layout, et elle peut être un master.
+    :width:, :height:, :bg: sont passés au Canvas sous-jacent
+    :bg: et tous les autres arguments clé sont passés à la Frame interne
+    il faut noter que le widget disposé dans cette frame aura un self.master 3 niveaux plus profonds,
+    (outer Frame, Canvas, inner Frame) donc
+    si vous sous classez ceci, il n'y a pas de moyen intégré pour que les enfants y accèdent.
+    Vous devez fournir le contrôleur séparément.
+    """
+
+    def __init__(self, master, **kwargs):
+        width = kwargs.pop('width', master.winfo_width())
+        height = kwargs.pop('height', master.winfo_height())
+        bg = kwargs.pop('bg', kwargs.pop('background', None))
+        self.outer = Frame(master, **kwargs)
+
+        self.vsb = Scrollbar(self.outer, orient=HORIZONTAL)
+        self.vsb.pack(fill=X, side=BOTTOM)
+        self.canvas = Canvas(self.outer, highlightthickness=0, width=width, height=height, bg=bg)
+        self.canvas.pack(side=LEFT, fill=BOTH, expand=True)
+        self.canvas.config(yscrollcommand=self.vsb.set)
+        # Défilement de la souris ne semble pas fonctionner avec juste "bind"; Vous avez besoin d'utiliser "bind_all". Par conséquent, pour utiliser plusieurs fenêtres, vous devez bind_all dans le widget actuel
+        self.canvas.bind("<Enter>", self._bind_mouse)
+        self.canvas.bind("<Leave>", self._unbind_mouse)
+        self.canvas.addtag_all("all")  # (added) for configuring width
+        self.vsb.config(command=self.canvas.yview)
+
+        self.inner = Frame(self.canvas, bg=bg)
+        self.inner.pack(side=TOP, fill=BOTH, expand=True)
+        # Installation d'une fenêtre interne dans le Canvas avec le coin supérieur gauche décalé de 4 pixels
+        self.canvas.create_window((0, 0), window=self.inner, anchor='nw')
+        self.canvas.bind("<Configure>", self._on_frame_configure)  # liaison du canvas au lieu de l'inner
+
+        self.outer_attr = set(dir(Widget))
+
+        self.inner = Frame(self.canvas, bg=bg)
+        # Installation d'une fenêtre interne dans le Canvas avec le coin supérieur gauche décalé de 4 pixels
+        self.canvas.create_window((0, 0), window=self.inner, anchor='nw')
+        self.canvas.bind("<Configure>", self._on_frame_configure)  # liaison du canvas au lieu de l'inner
+
+        self.outer_attr = set(dir(Widget))
+
+    def __getattr__(self, item):
+        if item in self.outer_attr:
+            # Attribus de géométrie, etc. eg pack, destroy, tkraise) sont transmis à self.outer
+            return getattr(self.outer, item)
+        else:
+            # Tous les autres attributs (_w, children, etc.) sont passés à self.inner
+            return getattr(self.inner, item)
+
+    def _on_frame_configure(self, event=None):
+        x1, y1, x2, y2 = self.canvas.bbox("all")
+        height = self.canvas.winfo_height()
+        width = self.canvas.winfo_width()
+        self.canvas.config(scrollregion=(0, 0, x2, max(y2, height)))
+        self.canvas.itemconfigure("all", width=width)
+
+    def _bind_mouse(self, event=None):
+        self.canvas.bind_all("<4>", self._on_mousewheel)
+        self.canvas.bind_all("<5>", self._on_mousewheel)
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+
+    def _unbind_mouse(self, event=None):
+        self.canvas.unbind_all("<4>")
+        self.canvas.unbind_all("<5>")
+        self.canvas.unbind_all("<MouseWheel>")
+
+    def _on_mousewheel(self, event):
+        """Linux uses event.num; Windows / Mac uses event.delta"""
+        if event.num == 4 or event.delta > 0:
+            self.canvas.yview_scroll(-1, "units")
+        elif event.num == 5 or event.delta < 0:
+            self.canvas.yview_scroll(1, "units")
+
+    def __str__(self):
+        return str(self.outer)
 
 class YesNoButton(Button):
     def __init__(self, master, value=False, **kwargs):
@@ -211,7 +263,6 @@ class IntEntry(Frame):
         self.entry.insert(0, str(self.value))
 
 
-# class TimerEntry with entry for minutes and seconds
 class TimerEntry(Frame):
     def __init__(self, master, minutes: int = 0, seconds: int = 0, **kwargs):
         def _validate(val):
@@ -321,105 +372,52 @@ class TimerEntry(Frame):
         self.set_total_seconds(self.get_total_seconds())
 
 
-class ScrollableTagsEntry(Frame):
-    # An Entry to enter tags
-    # The tags are displayed in a listbox and can be deleted by double-clicking on them or by pressing the delete key on the keyboard while the listbox is selected (focus)
-    # The listbox is scrollable
-    def __init__(self, master, **kwargs):
+class TagsEntry(Frame):
+    """
+    A Frame with an Entry and a Button to add tags to a list. Each tag is a button that can be clicked to remove it.
+    The tags are displayed in a HorizontalScrobleFrame that can be scrolled horizontally if there are too many tags.
+    """
+    def __init__(self, master, tags: list = None, **kwargs):
         super().__init__(master, **kwargs)
+
+        self.tags = tags if tags is not None else []
 
         self.string_var = StringVar()
         self.entry = Entry(self, textvariable=self.string_var)
-        self.entry.pack(side=LEFT, fill=BOTH, expand=True)
+        self.entry.pack(side=LEFT)
+        self.entry.bind("<Return>", self._add_tag)
 
-        self.scrollbar = Scrollbar(self, orient=VERTICAL)
-        self.scrollbar.pack(side=RIGHT, fill=Y)
+        self.button_add = Button(self, text="Add", command=self._add_tag)
+        self.button_add.pack(side=LEFT)
+        
+        self.frame_tags = HorizontalScrolledFrame(self, width=200, height=40)
+        self.frame_tags.pack(side=BOTTOM, fill=BOTH, expand=True)
 
-        self.listbox = Listbox(self, yscrollcommand=self.scrollbar.set)
-        self.listbox.pack(side=LEFT, fill=BOTH, expand=True)
+        self._update_tags()
+        
+    def _add_tag(self, event=None):
+        tag = self.entry.get()
+        if tag not in self.tags and tag != "":
+            self.tags.append(tag)
+            self.entry.delete(0, END)
+            self._update_tags()
 
-        self.scrollbar.config(command=self.listbox.yview)
-
-        self.entry.bind("<Return>", self._on_return)
-        self.listbox.bind("<Double-Button-1>", self._on_double_click)
-        self.listbox.bind("<Delete>", self._on_delete)
-
-        self.listbox.bind("<FocusIn>", self._on_focus_in)
-        self.listbox.bind("<FocusOut>", self._on_focus_out)
-
-        self.listbox.bind("<Button-1>", self._on_click)
-        self.listbox.bind("<Button-3>", self._on_click)
-
-        self.listbox.bind("<Key>", self._on_key)
-
-        self.listbox.bind("<MouseWheel>", self._on_mouse_wheel)
-        self.listbox.bind("<Button-4>", self._on_mouse_wheel)
-        self.listbox.bind("<Button-5>", self._on_mouse_wheel)
-
-        self.listbox.bind("<Up>", self._on_up)
-        self.listbox.bind("<Down>", self._on_down)
-
-    def _on_return(self, event):
-        self._add_tag()
-
-    def _on_double_click(self, event):
-        self._delete_tag()
-
-    def _on_delete(self, event):
-        self._delete_tag()
-
-    def _on_focus_in(self, event):
-        self.entry.config(state=DISABLED)
-
-    def _on_focus_out(self, event):
-        self.entry.config(state=NORMAL)
+    def _remove_tag(self, tag):
+        self.tags.remove(tag)
+        self._update_tags()
+        
+    def _update_tags(self):
+        clear_frame(self.frame_tags.inner)
+        for tag in self.tags:
+            button = Button(self.frame_tags.inner, text=tag + " ⨂", command=lambda tag=tag: self._remove_tag(tag))
+            button.pack(side=LEFT)
 
     def _on_click(self, event):
-        self.entry.focus()
+        widget = event.widget
+        index = widget.curselection()[0]
+        tag = widget.get(index)
+        self._remove_tag(tag)
 
-    def _on_key(self, event):
-        self.entry.focus()
-
-    def _on_mouse_wheel(self, event):
-        self.entry.focus()
-
-    def _on_up(self, event):
-        self.entry.focus()
-
-    def _on_down(self, event):
-        self.entry.focus()
-
-    def _add_tag(self):
-        tag = self.string_var.get()
-        if tag:
-            self.listbox.insert(END, tag)
-            self.string_var.set("")
-            self.entry.focus()
-
-    def _delete_tag(self):
-        index = self.listbox.curselection()
-        if index:
-            self.listbox.delete(index)
-            self.entry.focus()
-
-    def get_tags(self):
-        return self.listbox.get(0, END)
-
-    def set_tags(self, tags: list):
-        self.listbox.delete(0, END)
-        for tag in tags:
-            self.listbox.insert(END, tag)
-
-    def clear(self):
-        self.listbox.delete(0, END)
-        self.string_var.set("")
-        self.entry.focus()
-
-    def focus(self):
-        self.entry.focus()
-
-    def get(self):
-        return self.string_var.get()
 
 
 class Timer:

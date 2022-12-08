@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 from tkinter import messagebox, ttk
 from airmore_sms_manager import send_sms, get_new_messages
 from classes import SMSPlayer, BasicTask

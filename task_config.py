@@ -2,7 +2,7 @@ import json
 import os
 from tkinter import *
 from tkinter import messagebox
-from utils import clear_frame, ScrollableTagsEntry
+from utils import clear_frame, TagsEntry, VerticalScrolledFrame
 
 
 def task_config():
@@ -13,7 +13,6 @@ def task_config():
 
     def manage_names():
         manage_list_names()
-        print("manage names")
 
     window = Tk()
     window.title("Configurer les tâches")
@@ -23,7 +22,7 @@ def task_config():
     window.iconbitmap("assets/img/amongus.ico")
 
     choice_list_frame = Frame(window, bg="#f5f5f5")
-    choice_label = Label(choice_list_frame, text="Sélectionnez la liste à modifier")
+    choice_label = Label(choice_list_frame, text="Sélectionnez la liste à modifier", font=("Arial", 14))
 
     with open("config.json", "r", encoding='utf8') as file:
         config = json.load(file)
@@ -41,12 +40,12 @@ def task_config():
     choice_label.grid(row=0, column=0)
     choice_list.grid(row=0, column=1)
 
-    manage_button = Button(choice_list_frame, text="Gérer", command=manage_names)
+    manage_button = Button(choice_list_frame, text="Gérer les listes", font=("Arial", 14), command=manage_names)
     manage_button.grid(row=0, column=2)
 
     choice_list_frame.pack(fill=X, anchor=N)
 
-    edit_task_frame = Frame(window, bg="#f5f5f5")
+    edit_task_frame = VerticalScrolledFrame(window, bg="#f5f5f5")
 
     with open(f"taskList/{config['task_list']}.json", "r", encoding="utf-8") as file:
         tasks_list: list = json.load(file)
@@ -71,7 +70,7 @@ def task_config():
         name_entry.grid(row=0, column=1)
 
         keywords_label = Label(name_frame, text="Mots-clés: ")
-        keywords = ScrollableTagsEntry(name_frame)
+        keywords = TagsEntry(name_frame)
         keywords_label.grid(row=1, column=0)
         keywords.grid(row=1, column=1)
 
