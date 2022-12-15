@@ -2,7 +2,7 @@ import json
 from tkinter import *
 from tkinter import messagebox, ttk
 # from SMSgame import start_game as start_game_sms
-from sms_game_class import SMSGame
+from sms.sms_game_class import SMSGame
 import os
 from config_settings import config_settings
 from player_config import player_config

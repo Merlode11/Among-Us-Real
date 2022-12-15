@@ -170,6 +170,7 @@ class HorizontalScrolledFrame:
     def __str__(self):
         return str(self.outer)
 
+
 class YesNoButton(Button):
     def __init__(self, master, value=False, **kwargs):
         super().__init__(master, **kwargs)
@@ -377,6 +378,7 @@ class TagsEntry(Frame):
     A Frame with an Entry and a Button to add tags to a list. Each tag is a button that can be clicked to remove it.
     The tags are displayed in a HorizontalScrobleFrame that can be scrolled horizontally if there are too many tags.
     """
+
     def __init__(self, master, tags: list = None, **kwargs):
         super().__init__(master, **kwargs)
 
@@ -389,12 +391,12 @@ class TagsEntry(Frame):
 
         self.button_add = Button(self, text="Add", command=self._add_tag)
         self.button_add.pack(side=LEFT)
-        
+
         self.frame_tags = HorizontalScrolledFrame(self, width=200, height=40)
         self.frame_tags.pack(side=BOTTOM, fill=BOTH, expand=True)
 
         self._update_tags()
-        
+
     def _add_tag(self, event=None):
         tag = self.entry.get()
         if tag not in self.tags and tag != "":
@@ -405,7 +407,7 @@ class TagsEntry(Frame):
     def _remove_tag(self, tag):
         self.tags.remove(tag)
         self._update_tags()
-        
+
     def _update_tags(self):
         clear_frame(self.frame_tags.inner)
         for tag in self.tags:
@@ -417,7 +419,6 @@ class TagsEntry(Frame):
         index = widget.curselection()[0]
         tag = widget.get(index)
         self._remove_tag(tag)
-
 
 
 class Timer:
@@ -483,7 +484,6 @@ class Timer:
             if game.meeting == "vote" and player.id in game.meeting_votes.keys():
                 player_name.config(fg="red")
             player_name.pack(fill=BOTH, expand=True)
-
 
 
 if __name__ == "__main__":

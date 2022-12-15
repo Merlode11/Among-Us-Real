@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from tkinter import messagebox, ttk
-from airmore_sms_manager import send_sms, get_new_messages
+from airmore_manager import send_sms, get_new_messages
 from classes import SMSPlayer, BasicTask
 from game_class import Game
 import json
