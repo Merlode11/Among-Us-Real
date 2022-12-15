@@ -1,5 +1,5 @@
 from tkinter import messagebox
-from airmore_sms_manager import send_sms
+from airmore_manager import send_sms
 import re  # Importation du module pour faire des tests d'expressions régulières
 
 
