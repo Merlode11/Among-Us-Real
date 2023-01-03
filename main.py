@@ -1,12 +1,16 @@
 import json
 from tkinter import *
 from tkinter import messagebox, ttk
-# from SMSgame import start_game as start_game_sms
-from sms.sms_game_class import SMSGame
+# from sms.sms_game_class import SMSGame
 import os
 from config_settings import config_settings
 from player_config import player_config
 from utils import clear_frame
+
+
+class SMSGame:
+    def __init__(self, game_master: bool or None = None):
+        self.game_master = game_master
 
 
 def main():
@@ -33,7 +37,7 @@ def main():
         with open("config.json", "w", encoding="utf-8") as f:
             json.dump({
                 "impostors": 1,
-                "ingeniors": 2,
+                "engineers": 2,
                 "scientists": 1,
                 "tasks": 3,
                 "max_task_given": 2,
@@ -41,7 +45,7 @@ def main():
                 "names": {
                     "impostor": "Imposteur",
                     "scientist": "Scientifique",
-                    "ingenior": "Ingenieur",
+                    "engineer": "Ingénieur",
                     "crewmate": "Membre de l'équipe",
                     "title": "Among Us Réel"
                 },
@@ -55,8 +59,9 @@ def main():
                 "min_before_inactiv_warn": 5,
                 "max_warns": 3
             }, f)
+
     with open("players.json", "r", encoding="utf-8") as f:
-        players = json.load(f)
+        players: list = json.load(f)
 
     with open("config.json", "r", encoding="utf-8") as f:
         config = json.load(f)
@@ -68,16 +73,17 @@ def main():
         tasks = []
 
     def config_players():
+        global players
         player_config()
-        with open("players.json", "r", encoding="utf-8") as f:
-            players = json.load(f)
+        with open("players.json", "r", encoding="utf-8") as p:
+            players = json.load(p)
         show_config()
 
     def show_config():
         """
         Affiche dans la fenêtre la configuration actuelle de la partie
         """
-        play_players = [player for player in players if player["play"]]
+        play_players = [player for player in players if player.get("play")]
         clear_frame(edits_frame)
         player_label = Label(edits_frame, text=f"Joueurs ({len(play_players)}/{len(players)})")
         player_button = Button(edits_frame, text=f"Modifier", command=config_players)
@@ -109,10 +115,12 @@ def main():
 
     other_plays_frame = Frame(window, bg="#f5f5f5")
 
-    game_master_play_button = Button(other_plays_frame, text="Jouer (avec maître du jeu)", command=lambda: begin_game(True))
+    game_master_play_button = Button(other_plays_frame, text="Jouer (avec maître du jeu)",
+                                     command=lambda: begin_game(True))
     game_master_play_button.grid(row=0, column=0)
 
-    without_game_master_button = Button(other_plays_frame, text="Jouer (sans maître du jeu)", command=lambda: begin_game(False))
+    without_game_master_button = Button(other_plays_frame, text="Jouer (sans maître du jeu)",
+                                        command=lambda: begin_game(False))
     without_game_master_button.grid(row=0, column=1)
 
     other_plays_frame.pack(fill=X)
@@ -124,7 +132,7 @@ def main():
         :return: None
         """
         window.destroy()
-        result = SMSGame(game_master)
+        SMSGame(game_master)
         main()
 
     window.mainloop()

@@ -34,7 +34,7 @@ def config_settings():
 
         new_config: dict = {
             "impostors": int(impostors_entry.get_value()),
-            "ingeniors": int(ingeniors_entry.get_value()),
+            "engineers": int(engineers_entry.get_value()),
             "scientists": int(scientists_entry.get_value()),
             "tasks": int(tasks_entry.get_value()),
             "max_task_given": int(max_task_given_entry.get_value()),
@@ -42,7 +42,7 @@ def config_settings():
             "names": {
                 "impostor": impostor_name_entry.get(),
                 "scientist": scientist_name_entry.get(),
-                "ingenior": ingenior_name_entry.get(),
+                "engineer": engineer_name_entry.get(),
                 "crewmate": crewmate_name_entry.get(),
                 "title": title_name_entry.get()
             },
@@ -139,11 +139,11 @@ def config_settings():
     impostors_entry.grid(row=0, column=1)
     impostors_recommanded_button.grid(row=0, column=2)
 
-    ingeniors_label = Label(settings_frame, text="Nombre d'ingénieurs: ")
-    ingeniors_entry = IntEntry(settings_frame)
-    ingeniors_entry.set_value(config["ingeniors"])
-    ingeniors_label.grid(row=1, column=0)
-    ingeniors_entry.grid(row=1, column=1)
+    engineers_label = Label(settings_frame, text="Nombre d'ingénieurs: ")
+    engineers_entry = IntEntry(settings_frame)
+    engineers_entry.set_value(config["engineers"])
+    engineers_label.grid(row=1, column=0)
+    engineers_entry.grid(row=1, column=1)
 
     scientists_label = Label(settings_frame, text="Nombre de scientifiques: ")
     scientists_entry = IntEntry(settings_frame)
@@ -250,11 +250,11 @@ def config_settings():
     scientist_name_label.grid(row=1, column=0)
     scientist_name_entry.grid(row=1, column=1)
 
-    ingenior_name_label = Label(names_frame, text="Ingénieur: ")
-    ingenior_name_entry = Entry(names_frame)
-    ingenior_name_entry.insert(0, config["names"]["ingenior"])
-    ingenior_name_label.grid(row=2, column=0)
-    ingenior_name_entry.grid(row=2, column=1)
+    engineer_name_label = Label(names_frame, text="Ingénieur: ")
+    engineer_name_entry = Entry(names_frame)
+    engineer_name_entry.insert(0, config["names"]["engineer"])
+    engineer_name_label.grid(row=2, column=0)
+    engineer_name_entry.grid(row=2, column=1)
 
     crewmate_name_label = Label(names_frame, text="Membre de l'équipe: ")
     crewmate_name_entry = Entry(names_frame)

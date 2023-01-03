@@ -4,6 +4,7 @@ from pyairmore.request import AirmoreSession
 from pyairmore.services.messaging import MessagingService
 from pyairmore.data.messaging import MessageType
 from tkinter import messagebox
+from time import sleep
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -22,7 +23,12 @@ def send_sms(phone_number: str, message: str):
     """
     Envoye un SMS au numéro de téléphone spécifié
     """
-    service.send_message(phone_number, message)
+    try:
+        service.send_message(phone_number, message)
+    except Exception as e:
+        print(e)
+        sleep(2)
+        send_sms(phone_number, message)
 
 
 def get_new_messages(game) -> list:
