@@ -57,7 +57,7 @@ class Game:
         self.pause: bool = False
         self.unpause_code: str = ""
 
-        if self.config["impostors"] + self.config["ingeniors"] + self.config["scientists"] > len(self.players):
+        if self.config["impostors"] + self.config["engineers"] + self.config["scientists"] > len(self.players):
             messagebox.showerror("Erreur", "Le nombre de joueurs est insuffisant pour la configuration choisie")
             window.destroy()
             return
@@ -136,7 +136,7 @@ class Game:
                 fg = "#00b300"
             elif player.role == "impostor":
                 fg = "#ff0000"
-            elif player.role == "ingenior":
+            elif player.role == "engineer":
                 fg = "#ffa500"
             elif player.role == "scientist":
                 fg = "#0000ff"
@@ -373,7 +373,7 @@ class Game:
         """
         player.dead = True
         self.dead_players.append(player)
-        if player.role == "crewmate" or player.role == "ingenior" or player.role == "scientist":
+        if player.role == "crewmate" or player.role == "engineer" or player.role == "scientist":
             del self.crewmates[self.crewmates.index(player)]
         elif player.role == "impostor":
             del self.impostors[self.impostors.index(player)]
@@ -429,10 +429,10 @@ class Game:
         for player in self.impostors:
             player.role = "impostor"
 
-        for i in range(self.config["ingeniors"]):
-            self.crewmates[i].role = "ingenior"
+        for i in range(self.config["engineers"]):
+            self.crewmates[i].role = "engineer"
         for i in range(self.config["scientists"]):
-            self.crewmates[i + self.config["ingeniors"]].role = "scientist"
+            self.crewmates[i + self.config["engineers"]].role = "scientist"
 
         self.players = sorted(self.players, key=lambda joueur: joueur.name)
 

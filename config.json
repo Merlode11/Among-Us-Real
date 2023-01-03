@@ -1,6 +1,6 @@
 {
     "impostors": 1,
-    "ingeniors": 0,
+    "engineers": 0,
     "scientists": 0,
     "tasks": 3,
     "max_task_given": 2,
@@ -8,7 +8,7 @@
     "names": {
         "impostor": "Imposteur",
         "scientist": "Scientifique",
-        "ingenior": "Ingénieur",
+        "engineer": "Ingénieur",
         "crewmate": "Membre de l'équipe",
         "title": "Among Us Réel"
     },

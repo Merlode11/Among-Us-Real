@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>page joueur</title>
+    <body style="background-color:#B5F38D;">
+    </body>
+</head>
+
+<body>
+
+    <h1 class="center"> </h1>
+
+    {% for task in task_list %}
+        <div style="padding: 10px; background-color: #8CFF41; margin: 20px">
+            <p style="font-size: 24px">{{ str(task1) }}</p>
+            <input
+              class="favorite styled"
+              type="button"
+              value="effectuer tache"
+              id="faire tache1"
+              >
+        </div>
+    {% endfor %}
+
+<h1> Code joueur: {{str(code_joueur)}}</h1>
+
+
+
+    <input
+    class="favorite styled"
+    type="button"
+    value="reporter un corp"
+    id="reporter corp"
+    >
+
+    <input
+    class="favorite styled"
+    type="button"
+    value="Tuer joueur"
+    id="KILL"
+    >
+
+
+<script>
+    const tachevalide_Button = document.getElementById("faire tache1")
+    tachevalide_Button.addEventListener("click", function(){
+        alert("tache effectué")
+    })
+</script>
+
+<script>
+    const tachevalideButton = document.getElementById("faire tache2")
+    tachevalideButton.addEventListener("click", function(){
+        alert("tache effectué")
+    })
+</script>
+
+
+<script>
+    const Kill_Button = document.getElementById("KILL")
+    Kill_Button.addEventListener("click", function(){
+        alert("joueur executer")
+    })
+</script>
+
+
+<script>
+    const reportbutton = document.getElementById("reporter corp")
+    reportbutton.addEventListener("click", function(){
+        alert("corp repporté")
+    })
+</script>
+
+
+    <div style="padding: 10px; background-color: #e34242; margin: 20px">
+        <p style="font-size: 100%;">{{ str(est_mort) }}</p>
+    </div>
+
+</body>
+</html>
