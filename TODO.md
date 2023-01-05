@@ -20,9 +20,9 @@
    6. [ ] Créer une documentation pour le support SMS
 4. [x] Créer un menu de départ pour:
    1. [x] Lancer une partie
-   2. [ ] Modifier les paramètres
+   2. [x] Modifier les paramètres
    3. [ ] Modifier les tâches
-   4. [ ] Modifier les joueurs
+   4. [x] Modifier les joueurs
 5. [x] Faire un fichier start.bat
 6. [ ] Faire un système sans maître du jeu
    - Cacher les rôles des joueurs
