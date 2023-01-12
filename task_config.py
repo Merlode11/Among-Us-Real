@@ -2,7 +2,7 @@ import json
 import os
 from tkinter import *
 from tkinter import messagebox
-from utils import clear_frame, TagsEntry, VerticalScrolledFrame
+from utils import clear_frame, TagsEntry, VerticalScrolledFrame, IntEntry
 
 
 def task_config():
@@ -63,18 +63,57 @@ def task_config():
         edit_window.configure(background='#f5f5f5')
         edit_window.iconbitmap("assets/img/amongus.ico")
 
+        type_frame = Frame(edit_window, bg="#f5f5f5")
+        type_label = Label(type_frame, text="Type de tâche: ")
+        type_choice = StringVar()
+        type_choice.set(task["type"])
+
+        type_list = OptionMenu(type_frame, type_choice, *["Basique", "Avec Validation", "Avec Activation", "Avec Activation et Validation"])
+
+        type_label.grid(row=0, column=0)
+        type_list.grid(row=0, column=1)
+        type_frame.pack(fill=X)
+
+
         name_frame = Frame(edit_window, bg="#f5f5f5")
         name_label = Label(name_frame, text="Nom de la tâche: ")
         name_entry = Entry(name_frame)
+        name_entry.insert(0, task["name"])
         name_label.grid(row=0, column=0)
         name_entry.grid(row=0, column=1)
-
-        keywords_label = Label(name_frame, text="Mots-clés: ")
-        keywords = TagsEntry(name_frame)
-        keywords_label.grid(row=1, column=0)
-        keywords.grid(row=1, column=1)
-
         name_frame.pack(fill=X)
+
+        description_frame = Frame(edit_window, bg="#f5f5f5")
+        description_label = Label(description_frame, text="Description de la tâche: ")
+        description_entry = Entry(description_frame)
+        description_entry.insert(0, task["description"])
+        description_label.grid(row=1, column=0)
+        description_entry.grid(row=1, column=1)
+        description_frame.pack(fill=X)
+
+        location_frame = Frame(edit_window, bg="#f5f5f5")
+        location_label = Label(location_frame, text="Emplacement de la tâche: ")
+        location_entry = Entry(location_frame)
+        location_entry.insert(0, task["location"])
+        location_label.grid(row=2, column=0)
+        location_entry.grid(row=2, column=1)
+
+        steps_frame = Frame(edit_window, bg="#f5f5f5")
+        steps_label = Label(steps_frame, text="Nombre d'étapes de la tâche: ")
+        steps_entry = IntEntry(steps_frame, value=task["steps"] if "steps" in task else 1)
+        steps_label.grid(row=3, column=0)
+        steps_entry.grid(row=3, column=1)
+        steps_frame.pack(fill=X)
+
+
+
+
+
+        # keywords_label = Label(name_frame, text="Mots-clés: ")
+        # keywords = TagsEntry(name_frame)
+        # keywords_label.grid(row=1, column=0)
+        # keywords.grid(row=1, column=1)
+
 
         def save_task() -> str or None:
             """
