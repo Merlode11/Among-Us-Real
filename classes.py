@@ -98,10 +98,10 @@ class WebPlayer(Player):
 class BasicTask:
     type: str = "basic"
 
-    def __init__(self, name: str, description: str, classe: str, location: str, other: dict = None):
+    def __init__(self, name: str, description: str, steps: int, location: str, other: dict = None):
         self.name: str = name
         self.description: str = description
-        self.classe: str = classe
+        self.steps: int = steps
         self.location: str = location
         self.done: bool = False
         self.other: dict = other
@@ -116,70 +116,70 @@ class BasicTask:
             self.other["questions"] = questions
 
     def __repr__(self):
-        return f"{self.name} ({self.classe}): {self.description} | {self.location}"
+        return f"{self.name} ({self.steps}): {self.description} | {self.location}"
 
     def __str__(self):
-        return f"{self.name} ({self.classe})"
+        return f"{self.name} ({self.steps})"
 
 
 class ValidateBasicTask(BasicTask):
     type: str = "validate_basic"
 
-    def __init__(self, name: str, description: str, classe: str, location: str, valid_keywords: list):
-        super().__init__(name, description, classe, location, {})
+    def __init__(self, name: str, description: str, steps: int, location: str, valid_keywords: list):
+        super().__init__(name, description, steps, location, {})
         self.keywords: list = valid_keywords
 
     def __repr__(self):
-        return f"ValidateBasicTask({self.name}, {self.description}, {self.classe}, {self.location}, {self.other})"
+        return f"ValidateBasicTask({self.name}, {self.description}, {self.steps}, {self.location}, {self.other})"
 
     def __str__(self):
-        return f"Valide la tâche {self.name} ({self.classe})"
+        return f"{self.name} ({self.steps})"
 
 
 class ActivateBasicTask(BasicTask):
     type: str = "activate_basic"
 
-    def __init__(self, name: str, description: str, classe: str, location: str, activ_keywords: list, message: str):
-        super().__init__(name, description, classe, location, {})
+    def __init__(self, name: str, description: str, steps: int, location: str, activ_keywords: list, message: str):
+        super().__init__(name, description, steps, location, {})
         self.activ_keywords: list = activ_keywords
         self.message: str = message
 
     def __repr__(self):
-        return f"ActivateBasicTask({self.name}, {self.description}, {self.classe}, {self.location}, {self.other})"
+        return f"ActivateBasicTask({self.name}, {self.description}, {self.steps}, {self.location}, {self.other})"
 
     def __str__(self):
-        return f"Active la tâche {self.name} ({self.classe})"
+        return f"{self.name} ({self.steps})"
 
 
 class ActivValidTask(ValidateBasicTask):
     type: str = "activ_valid"
 
-    def __init__(self, name: str, description: str, classe: str, location: str, valid_keywords: list,
+    def __init__(self, name: str, description: str, steps: int, location: str, valid_keywords: list,
                  activ_keywords: list, message: str):
-        super().__init__(name, description, classe, location, valid_keywords)
+        super().__init__(name, description, steps, location, valid_keywords)
         self.activ_keywords: list = activ_keywords
         self.message: str = message
 
     def __repr__(self):
-        return f"ActivValidTask({self.name}, {self.description}, {self.classe}, {self.location}, {self.other})"
+        return f"ActivValidTask({self.name}, {self.description}, {self.steps}, {self.location}, {self.other})"
 
     def __str__(self):
-        return f"Active et valide la tâche {self.name} ({self.classe})"
+        return f"{self.name} ({self.steps})"
 
 
 def set_task(task_dict: dict) -> BasicTask or ActivateBasicTask or ValidateBasicTask or ActivValidTask:
     if task_dict["type"] == "basic":
-        return BasicTask(task_dict["name"], task_dict["description"], task_dict["classe"], task_dict["location"])
+        return BasicTask(task_dict["name"], task_dict["description"], task_dict["steps"], task_dict["location"])
     elif task_dict["type"] == "validate_basic":
-        return ValidateBasicTask(task_dict["name"], task_dict["description"], task_dict["classe"],
+        return ValidateBasicTask(task_dict["name"], task_dict["description"], task_dict["steps"],
                                  task_dict["location"],
                                  task_dict["keywords"])
     elif task_dict["type"] == "activate_basic":
-        return ActivateBasicTask(task_dict["name"], task_dict["description"], task_dict["classe"],
+        return ActivateBasicTask(task_dict["name"], task_dict["description"], task_dict["steps"],
                                  task_dict["location"],
                                  task_dict["keywords"], task_dict["message"])
     elif task_dict["type"] == "activ_valid":
-        return ActivValidTask(task_dict["name"], task_dict["description"], task_dict["classe"], task_dict["location"],
+        return ActivValidTask(task_dict["name"], task_dict["description"], task_dict["steps"], task_dict["location"],
                               task_dict["valid_keywords"], task_dict["activ_keywords"], task_dict["message"])
 
 
