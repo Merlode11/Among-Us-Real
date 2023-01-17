@@ -38,6 +38,18 @@ class Player:
         return f"Player()"
 
     def get_str(self, game):
+        """
+        Renvoie le string de l'affichage du joueur
+        :param game: Game: La partie
+        :return: str: Le string de l'affichage du joueur
+        """
+        pass
+
+    def get_name(self) -> str:
+        """
+        Renvoie le nom du joueur
+        :return: str: Le nom du joueur
+        """
         pass
 
     def finished_all_tasks(self) -> bool:
@@ -73,6 +85,9 @@ class SMSPlayer(Player):
                 {show_phone_number(self.phone)}"
         return f"{self.name} {self.lastname}: {show_phone_number(self.phone)}"
 
+    def get_name(self):
+        return f"{self.name} {self.lastname}"
+
 
 class WebPlayer(Player):
     def __init__(self, ip: str, nickname: str, color: str, used_passwords: list):
@@ -93,6 +108,9 @@ class WebPlayer(Player):
             elif self.dead:
                 return f"☠ {self.nickname} ({self.ip}), {game.config['names'][self.role]}"
         return f"{self.nickname} ({self.ip})"
+
+    def get_name(self):
+        return self.nickname
 
 
 class BasicTask:
@@ -143,6 +161,7 @@ class ActivateBasicTask(BasicTask):
         super().__init__(name, description, steps, location, {})
         self.activ_keywords: list = activ_keywords
         self.message: str = message
+        self.active: bool = False
 
     def __repr__(self):
         return f"ActivateBasicTask({self.name}, {self.description}, {self.steps}, {self.location}, {self.other})"
@@ -159,6 +178,7 @@ class ActivValidTask(ValidateBasicTask):
         super().__init__(name, description, steps, location, valid_keywords)
         self.activ_keywords: list = activ_keywords
         self.message: str = message
+        self.active: bool = False
 
     def __repr__(self):
         return f"ActivValidTask({self.name}, {self.description}, {self.steps}, {self.location}, {self.other})"

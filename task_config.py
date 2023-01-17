@@ -4,6 +4,17 @@ from tkinter import *
 from tkinter import messagebox
 from utils import clear_frame, TagsEntry, VerticalScrolledFrame, IntEntry
 
+task_type_name = {
+    "basic": "Basique",
+    "validate_basic": "Avec Validation",
+    "activate_basic": "Avec Activation",
+    "activ_valid": "Avec Activation et Validation",
+    "Basique": "basic",
+    "Avec Validation": "validate_basic",
+    "Avec Activation": "activate_basic",
+    "Avec Activation et Validation": "activ_valid"
+}
+
 
 def task_config():
     """
@@ -63,19 +74,49 @@ def task_config():
         edit_window.configure(background='#f5f5f5')
         edit_window.iconbitmap("assets/img/amongus.ico")
 
-        type_frame = Frame(edit_window, bg="#f5f5f5")
+        edit_frame = VerticalScrolledFrame(edit_window, bg="#f5f5f5")
+
+        tags_frame = Frame(edit_frame, bg="#f5f5f5")
+
+        keywords = TagsEntry(tags_frame, tags=task.get("keywords", []))
+        activation = TagsEntry(tags_frame, tags=task.get("activ_keywords", []))
+
+        def show_tags():
+            global keywords, activation
+            clear_frame(tags_frame)
+            if type_choice.get() == "Avec Validation":
+                keywords_label = Label(tags_frame, text="Mots-clés de validation: ")
+                keywords_label.grid(row=1, column=0)
+                keywords.grid(row=1, column=1)
+            elif type_choice.get() == "Avec Activation":
+                activation_label = Label(tags_frame, text="Mots-clé d'activation: ")
+                activation_label.grid(row=1, column=0)
+                activation.grid(row=1, column=1)
+            elif type_choice.get() == "Avec Activation et Validation":
+                keywords_label = Label(tags_frame, text="Mots-clés de validation: ")
+                keywords = TagsEntry(tags_frame, tags=task.get("keywords", []))
+                keywords_label.grid(row=1, column=0)
+                keywords.grid(row=1, column=1)
+
+                activation_label = Label(tags_frame, text="Mots-clé d'activation: ")
+                activation = TagsEntry(tags_frame, tags=task.get("activ_keywords", []))
+                activation_label.grid(row=2, column=0)
+                activation.grid(row=2, column=1)
+
+        type_frame = Frame(edit_frame, bg="#f5f5f5")
         type_label = Label(type_frame, text="Type de tâche: ")
         type_choice = StringVar()
-        type_choice.set(task["type"])
+        type_choice.set(task_type_name[task["type"]])
 
-        type_list = OptionMenu(type_frame, type_choice, *["Basique", "Avec Validation", "Avec Activation", "Avec Activation et Validation"])
+        type_list = OptionMenu(type_frame, type_choice, *["Basique", "Avec Validation", "Avec Activation",
+                                                          "Avec Activation et Validation"],
+                               command=lambda x: show_tags())
 
         type_label.grid(row=0, column=0)
         type_list.grid(row=0, column=1)
         type_frame.pack(fill=X)
 
-
-        name_frame = Frame(edit_window, bg="#f5f5f5")
+        name_frame = Frame(edit_frame, bg="#f5f5f5")
         name_label = Label(name_frame, text="Nom de la tâche: ")
         name_entry = Entry(name_frame)
         name_entry.insert(0, task["name"])
@@ -85,10 +126,10 @@ def task_config():
 
         description_frame = Frame(edit_window, bg="#f5f5f5")
         description_label = Label(description_frame, text="Description de la tâche: ")
-        description_entry = Entry(description_frame)
-        description_entry.insert(0, task["description"])
+        description_text = Text(description_frame, height=5, width=50)
+        description_text.insert(INSERT, task["description"])
         description_label.grid(row=1, column=0)
-        description_entry.grid(row=1, column=1)
+        description_text.grid(row=1, column=1)
         description_frame.pack(fill=X)
 
         location_frame = Frame(edit_window, bg="#f5f5f5")
@@ -105,15 +146,8 @@ def task_config():
         steps_entry.grid(row=3, column=1)
         steps_frame.pack(fill=X)
 
-
-
-
-
-        # keywords_label = Label(name_frame, text="Mots-clés: ")
-        # keywords = TagsEntry(name_frame)
-        # keywords_label.grid(row=1, column=0)
-        # keywords.grid(row=1, column=1)
-
+        show_tags()
+        tags_frame.pack(fill=X)
 
         def save_task() -> str or None:
             """
@@ -123,10 +157,17 @@ def task_config():
             if name == "":
                 messagebox.showerror("Erreur", "Le nom de la tâche ne peut pas être vide", parent=edit_window)
                 return
-            if name in [tache["name"] for tache in tasks_list]:
+            if name in [tache["name"] for tache in tasks_list if tache["name"] != task["name"]]:
                 messagebox.showerror("Erreur", "Une tâche avec ce nom existe déjà", parent=edit_window)
                 return
             task["name"] = name
+            task["description"] = description_text.get("1.0", END)
+            task["location"] = location_entry.get()
+            task["steps"] = steps_entry.get_value()
+            task["type"] = task_type_name[type_choice.get()]
+            if type_choice.get() == "Avec Validation":
+                task["keywords"] = keywords.get_tags()
+
             edit_window.destroy()
             return name
 

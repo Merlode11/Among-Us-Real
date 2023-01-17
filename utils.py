@@ -26,7 +26,7 @@ class VerticalScrolledFrame:
     :bg: et tous les autres arguments clé sont passés à la Frame interne
     il faut noter que le widget disposé dans cette frame aura un self.master 3 niveaux plus profonds,
     (outer Frame, Canvas, inner Frame) donc
-    si vous sous classez ceci, il n'y a pas de moyen intégré pour que les enfants y accèdent.
+    si vous sous-classez ceci, il n'y a pas de moyen intégré pour que les enfants y accèdent.
     Vous devez fournir le contrôleur séparément.
     """
 
@@ -41,7 +41,8 @@ class VerticalScrolledFrame:
         self.canvas = Canvas(self.outer, highlightthickness=0, width=width, height=height, bg=bg)
         self.canvas.pack(side=LEFT, fill=BOTH, expand=True)
         self.canvas.config(yscrollcommand=self.vsb.set)
-        # Défilement de la souris ne semble pas fonctionner avec juste "bind"; Vous avez besoin d'utiliser "bind_all". Par conséquent, pour utiliser plusieurs fenêtres, vous devez bind_all dans le widget actuel
+        # Défilement de la souris ne semble pas fonctionner avec juste "bind"; Vous avez besoin d'utiliser
+        # "bind_all". Par conséquent, pour utiliser plusieurs fenêtres, vous devez bind_all dans le widget actuel
         self.canvas.bind("<Enter>", self._bind_mouse)
         self.canvas.bind("<Leave>", self._unbind_mouse)
         self.canvas.addtag_all("all")  # (added) for configuring width
@@ -114,7 +115,8 @@ class HorizontalScrolledFrame:
         self.canvas = Canvas(self.outer, highlightthickness=0, width=width, height=height, bg=bg)
         self.canvas.pack(side=LEFT, fill=BOTH, expand=True)
         self.canvas.config(yscrollcommand=self.vsb.set)
-        # Défilement de la souris ne semble pas fonctionner avec juste "bind"; Vous avez besoin d'utiliser "bind_all". Par conséquent, pour utiliser plusieurs fenêtres, vous devez bind_all dans le widget actuel
+        # Défilement de la souris ne semble pas fonctionner avec juste "bind"; Vous avez besoin d'utiliser
+        # "bind_all". Par conséquent, pour utiliser plusieurs fenêtres, vous devez bind_all dans le widget actuel
         self.canvas.bind("<Enter>", self._bind_mouse)
         self.canvas.bind("<Leave>", self._unbind_mouse)
         self.canvas.addtag_all("all")  # (added) for configuring width
@@ -469,7 +471,7 @@ class Timer:
             root.destroy()
             return
 
-        root.mainloop()
+        # root.mainloop()
 
     def show_players(self):
         players_frame = self.players_frame
