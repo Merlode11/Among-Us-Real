@@ -49,7 +49,6 @@ class SMSGame(Game):
             send_sms(player.phone, new_message)
 
     def send_info(self, player: SMSPlayer, message: str):
-        print(player)
         print(player.name, ":", message)
         send_sms(player.phone, message)
 
@@ -90,16 +89,32 @@ class SMSGame(Game):
             if message.startswith(tuple([cmd.name] + cmd.aliases)):
                 return cmd.run(player, message, self)
         for task in player.tasks:
-            pass
-            # if task.get("other") and task["other"].get("keywords"):
-            #     for word in task["other"]["keywords"]:
-            #         if word in message:
-            #             task.done = True
-            #             self.done_tasks.append(task)
-            #             send_sms(player.phone, f"Votre tâche {task.name} a été confirmée comme faite !")
-            #             messagebox.showinfo("Succès",
-            #                                 f"{player.name} {player.lastname} a confirmé avoir réalisé la tâche {task.name} ! Son message est :\n {message}")
-            #             return True
+            if task.type == "validate_basic":
+                for word in task.keywords:
+                    if word in message:
+                        self.task_done(player, task)
+                        return True
+            elif task.type == "activate_basic":
+                for word in task.activ_keywords:
+                    if word in message:
+                        send_sms(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
+                        task.active = True
+                        return True
+            elif task.type == "activ_valid":
+                for word in task.keywords:
+                    if word in message:
+                        if task.active:
+                            self.task_done(player, task)
+                            return True
+                        else:
+                            send_sms(player.phone, "La tâche n'est pas encore activée")
+                            return True
+                for word in task.activ_keywords:
+                    if word in message:
+                        send_sms(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
+                        task.active = True
+                        return True
+
         return False
 
     def start_recieve_sms(self):
@@ -126,8 +141,10 @@ class SMSGame(Game):
                     messagebox.showinfo(f"Message de {msg.phone}", string)
 
             for player in self.players:
-                if player.last_message and player.last_message + self.config["min_before_inactiv_warn"] * 60 < int(datetime.datetime.now().timestamp()):
-                    if player.last_warning and player.last_warning + self.config["min_before_inactiv_kick"] * 60 < int(datetime.datetime.now().timestamp()):
+                if player.last_message and player.last_message + self.config["min_before_inactiv_warn"] * 60 < int(
+                        datetime.datetime.now().timestamp()):
+                    if player.last_warning and player.last_warning + self.config["min_before_inactiv_kick"] * 60 < int(
+                            datetime.datetime.now().timestamp()):
                         if player.warnings >= self.config["max_warns"]:
                             self.send_info_all(
                                 f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur")
@@ -145,6 +162,7 @@ class SMSGame(Game):
                         player.last_warning = int(datetime.datetime.now().timestamp())
                 if self.receive:
                     Timer(5, recieve).start()
+
         Timer(2, recieve).start()
 
 

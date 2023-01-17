@@ -1,562 +1,182 @@
 [
-  {
-    "name": "Histoire de la France",
-    "description": "Vous allez intégrer le groupe de l'élite de Mélenchon, répondez à ce quizz sur l'histoire de la politique pour réussir cette tâche.",
-    "location": "À côté de la poste",
-    "type": "Cognitif",
-    "steps": 1,
-    "other": {
-      "questions": [
-        {
-          "question": "Napoléon III était?",
-          "answers": [
-            {
-              "answer": "Le fils de Napoléon",
-              "correct": false
-            },
-            {
-              "answer": "Un libéraliste",
-              "correct": true
-            },
-            {
-              "answer": "Un général impitoyable",
-              "correct": false
-            },
-            {
-              "answer": "Un grand ami avec les arabes",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Qui est le premier président de la IInd république française ?",
-          "answers": [
-            {
-              "answer": "Louis-Napoléon Bonaparte",
-              "correct": true
-            },
-            {
-              "answer": "Mehdi Ali",
-              "correct": false
-            },
-            {
-              "answer": "Victor Hugo",
-              "correct": false
-            },
-            {
-              "answer": "Napoléon Bonaparte",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Quelle est l'année de l'obtention du droit de vote des femmes en France ?",
-          "answers": [
-            {
-              "answer": "1945",
-              "correct": false
-            },
-            {
-              "answer": "1918",
-              "correct": false
-            },
-            {
-              "answer": "1944",
-              "correct": true
-            },
-            {
-              "answer": "Elles ne l'ont pas encore",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Où était située la première démocratie ?",
-          "answers": [
-            {
-              "answer": "À Rome",
-              "correct": false
-            },
-            {
-              "answer": "À Lutèce",
-              "correct": false
-            },
-            {
-              "answer": "À Beyrouth",
-              "correct": false
-            },
-            {
-              "answer": "À Athènes",
-              "correct": true
-            }
-          ]
-        },
-        {
-          "question": "À quel siècle vivait le roi soleil ?",
-          "answers": [
-            {
-              "answer": "XVe",
-              "correct": false
-            },
-            {
-              "answer": "XVIIe",
-              "correct": true
-            },
-            {
-              "answer": "XVIe",
-              "correct": false
-            },
-            {
-              "answer": "Ier",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Qui a créé la Ve République française ?",
-          "answers": [
-            {
-              "answer": "Charles de Gaules",
-              "correct": true
-            },
-            {
-              "answer": "Emmanuel Macron",
-              "correct": false
-            },
-            {
-              "answer": "Maréchal Pétain",
-              "correct": false
-            },
-            {
-              "answer": "Oussama ben Laden",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Quel siècle Karl Marx inventa le communisme ?",
-          "answers": [
-            {
-              "answer": "XIème",
-              "correct": false
-            },
-            {
-              "answer": "XIXème",
-              "correct": true
-            },
-            {
-              "answer": "XIVème",
-              "correct": false
-            },
-            {
-              "answer": "XVIème",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Lequel de ces traités a permis le partage de l'Afrique entre certaines puissances Européennes ?",
-          "answers": [
-            {
-              "answer": "Traité de Paris",
-              "correct": false
-            },
-            {
-              "answer": "Traité de Rome",
-              "correct": false
-            },
-            {
-              "answer": "Traité de Berlin",
-              "correct": true
-            },
-            {
-              "answer": "Traité de Vienne",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Quels sont les pays les plus grand et plus petit du monde ?",
-          "answers": [
-            {
-              "answer": "Russie, Canada",
-              "correct": false
-            },
-            {
-              "answer": "Canada, Monaco",
-              "correct": false
-            },
-            {
-              "answer": "Canada, Vatican",
-              "correct": false
-            },
-            {
-              "answer": "Russie, Vatican",
-              "correct": true
-            }
-          ]
-        },
-        {
-          "question": "Qui dirigea le front populaire de 1936 à 1938 ?",
-          "answers": [
-            {
-              "answer": "Léon Blum",
-              "correct": true
-            },
-            {
-              "answer": "Paul Raynaud",
-              "correct": false
-            },
-            {
-              "answer": "Édouard Taladier",
-              "correct": false
-            },
-            {
-              "answer": "Éric Zemmour",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "En quelle année a-t-elle été promue la loi sur l'avortement de Simone Veil ?",
-          "answers": [
-            {
-              "answer": "1975",
-              "correct": true
-            },
-            {
-              "answer": "1945",
-              "correct": false
-            },
-            {
-              "answer": "1989",
-              "correct": false
-            },
-            {
-              "answer": "1958",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Combien il y a eu de présidents en France durant la 5ème République ?",
-          "answers": [
-            {
-              "answer": "15",
-              "correct": false
-            },
-            {
-              "answer": "22",
-              "correct": false
-            },
-            {
-              "answer": "5",
-              "correct": false
-            },
-            {
-              "answer": "8",
-              "correct": true
-            }
-          ]
-        },
-        {
-          "question": "Qui a prononcé la célèbre phrase \"Vous n'êtes pas le président, et je ne suis pas le premier ministre, nous sommes 2 candidats [...]\" ?",
-          "answers": [
-            {
-              "answer": "François Mitterrand",
-              "correct": false
-            },
-            {
-              "answer": "Jaques Chirac",
-              "correct": true
-            },
-            {
-              "answer": "Emmanuel Macron",
-              "correct": false
-            },
-            {
-              "answer": "Jean Marie Lepen",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Contre qui Jean Marie Lepen a-t-il perdu l'élection présidentielle ?",
-          "answers": [
-            {
-              "answer": "François Mitterrand",
-              "correct": false
-            },
-            {
-              "answer": "Jaques Chirac",
-              "correct": true
-            },
-            {
-              "answer": "Emmanuel Macron",
-              "correct": false
-            },
-            {
-              "answer": "Jean Marie Lepen",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Comment s'appelait le général qui a fait la campagne d'Égypte ?",
-          "answers": [
-            {
-              "answer": "La Fayette",
-              "correct": false
-            },
-            {
-              "answer": "Mac Haon",
-              "correct": false
-            },
-            {
-              "answer": "Napoléon Bonaparte",
-              "correct": true
-            },
-            {
-              "answer": "Pétain",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Quel était le Louis qui a été guillotiné ?",
-          "answers": [
-            {
-              "answer": "Louis XIV",
-              "correct": false
-            },
-            {
-              "answer": "Louis XVI",
-              "correct": true
-            },
-            {
-              "answer": "Charles X",
-              "correct": false
-            },
-            {
-              "answer": "Louis XVIII",
-              "correct": false
-            }
-          ]
-        },
-        {
-          "question": "Qui déclencha la nuit de Cristal ?",
-          "answers": [
-            {
-              "answer": "Maréchal Pétain",
-              "correct": false
-            },
-            {
-              "answer": "Charles de Gaule",
-              "correct": false
-            },
-            {
-              "answer": "Staline",
-              "correct": false
-            },
-            {
-              "answer": "le parti Nationalsozialismus",
-              "correct": true
-            }
-          ]
-        },
-        {
-          "question": "Qui était Vauban ?",
-          "answers": [
-            {
-              "answer": "Un secrétaire du roi",
-              "correct": false
-            },
-            {
-              "answer": "Un architecte de forts de guerres",
-              "correct": true
-            },
-            {
-              "answer": "Un mousquetaire du roi",
-              "correct": false
-            },
-            {
-              "answer": "Ministre des finances du roi",
-              "correct": false
-            }
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "name": "Mathématiques",
-    "description": "Calculez le total des impôts qu'aura l'homme le plus riche de France après que Mélenchon ai rétabli les impôts sur la fortune",
-    "location": "Panneaux de randonnées",
-    "type": "Cognitif",
-    "steps": 1,
-    "other": {
-      "keywords": ["2.37", "2,37"]
-    }
-  },
-  {
-    "name": "Labyrinthe",
-    "description": "Méluch cherche le chemin pour aller à l'Elysée: aider à trouver le bon!",
-    "location": "Cartes à côté de l'arrêt de bus",
-    "type": "Cognitif",
-    "steps": 1
-  },
-  {
-    "name": "Jeu de 7 différences",
-    "description": "Mélenchon déteste son patriote Nicolas Sarcozy. Décelez les 7 erreurs du programme de Nicolas pour l'humilier et pour que la gauche gagne !",
-    "location": "Dans le cimetière",
-    "type": "Cognitif",
-    "steps": 1
-  },
-  {
-    "name": "Le bon poids",
-    "description": "Mélenchon adore les gâteaux. Mais il veut que ses pâtissiers soient excellents. Prouvez le en pesant exactement le poids demandé !",
-    "location": "En face de l'office du tourisme",
-    "type": "Cognitif",
-    "steps": 1
-  },
-  {
-    "name": "Le code de la boîte",
-    "description": "Mélenchon a oublié son code pour ouvrir son coffre avec sa méthode pour être plus charismatique. Il a juste un indice qui permettrait de retrouver le code.\n\nMélenchon a oublié son code pour ouvrir son coffre avec sa méthode pour être plus charismatique. Allez chercher le code.",
-    "location": "Ruelle entre la poste et la maison",
-    "type": "Cognitif",
-    "steps": 2
-  },
-  {
-    "name": "Dans le bon ordre",
-    "description": "Une personne a oublié dans quel ordre devait apparaître les candidats d'un débat sur la pass vaccinal, allez le vérifier et redonnez le bon ordre.",
-    "location": "Entre la poste et le refuge Chabournéou",
-    "type": "Cognitif",
-    "steps": 2
-  },
-  {
-    "name": "Coloriage",
-    "description": "Vous testez un nouveau type de tract: colorier le pour le voir en couleur.",
-    "location": "En dessous des panneaux de randonnées",
-    "type": "Dextérité",
-    "steps": 1
-  },
-  {
-    "name": "Construire une pyramide de gobelets",
-    "description": "Une fête en l'honneur de notre cher Méluch va débuter: faites un pyramide avec les gobelets pour la décoration.",
-    "location": "Sur le terrain de pétanque, à côté des arrets de bus",
-    "type": "Dextérité",
-    "steps": 1
-  },
-  {
-    "name": "Puzzle",
-    "description": "Il est bon de commencer à former les esprits dès le plus jeune âge... Testez ce nouveau puzzle.",
-    "location": "Sur le terrain de pétanque, à côté des arrets de bus",
-    "type": "Dextérité",
-    "steps": 1
-  },
-  {
-    "name": "Faire la vaisselle",
-    "description": "Mélenchon ne sait vraiment pas manger ! Mais pour le soulager, vous pouvez faire sa vaisselle !",
-    "location": "Dans la maison, dans l'appartement",
-    "type": "Dextérité",
-    "steps": 1
-  },
-  {
-    "name": "Faite une tour en kapla",
-    "description": "Vous êtes architecte et le parti vous a mandater pour créer une tour en l'honneur de Mélanchon: faites une simulation de 5 étages de Kapla.",
-    "location": "À côté du cimetière",
-    "type": "Dextérité",
-    "steps": 1
-  },
-  {
-    "name": "Faire deux photos de deux animaux",
-    "description": "Méluch se demande s'il ne devrait pas faire des dons pour les animaux... Montrez leur la tête de deux animaux différents pour l'aider à faire son choix.",
-    "location": "À l'extrémité de la carte",
-    "type": "Dextérité",
-    "steps": 1
-  },
-  {
-    "name": "Démêler des cordes",
-    "description": "Les chargeurs des différents dirigeants sont emmêlés, en tant que stagiaire du parti démêlez tout ça.",
-    "location": "Entre les panneaux et la maison",
-    "type": "Dextérité",
-    "steps": 1
-  },
-  {
-    "name": "Lancer des ballons de rugby dans une corbeille",
-    "description": "Entraînez vous au rugby pour être meilleur face à Zemmour !",
-    "location": "Sur le parking du centre Les Glaciers",
-    "type": "Dextérité",
-    "steps": 1
-  },
-  {
-    "name": "Réciter un texte",
-    "description": "Une ode à Mélanchon va être déclamé au prochain meeting: entraînez-vous en appelant  le coordinateur.",
-    "location": "Sur la route entre la pizzeria et l'épicerie",
-    "type": "Dextérité",
-    "steps": 1
-  },
-  {
-    "name": "Faire un double avec deux dés",
-    "description": "Double 6: Élimine une de vos tâches\nLa campagne de Mélenchon a été si compliqué qu'il se remet au hasard. Aidez le à se sentir bien et à lui montrer qu'il sera premier ministre avec vous",
-    "location": "Sur le chemin entre la poste et la maison",
-    "type": "Dextérité",
-    "steps": 1
-  },
     {
-    "name": "Faire un bottle flip",
-    "description": "Mélenchon souhaite faire le buzz sur internet mais ne sais pas faire de bottle flip. Aidez le à faire booster sa popularité !",
-    "location": "Entre l'épicerie et le Centre Les Glaciers",
-    "type": "Dextérité",
-    "steps": 1
-  },
-  {
-    "name": "Gonfler un ballon de baudruche",
-    "description": "Une fête en l'honneur de notre cher Méluch va débuter: gonfler un ballon frappé du M.\n",
-    "location": "Croisement de routes pour la maison et la Séveraisse",
-    "type": "Physique",
-    "steps": 1
-  },
-  {
-    "name": "Remplir un récipient avec ses mains",
-    "description": "Après sa dernière campagne, Méluch a des problèmes financiers... De ce fait, remplissez ce verre à la main.",
-    "location": "À la fameuse fontaine derrière la maison",
-    "type": "Physique",
-    "steps": 1
-  },
-  {
-    "name": "Boire des petits verres en cul-sec",
-    "description": "Pour un débat, il faut pouvoir parler à tout moment. Cependant que faire quand vous devez boire? Pour vous entraîner à être le plus vite possible disponible buvez ces verres cul sec.",
-    "location": "Devant la pizzeria",
-    "type": "Physique",
-    "steps": 1
-  },
-  {
-    "name": "Faire des pompes",
-    "description": "Distribuer des tractes, coller des affiches... Toutes ces tâches demandent une condition physique à toute épreuve... Pour vous entraîner faites le nombre de pompes indiquée par les deux dés.",
-    "location": "Sur le parking pour aller vers le point de rendez-vous",
-    "type": "Physique",
-    "steps": 1
-  },
-  {
-    "name": "Pétanque",
-    "description": "Mélenchon souhaite trouver un nouveau partenaire de jeu pour sa pétanque. Montrez que vous être le meilleur !",
-    "location": "Dans le jardin de la maison",
-    "type": "Physique",
-    "steps": 1
-  },
-  {
-    "name": "Ranger des balles de tennis",
-    "description": "Mélenchon est très sportif. Il adore le tennis _ce qui fait malheureusement un point commun avec Louis_. Aidez le à ranger ses balles car son prochain meeting approche et il n'a plus le temps pour le faire",
-    "location": "Sur le terrain de tennis dans le camping",
-    "type": "Physique",
-    "steps": 1
-  },
-  {
-    "name": "Déménager des affaires d'un point à un autre",
-    "description": "Amener les tractes dans les boîtes aux lettres.",
-    "location": "Derrière la pizzeria",
-    "type": "Physique",
-    "steps": 2
-  }
+        "name": "Histoire de la France",
+        "description": "Vous allez intégrer le groupe de l'élite de Mélenchon, répondez à ce quizz sur l'histoire de la politique pour réussir cette tâche.",
+        "location": "À côté de la poste",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Mathématiques",
+        "description": "Calculez le total des impôts qu'aura l'homme le plus riche de France après que Mélenchon ai rétabli les impôts sur la fortune",
+        "location": "Panneaux de randonnées",
+        "type": "validate_basic",
+        "steps": 1,
+        "other": {},
+        "keywords": [
+            "2.37",
+            "2,37"
+        ]
+    },
+    {
+        "name": "Labyrinthe",
+        "description": "Méluch cherche le chemin pour aller à l'Elysée: aider à trouver le bon!",
+        "location": "Cartes à côté de l'arrêt de bus",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Jeu de 7 différences",
+        "description": "Mélenchon déteste son patriote Nicolas Sarcozy. Décelez les 7 erreurs du programme de Nicolas pour l'humilier et pour que la gauche gagne !",
+        "location": "Dans le cimetière",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Le bon poids",
+        "description": "Mélenchon adore les gâteaux. Mais il veut que ses pâtissiers soient excellents. Prouvez le en pesant exactement le poids demandé !",
+        "location": "En face de l'office du tourisme",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Le code de la boîte",
+        "description": "Mélenchon a oublié son code pour ouvrir son coffre avec sa méthode pour être plus charismatique. Il a juste un indice qui permettrait de retrouver le code.\n\nMélenchon a oublié son code pour ouvrir son coffre avec sa méthode pour être plus charismatique. Allez chercher le code.",
+        "location": "Ruelle entre la poste et la maison",
+        "type": "basic",
+        "steps": 2
+    },
+    {
+        "name": "Dans le bon ordre",
+        "description": "Une personne a oublié dans quel ordre devait apparaître les candidats d'un débat sur la pass vaccinal, allez le vérifier et redonnez le bon ordre.",
+        "location": "Entre la poste et le refuge Chabournéou",
+        "type": "basic",
+        "steps": 2
+    },
+    {
+        "name": "Coloriage",
+        "description": "Vous testez un nouveau type de tract: colorier le pour le voir en couleur.",
+        "location": "En dessous des panneaux de randonnées",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Construire une pyramide de gobelets",
+        "description": "Une fête en l'honneur de notre cher Méluch va débuter: faites un pyramide avec les gobelets pour la décoration.",
+        "location": "Sur le terrain de pétanque, à côté des arrets de bus",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Puzzle",
+        "description": "Il est bon de commencer à former les esprits dès le plus jeune âge... Testez ce nouveau puzzle.",
+        "location": "Sur le terrain de pétanque, à côté des arrets de bus",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Faire la vaisselle",
+        "description": "Mélenchon ne sait vraiment pas manger ! Mais pour le soulager, vous pouvez faire sa vaisselle !",
+        "location": "Dans la maison, dans l'appartement",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Faite une tour en kapla",
+        "description": "Vous êtes architecte et le parti vous a mandater pour créer une tour en l'honneur de Mélanchon: faites une simulation de 5 étages de Kapla.",
+        "location": "À côté du cimetière",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Faire deux photos de deux animaux",
+        "description": "Méluch se demande s'il ne devrait pas faire des dons pour les animaux... Montrez leur la tête de deux animaux différents pour l'aider à faire son choix.",
+        "location": "À l'extrémité de la carte",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Démêler des cordes",
+        "description": "Les chargeurs des différents dirigeants sont emmêlés, en tant que stagiaire du parti démêlez tout ça.",
+        "location": "Entre les panneaux et la maison",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Lancer des ballons de rugby dans une corbeille",
+        "description": "Entraînez vous au rugby pour être meilleur face à Zemmour !",
+        "location": "Sur le parking du centre Les Glaciers",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Réciter un texte",
+        "description": "Une ode à Mélanchon va être déclamé au prochain meeting: entraînez-vous en appelant  le coordinateur.",
+        "location": "Sur la route entre la pizzeria et l'épicerie",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Faire un double avec deux dés",
+        "description": "Double 6: Élimine une de vos tâches\nLa campagne de Mélenchon a été si compliqué qu'il se remet au hasard. Aidez le à se sentir bien et à lui montrer qu'il sera premier ministre avec vous",
+        "location": "Sur le chemin entre la poste et la maison",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Faire un bottle flip",
+        "description": "Mélenchon souhaite faire le buzz sur internet mais ne sais pas faire de bottle flip. Aidez le à faire booster sa popularité !",
+        "location": "Entre l'épicerie et le Centre Les Glaciers",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Gonfler un ballon de baudruche",
+        "description": "Une fête en l'honneur de notre cher Méluch va débuter: gonfler un ballon frappé du M.\n",
+        "location": "Croisement de routes pour la maison et la Séveraisse",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Remplir un récipient avec ses mains",
+        "description": "Après sa dernière campagne, Méluch a des problèmes financiers... De ce fait, remplissez ce verre à la main.",
+        "location": "À la fameuse fontaine derrière la maison",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Boire des petits verres en cul-sec",
+        "description": "Pour un débat, il faut pouvoir parler à tout moment. Cependant que faire quand vous devez boire? Pour vous entraîner à être le plus vite possible disponible buvez ces verres cul sec.",
+        "location": "Devant la pizzeria",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Faire des pompes",
+        "description": "Distribuer des tractes, coller des affiches... Toutes ces tâches demandent une condition physique à toute épreuve... Pour vous entraîner faites le nombre de pompes indiquée par les deux dés.",
+        "location": "Sur le parking pour aller vers le point de rendez-vous",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Pétanque",
+        "description": "Mélenchon souhaite trouver un nouveau partenaire de jeu pour sa pétanque. Montrez que vous être le meilleur !",
+        "location": "Dans le jardin de la maison",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Ranger des balles de tennis",
+        "description": "Mélenchon est très sportif. Il adore le tennis _ce qui fait malheureusement un point commun avec Louis_. Aidez le à ranger ses balles car son prochain meeting approche et il n'a plus le temps pour le faire",
+        "location": "Sur le terrain de tennis dans le camping",
+        "type": "basic",
+        "steps": 1
+    },
+    {
+        "name": "Déménager des affaires d'un point à un autre",
+        "description": "Amener les tractes dans les boîtes aux lettres.",
+        "location": "Derrière la pizzeria",
+        "type": "basic",
+        "steps": 2
+    }
 ]
