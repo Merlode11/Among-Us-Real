@@ -5,79 +5,98 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>page joueur</title>
-    <body style="background-color:#B5F38D;">
-    </body>
+    <link type="text/css" rel="stylesheet" href="../static/css/style.css">
 </head>
 
-<body>
+<body style="background-color:#b5f38d;">
 
-    <h1 class="center"> </h1>
+<h1 class="center"></h1>
 
-    {% for task in task_list %}
-        <div style="padding: 10px; background-color: #8CFF41; margin: 20px">
-            <p style="font-size: 24px">{{ str(task1) }}</p>
-            <input
-              class="favorite styled"
-              type="button"
-              value="effectuer tache"
-              id="faire tache1"
-              >
+{% for task in task_list %}
+<div style="padding: 10px; background-color: #8cff41; margin: 20px">
+    <p style="font-size: 24px">{{ (task) }}</p>
+    {% if task.type == "basic" %}
+        <button data-taskname="{{task.name}}" class="direct-valid">Effectuer la tâche</button>
+    {% elif task.type == "validate_basic" %}
+        <button class="ask" data-modal="Tache_validate" tabindex=0>Valider la tâche</button>
+    {% elif task.type == "activate_basic" %}
+        {% if task.active %}
+            <button data-taskname="{{task.name}}" class="direct-valid">Effectuer la tâche</button>
+        {% else %}
+            <button class="ask" data-modal="Tache_activate" tabindex=0>Activer la tâche</button>
+        {% endif %}
+    {% elif task.type == "activ_valid" %}
+        {% if task.active %}
+            <button class="ask" data-modal="Tache_validate" tabindex=0>Valider la tâche</button>
+        {% else %}
+            <button class="ask" data-modal="Tache_activate" tabindex=0>Activer la tâche</button>
+        {% endif %}
+    {% endif %}
+</div>
+{% endfor %}
+
+<h1> Code joueur: {{(code_joueur)}}</h1>
+
+
+<button class="ask" data-modal="Kill" tabindex=0>Tuer joueur</button>
+
+<button class="ask" data-modal="Report" tabindex=0>Tuer joueur</button>
+
+
+<script src="../static/js/main.js"></script>
+
+
+<div style="padding: 10px; background-color: #e34242; margin: 20px">
+    <p style="font-size: 100%;">{{ (est_mort) }}</p>
+</div>
+
+
+<!-- Modal -->
+<div id="Kill" class="modal">
+    <div class="modal-content">
+        <div class="contact-form">
+            <a class="close" tabindex="0">&times;</a>
+            <h2>Qui voulez-vous tuer ?</h2>
+            <input type="text" placeholder="La personne à tuer">
         </div>
-    {% endfor %}
-
-<h1> Code joueur: {{str(code_joueur)}}</h1>
-
-
-
-    <input
-    class="favorite styled"
-    type="button"
-    value="reporter un corp"
-    id="reporter corp"
-    >
-
-    <input
-    class="favorite styled"
-    type="button"
-    value="Tuer joueur"
-    id="KILL"
-    >
-
-
-<script>
-    const tachevalide_Button = document.getElementById("faire tache1")
-    tachevalide_Button.addEventListener("click", function(){
-        alert("tache effectué")
-    })
-</script>
-
-<script>
-    const tachevalideButton = document.getElementById("faire tache2")
-    tachevalideButton.addEventListener("click", function(){
-        alert("tache effectué")
-    })
-</script>
-
-
-<script>
-    const Kill_Button = document.getElementById("KILL")
-    Kill_Button.addEventListener("click", function(){
-        alert("joueur executer")
-    })
-</script>
-
-
-<script>
-    const reportbutton = document.getElementById("reporter corp")
-    reportbutton.addEventListener("click", function(){
-        alert("corp repporté")
-    })
-</script>
-
-
-    <div style="padding: 10px; background-color: #e34242; margin: 20px">
-        <p style="font-size: 100%;">{{ str(est_mort) }}</p>
     </div>
+</div>
+
+<div id="Report" class="modal">
+    <div class="modal-content">
+        <div class="contact-form">
+            <a class="close" tabindex="0">&times;</a>
+            <h2>Qui voulez-vous tuer ?</h2>
+            <input type="text" placeholder="Reporter le corp du joueur">
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Taches -->
+
+<div id="Tache_validate" class="modal">
+    <div class="modal-content">
+        <div class="contact-form">
+            <a class="close" tabindex="0">&times;</a>
+            <h2>Valider la tache</h2>
+            <input type="text" placeholder="Code de validation">
+            <input type="submit" value="Valider">
+        </div>
+    </div>
+</div>
+
+
+<div id="Tache_activate" class="modal">
+    <div class="modal-content">
+        <div class="contact-form">
+            <a class="close" tabindex="0">&times;</a>
+            <h2>valider la tache</h2>
+            <input type="text" placeholder="Effectuer la tache">
+        </div>
+    </div>
+</div>
+
 
 </body>
 </html>
