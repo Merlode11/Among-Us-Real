@@ -70,6 +70,7 @@ class SMSPlayer(Player):
         self.name: str = name
         self.lastname: str = lastname
         self.phone: str = phone
+        self.popup: str or None = None
 
     def get_str(self, game) -> str:
         if game.game_master:
