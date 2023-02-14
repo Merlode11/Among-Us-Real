@@ -1,17 +1,17 @@
 from flask import Flask, render_template
 from game_class import Game
-from classes import WebPlayer
+from classes import WebPlaye
+import json
 
 
 class WebGame(Game):
     def __init__(self, ip: str, port: int, game_master: bool = None):
         self.ip = ip
         self.port = port
-        self.server = None
+        self.server = app = Flask(__name__)
         self.receive = False
         self.game_master = game_master
         self.config = None
-        app = Flask(__name__)
 
         @app.route("/")
         def index():
@@ -21,16 +21,16 @@ class WebGame(Game):
         def joueur():
             return render_template("joueur.html", code_joueur="123456789", task_list=["tache1", "tache2", "tache3"])
 
-        @app.get("/infos/<code_joueur>")
+        @app.get("/api/infos/<code_joueur>")
         def infos(code_joueur):
             """
             Returns a json with the information of the player
             :param code_joueur:
             :return:
             """
-            player = next((joueur for joueur in self.players if joueur.id == code_joueur), None)
+            player = self.get_player(code_joueur)
             if player is None:
-                return {"error": "Joueur introuvable"}
+                return {"error": "Joueur introuvable", "error_code": "executor_not_found"}
             data = {
                 "ip": player.ip,
                 "nickname": player.nickname,
@@ -44,6 +44,52 @@ class WebGame(Game):
             }
             player.popup = None
             return data
+        
+        @app.post("/api/kill/<killer_id/<killed_id>")
+        def kill(killer_id, killed_id):
+            """
+            Kill the player given in thz request
+            """
+            killer = self.get_player(killer_id)
+            if killer is None:
+                return {"error": "Joueur assassin introuvable", "error_code": "executor_not_found"}
+            killed = self.get_player(killed_id)
+            if killed is None:
+                return {"error": "Joueur assassiné introuvable", "error_code": "target_not_found"}
+            if killer.role != "impostor": 
+                return {"error": "Joueur n'étant pas imposteur", "error_code": "not_impostor"}
+            if killed.dead:
+                return {"error": "Joueur assassiné déjà mort", "error_code": "target_dead"}
+            self.kill_player(killed)
+            return {"success": True}
+        
+        @app.post("/api/done_task/<player_id>/<task_id>")
+        def done_task(player_id, task_id):
+            # TODO: Chercher pour avoir les informations de la requête (si jamais un mot a été fourni)
+            player = self.get_player(player_id)
+            task = player.tasks[task_id]
+            if task.done:
+                return {"error": "La tâche a déjà été faite", "error_code": "task_already_done"}
+            elif "activ" in task.type and not task.active: 
+                return {"error": "La tâche n'a pas été activée", "error_code": "task_inactive"}
+            elif "valid" in task.type:
+                if req.body["keyword"] not in task.keywords: 
+                    return {"error": "Ce mot n'est pas valide", "error_code": "unknown_keyword"}
+            self.task_done(player, task)
+            return {"success": True, "task": task}
+        
+        @app.post("/api/activ_task/<player_id>/<task_id>")
+        def activ_task(player_id, task_id): 
+            player = self.get_player(player_id)
+            task = player.tasks[task_id]
+            if "activ" not in task.type:
+                return {"error": "Le type de tâche n'est pas correct", "error_code": "invalid_task_type"}
+            elif task.active:
+                return {"error": "La tâche est déjà active", "error_code": "task_active"}
+            elif req.body["keyword"] not in task.activ_keywords: 
+                return {"error": "Ce mot n'est pas valide", "error_code": "unknown_keyword"}
+            task.active = True
+            
 
         super().__init__(game_master)
 
@@ -54,8 +100,8 @@ class WebGame(Game):
 
     def send_info_all(self, message: str):
         for player in self.players:
-            new_message = message.replace("{name}", player.name)
             # replace the variable in the message
+            new_message = message.replace("{name}", player.name)
             new_message = new_message.replace("{lastname}", player.lastname)
             new_message = new_message.replace("{role}", self.config["names"][player.role])
             new_message = new_message.replace("{id}", player.id)
@@ -92,96 +138,7 @@ class WebGame(Game):
         message += "Pour voir toutes les commandes, vous pouvez taper \"help\"\n"
         message += "Nous vous souhaitons une bonne partie !"
 
-        self.send_messages.append(message)
         self.send_info(player, message)
-
-    def check_command(self, player, message: str) -> bool:
-        """
-        Vérifie si jamais le message reçu est une commande ou un message validant une tâche. Si c’est le cas, on l'exécute
-        :param player: SMSPlayer: Le joueur qui a envoyé le message
-        :param message: str: le contenu du message reçu
-        :return: bool: Si jamais le message était bien une commande
-        """
-        message = message.lower()
-        for cmd in commands:
-            if message.startswith(tuple([cmd.name] + cmd.aliases)):
-                return cmd.run(player, message, self)
-        for task in player.tasks:
-            if task.type == "validate_basic":
-                for word in task.keywords:
-                    if word in message:
-                        self.task_done(player, task)
-                        return True
-            elif task.type == "activate_basic":
-                for word in task.activ_keywords:
-                    if word in message:
-                        send_sms(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
-                        task.active = True
-                        return True
-            elif task.type == "activ_valid":
-                for word in task.keywords:
-                    if word in message:
-                        if task.active:
-                            self.task_done(player, task)
-                            return True
-                        else:
-                            send_sms(player.phone, "La tâche n'est pas encore activée")
-                            return True
-                for word in task.activ_keywords:
-                    if word in message:
-                        send_sms(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
-                        task.active = True
-                        return True
-
-        return False
-
-    def start_recieve_sms(self):
-        """
-        Active la vérification périodique de la réception de SMS
-        """
-
-        def recieve():
-            try:
-                new = get_new_messages(self)
-            except Exception as e:
-                # print(e)
-                new = []
-            if len(new) > 0:
-                for msg in new:
-                    if msg.content in self.send_messages:
-                        del self.send_messages[self.send_messages.index(msg.content)]
-                        continue
-                    joueur = next((joueur for joueur in self.players if joueur.phone == msg.phone), None)
-                    if self.check_command(joueur, msg.content):
-                        continue
-                    string = "Nouveau message de " + joueur.name + " " + joueur.lastname + " (" + joueur.phone + ") :\n"
-                    string += msg.content
-                    messagebox.showinfo(f"Message de {msg.phone}", string)
-
-            for player in self.players:
-                if player.last_message and player.last_message + self.config["min_before_inactiv_warn"] * 60 < int(
-                        datetime.datetime.now().timestamp()):
-                    if player.last_warning and player.last_warning + self.config["min_before_inactiv_kick"] * 60 < int(
-                            datetime.datetime.now().timestamp()):
-                        if player.warnings >= self.config["max_warns"]:
-                            self.send_info_all(
-                                f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur")
-                            self.pause = True
-                            if self.game_master:
-                                messagebox.showerror("Un joueur ne répond pas",
-                                                     f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur. Un message a été envoyé à tout le monde.")
-                        else:
-                            send_sms(player.phone,
-                                     f"Il y a un problème ? Nous n'avons pas reçu de message depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Si tout va bien, renvoie un message pour que nous soyons sûr que tout va bien.")
-                            if self.game_master:
-                                messagebox.showwarning("Sans nouvelles d'un joueur",
-                                                       f"{player.name} {player.lastname} n'a plus envoyé de messages depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Un message d'avertissement lui a été envoyé. Une procédure d'urgence aura lieu automatiquement si on n'a pas de nouvelles dans {self.config['max_warns'] - player.warnings * self.config['min_before_inactiv_warn']} minutes")
-                        player.warnings += 1
-                        player.last_warning = int(datetime.datetime.now().timestamp())
-                if self.receive:
-                    Timer(5, recieve).start()
-
-        Timer(2, recieve).start()
 
 
 if __name__ == '__main__':

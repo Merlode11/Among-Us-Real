@@ -249,12 +249,8 @@ class DoneCommand(Command):
             elif task.type == "activate_basic" and not task.active:
                 send_sms(player.phone, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(task_number) + " car elle n'est pas encore active")
             else:
-                task.done = True
-                game.done_tasks.append(task)
-                send_sms(player.phone, f"Votre tâche {task.name} a été confirmée comme faite !")
-                if game.game_master:
-                    messagebox.showinfo("Succès", f"{player.name} {player.lastname} a confirmé avoir réalisé la tâche "
-                                                  f"{task.name} ! Son message est :\n {message}")
+                game.done_task(player, task)
+                game.send_info(player, f"Votre tâche {task.name} a été confirmée comme faite !")
         except (Exception,):
             send_sms(player.phone, "Veuillez entrer un numéro de tâche valide !")
 
