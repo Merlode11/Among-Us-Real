@@ -46,8 +46,6 @@ class Game:
         self.impostors: list = []
         self.dead_players: list = []
         self.done_tasks: list = []
-        self.receive: bool = True
-        self.send_messages: list = []
         self.meeting: str or None = None
         self.meeting_votes: dict = {}
 
@@ -608,7 +606,6 @@ class Game:
         self.done_tasks.append(task)
         self.__tasks_progress_bar.config(value=len(self.done_tasks) / self.given_tasks * 100)
         self.__label_tasks.config(text=f"{len(self.done_tasks)}/{self.given_tasks} tâches données")
-        self.send_info(player, f"Votre tâche {task.name} a été confirmée comme faite !")
 
         if len(self.done_tasks) == self.given_tasks:
             self.__tasks_progress_bar.config(value=100)
@@ -624,6 +621,8 @@ class Game:
                 Game(self.game_master)
             else:
                 self.window.destroy()
+        elif game.game_master:
+            messagebox.showinfo("Succès", f"{player.name} {player.lastname} a confirmé avoir réalisé la tâche {task.name} ! Son message est :\n {message}")
 
 
 if __name__ == '__main__':
