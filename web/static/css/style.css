@@ -39,3 +39,17 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+body{
+  background-color:#B5F38D;
+}
+
+.task-card{
+  padding: 10px;
+  background-color: #8CFF41;
+  margin: 20px
+}
+
+.dead {
+  background-color:#f56767 !important;
+}

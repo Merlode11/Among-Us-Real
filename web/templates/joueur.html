@@ -5,12 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>page joueur</title>
-    <link type="text/css" rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/style.css">
 </head>
 
-<body style="background-color:#b5f38d;">
+<body class="dead">
+
+
 
 <h1 class="center"></h1>
+
+<h1> Code joueur: {{(code_joueur)}}</h1>
+
+<button class="ask" data-modal="Kill" tabindex=0>Tuer joueur</button>
+
+<button class="ask" data-modal="Report" tabindex=0>Reporter un corp</button>
+
 
 {% for task in task_list %}
 <div style="padding: 10px; background-color: #8cff41; margin: 20px">
@@ -35,20 +44,10 @@
 </div>
 {% endfor %}
 
-<h1> Code joueur: {{(code_joueur)}}</h1>
 
-
-<button class="ask" data-modal="Kill" tabindex=0>Tuer joueur</button>
-
-<button class="ask" data-modal="Report" tabindex=0>Tuer joueur</button>
 
 
 <script src="../static/js/main.js"></script>
-
-
-<div style="padding: 10px; background-color: #e34242; margin: 20px">
-    <p style="font-size: 100%;">{{ (est_mort) }}</p>
-</div>
 
 
 <!-- Modal -->
@@ -66,7 +65,7 @@
     <div class="modal-content">
         <div class="contact-form">
             <a class="close" tabindex="0">&times;</a>
-            <h2>Qui voulez-vous tuer ?</h2>
+            <h2>Quel personne a été tuée ?</h2>
             <input type="text" placeholder="Reporter le corp du joueur">
         </div>
     </div>
@@ -91,8 +90,8 @@
     <div class="modal-content">
         <div class="contact-form">
             <a class="close" tabindex="0">&times;</a>
-            <h2>valider la tache</h2>
-            <input type="text" placeholder="Effectuer la tache">
+            <h2>Activer la tache</h2>
+            <input type="text" placeholder="Mot clé d'activation ">
         </div>
     </div>
 </div>
