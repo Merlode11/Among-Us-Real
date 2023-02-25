@@ -16,29 +16,29 @@
 
 <h1> Code joueur: {{(code_joueur)}}</h1>
 
-<button class="ask" data-modal="Kill" tabindex=0>Tuer joueur</button>
+<button2 class="ask" data-modal="Kill" tabindex=0>Tuer joueur</button2>
 
-<button class="ask" data-modal="Report" tabindex=0>Reporter un corp</button>
+<button2 class="ask" data-modal="Report" tabindex=0>Reporter un corp</button2>
 
 
 {% for task in task_list %}
-<div style="padding: 10px; background-color: #8cff41; margin: 20px">
+<div class="task-card">
     <p style="font-size: 24px">{{ (task) }}</p>
     {% if task.type == "basic" %}
-        <button data-taskname="{{task.name}}" class="direct-valid">Effectuer la tâche</button>
+        <button1 data-taskname="{{task.name}}" class="direct-valid">Effectuer la tâche</button1>
     {% elif task.type == "validate_basic" %}
-        <button class="ask" data-modal="Tache_validate" tabindex=0>Valider la tâche</button>
+        <button1 class="ask" data-modal="Tache_validate" tabindex=0>Valider la tâche</button1>
     {% elif task.type == "activate_basic" %}
         {% if task.active %}
-            <button data-taskname="{{task.name}}" class="direct-valid">Effectuer la tâche</button>
+            <button1 data-taskname="{{task.name}}" class="direct-valid">Effectuer la tâche</button1>
         {% else %}
-            <button class="ask" data-modal="Tache_activate" tabindex=0>Activer la tâche</button>
+            <button1 class="ask" data-modal="Tache_activate" tabindex=0>Activer la tâche</button1>
         {% endif %}
     {% elif task.type == "activ_valid" %}
         {% if task.active %}
-            <button class="ask" data-modal="Tache_validate" tabindex=0>Valider la tâche</button>
+            <button1 class="ask" data-modal="Tache_validate" tabindex=0>Valider la tâche</button1>
         {% else %}
-            <button class="ask" data-modal="Tache_activate" tabindex=0>Activer la tâche</button>
+            <button1 class="ask" data-modal="Tache_activate" tabindex=0>Activer la tâche</button1>
         {% endif %}
     {% endif %}
 </div>
