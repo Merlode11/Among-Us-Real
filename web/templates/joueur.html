@@ -18,7 +18,7 @@
 
 <button2 class="ask" data-modal="Kill" tabindex=0>Tuer joueur</button2>
 
-<button2 class="ask" data-modal="Report" tabindex=0>Reporter un corp</button2>
+<button2 class="ask" data-modal="Report" tabindex=0>Reporter un corps</button2>
 
 
 {% for task in task_list %}
@@ -56,7 +56,7 @@
         <div class="contact-form">
             <a class="close" tabindex="0">&times;</a>
             <h2>Qui voulez-vous tuer ?</h2>
-            <input type="text" placeholder="La personne à tuer">
+            <input placeholder="La personne à tuer" type="text" name="text" class="input">
         </div>
     </div>
 </div>
@@ -65,8 +65,8 @@
     <div class="modal-content">
         <div class="contact-form">
             <a class="close" tabindex="0">&times;</a>
-            <h2>Quel personne a été tuée ?</h2>
-            <input type="text" placeholder="Reporter le corp du joueur">
+            <h2>Quelle personne a été tuée ?</h2>
+            <input placeholder="Reporter le corps du joueur" type="text" name="text" class="input">
         </div>
     </div>
 </div>
@@ -78,8 +78,8 @@
     <div class="modal-content">
         <div class="contact-form">
             <a class="close" tabindex="0">&times;</a>
-            <h2>Valider la tache</h2>
-            <input type="text" placeholder="Code de validation">
+            <h2>Valider la tâche</h2>
+            <input placeholder="Code de validation" type="text" name="text" class="input">
             <input type="submit" value="Valider">
         </div>
     </div>
@@ -90,8 +90,8 @@
     <div class="modal-content">
         <div class="contact-form">
             <a class="close" tabindex="0">&times;</a>
-            <h2>Activer la tache</h2>
-            <input type="text" placeholder="Mot clé d'activation ">
+            <h2>Activer la tâche</h2>
+            <input placeholder="Mot clé d'activation " type="text" name="text" class="input">
         </div>
     </div>
 </div>
