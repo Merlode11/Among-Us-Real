@@ -422,6 +422,9 @@ class TagsEntry(Frame):
         tag = widget.get(index)
         self._remove_tag(tag)
 
+    def get_tags(self):
+        return self.tags
+
 
 class Timer:
     def __init__(self, remining: int, title: str, game):
