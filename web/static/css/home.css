@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css?family=Fredoka%20One&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Manrope&display=swap');
+
+h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 50px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+    font-family: "Manrope", sans-serif;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+
+.grid-child {
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.grid-child svg {
+    margin: -90px -400px -400px;
+    width: 820px;
+    height: 820px;
+}
+
+.group {
+    position: relative;
+    left: 43%;
+    font-family: "Manrope", sans-serif;
+}
+
+.input {
+    font-size: 16px;
+    padding: 10px 10px 10px 5px;
+    display: block;
+    width: 200px;
+    border: none;
+    border-bottom: 1px solid #515151;
+    background: transparent;
+}
+
+.input:focus {
+    outline: none;
+}
+
+label {
+    color: #999;
+    font-size: 18px;
+    font-weight: normal;
+    position: absolute;
+    pointer-events: none;
+    left: 5px;
+    top: 10px;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+}
+
+.input:focus ~ label, .input:valid ~ label {
+    top: -10px;
+    font-size: 14px;
+    color: #5264AE;
+}
+
+.bar {
+    position: relative;
+    display: block;
+    width: 215px;
+}
+
+.bar:before, .bar:after {
+    content: '';
+    height: 2px;
+    width: 0;
+    bottom: 1px;
+    position: absolute;
+    background: #5264AE;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+}
+
+.bar:before {
+    left: 50%;
+}
+
+.bar:after {
+    right: 50%;
+}
+
+.input:focus ~ .bar:before, .input:focus ~ .bar:after {
+    width: 50%;
+}
+
+.highlight {
+    position: absolute;
+    height: 60%;
+    width: 100px;
+    top: 25%;
+    left: 0;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.input:focus ~ .highlight {
+    animation: inputHighlighter 0.3s ease;
+}
+
+@keyframes inputHighlighter {
+    from {
+        background: #5264AE;
+    }
+
+    to {
+        width: 0;
+        background: transparent;
+    }
+}
+
+.play-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 10px;
+    color: white;
+    text-shadow: 2px 2px rgb(116, 116, 116);
+    text-transform: uppercase;
+    border: solid 2px black;
+    letter-spacing: 1px;
+    font-weight: 600;
+    font-size: 17px;
+    background-color: hsl(49deg 98% 60%);
+    border-radius: 50px;
+    position: relative;
+    overflow: hidden;
+    transition: all .5s ease;
+    margin: 85px auto;
+}
+
+.play-button:active {
+    transform: scale(.9);
+    transition: all 100ms ease;
+}
+
+.play-button svg {
+    transition: all .5s ease;
+    z-index: 2;
+}
+
+.play {
+    transition: all .5s ease;
+    transition-delay: 300ms;
+}
+
+.play-button:hover svg {
+    transform: scale(3) translate(50%);
+}
+
+.play-button:hover {
+    cursor: pointer;
+}
+
+.now {
+    position: absolute;
+    left: 0;
+    transform: translateX(-100%);
+    transition: all .5s ease;
+    z-index: 2;
+}
+
+.play-button:hover .now {
+    transform: translateX(10px);
+    transition-delay: 300ms;
+}
+
+.play-button:hover .play {
+    transform: translateX(200%);
+    transition-delay: 300ms;
+}

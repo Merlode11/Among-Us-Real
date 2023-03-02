@@ -5,3 +5,11 @@ misc/*
 /__pycache__/
 /venv/
 /taskList/*
+
+# Ignore the .DS_Store mac file
+.DS_Store
+**/.DS_Store
+._.DS_Store
+**/._.DS_Store
+.DS_Store?
+.DS_Store??
