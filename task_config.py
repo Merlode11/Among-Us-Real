@@ -69,7 +69,7 @@ def task_config():
         """
         edit_window = Tk()
         edit_window.title("Éditer une tâche")
-        edit_window.geometry("400x100")
+        edit_window.geometry("800x600")
         edit_window.resizable(True, True)
         edit_window.configure(background='#f5f5f5')
         edit_window.iconbitmap("assets/img/amongus.ico")
@@ -82,7 +82,8 @@ def task_config():
         activation = TagsEntry(tags_frame, tags=task.get("activ_keywords", []))
 
         def show_tags():
-            global keywords, activation
+            global keywords
+            global activation
             clear_frame(tags_frame)
             if type_choice.get() == "Avec Validation":
                 keywords_label = Label(tags_frame, text="Mots-clés de validation: ")
@@ -124,7 +125,7 @@ def task_config():
         name_entry.grid(row=0, column=1)
         name_frame.pack(fill=X)
 
-        description_frame = Frame(edit_window, bg="#f5f5f5")
+        description_frame = Frame(edit_frame, bg="#f5f5f5")
         description_label = Label(description_frame, text="Description de la tâche: ")
         description_text = Text(description_frame, height=5, width=50)
         description_text.insert(INSERT, task["description"])
@@ -132,14 +133,14 @@ def task_config():
         description_text.grid(row=1, column=1)
         description_frame.pack(fill=X)
 
-        location_frame = Frame(edit_window, bg="#f5f5f5")
+        location_frame = Frame(edit_frame, bg="#f5f5f5")
         location_label = Label(location_frame, text="Emplacement de la tâche: ")
         location_entry = Entry(location_frame)
         location_entry.insert(0, task["location"])
         location_label.grid(row=2, column=0)
         location_entry.grid(row=2, column=1)
 
-        steps_frame = Frame(edit_window, bg="#f5f5f5")
+        steps_frame = Frame(edit_frame, bg="#f5f5f5")
         steps_label = Label(steps_frame, text="Nombre d'étapes de la tâche: ")
         steps_entry = IntEntry(steps_frame, value=task["steps"] if "steps" in task else 1)
         steps_label.grid(row=3, column=0)
@@ -171,8 +172,9 @@ def task_config():
             edit_window.destroy()
             return name
 
-        save_button = Button(edit_window, text="Enregistrer", command=save_task)
+        save_button = Button(edit_frame, text="Enregistrer", command=save_task)
         save_button.pack(side=BOTTOM)
+        edit_frame.pack(fill=X)
 
         edit_window.mainloop()
         return None
