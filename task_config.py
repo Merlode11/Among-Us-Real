@@ -78,13 +78,12 @@ def task_config():
 
         tags_frame = Frame(edit_frame, bg="#f5f5f5")
 
-        keywords = TagsEntry(tags_frame, tags=task.get("keywords", []))
-        activation = TagsEntry(tags_frame, tags=task.get("activ_keywords", []))
-
         def show_tags():
-            global keywords
-            global activation
             clear_frame(tags_frame)
+
+            keywords = TagsEntry(tags_frame, tags=task.get("keywords", []))
+            activation = TagsEntry(tags_frame, tags=task.get("activ_keywords", []))
+
             if type_choice.get() == "Avec Validation":
                 keywords_label = Label(tags_frame, text="Mots-clés de validation: ")
                 keywords_label.grid(row=1, column=0)
@@ -166,8 +165,16 @@ def task_config():
             task["location"] = location_entry.get()
             task["steps"] = steps_entry.get_value()
             task["type"] = task_type_name[type_choice.get()]
+
             if type_choice.get() == "Avec Validation":
                 task["keywords"] = keywords.get_tags()
+            elif type_choice.get() == "Avec Activation":
+                task["activ_keywords"] = activation.get_tags()
+            elif type_choice.get() == "Avec Activation et Validation":
+                task["keywords"] = keywords.get_tags()
+                task["activ_keywords"] = activation.get_tags()
+            with open(f"taskList/{config['task_list']}.json", "w", encoding="utf-8") as file:
+                json.dump(tasks_list, file, indent=4)
 
             edit_window.destroy()
             return name
@@ -177,7 +184,126 @@ def task_config():
         edit_frame.pack(fill=X)
 
         edit_window.mainloop()
-        return None
+
+    def add_task():
+        """
+        Ajouter une tâche
+        """
+        add_window = Tk()
+        add_window.title("Éditer une tâche")
+        add_window.geometry("800x600")
+        add_window.resizable(True, True)
+        add_window.configure(background='#f5f5f5')
+        add_window.iconbitmap("assets/img/amongus.ico")
+
+        add_frame = VerticalScrolledFrame(add_window, bg="#f5f5f5")
+
+        tags_frame = Frame(add_frame, bg="#f5f5f5")
+
+        def show_tags():
+            clear_frame(tags_frame)
+
+            keywords = TagsEntry(tags_frame)
+            activation = TagsEntry(tags_frame)
+
+            if type_choice.get() == "Avec Validation":
+                keywords_label = Label(tags_frame, text="Mots-clés de validation: ")
+                keywords_label.grid(row=1, column=0)
+                keywords.grid(row=1, column=1)
+            elif type_choice.get() == "Avec Activation":
+                activation_label = Label(tags_frame, text="Mots-clé d'activation: ")
+                activation_label.grid(row=1, column=0)
+                activation.grid(row=1, column=1)
+            elif type_choice.get() == "Avec Activation et Validation":
+                keywords_label = Label(tags_frame, text="Mots-clés de validation: ")
+                keywords = TagsEntry(tags_frame)
+                keywords_label.grid(row=1, column=0)
+                keywords.grid(row=1, column=1)
+
+                activation_label = Label(tags_frame, text="Mots-clé d'activation: ")
+                activation = TagsEntry(tags_frame)
+                activation_label.grid(row=2, column=0)
+                activation.grid(row=2, column=1)
+            global keywords
+            global activation
+
+        type_frame = Frame(add_frame, bg="#f5f5f5")
+        type_label = Label(type_frame, text="Type de tâche: ")
+        type_choice = StringVar()
+        type_choice.set("Basique")
+
+        type_list = OptionMenu(type_frame, type_choice, *["Basique", "Avec Validation", "Avec Activation",
+                                                          "Avec Activation et Validation"],
+                               command=lambda x: show_tags())
+
+        type_label.grid(row=0, column=0)
+        type_list.grid(row=0, column=1)
+        type_frame.pack(fill=X)
+
+        name_frame = Frame(add_frame, bg="#f5f5f5")
+        name_label = Label(name_frame, text="Nom de la tâche: ")
+        name_entry = Entry(name_frame)
+        name_label.grid(row=0, column=0)
+        name_entry.grid(row=0, column=1)
+        name_frame.pack(fill=X)
+
+        description_frame = Frame(add_frame, bg="#f5f5f5")
+        description_label = Label(description_frame, text="Description de la tâche: ")
+        description_text = Text(description_frame, height=5, width=50)
+        description_label.grid(row=1, column=0)
+        description_text.grid(row=1, column=1)
+        description_frame.pack(fill=X)
+
+        location_frame = Frame(add_frame, bg="#f5f5f5")
+        location_label = Label(location_frame, text="Emplacement de la tâche: ")
+        location_entry = Entry(location_frame)
+        location_label.grid(row=2, column=0)
+        location_entry.grid(row=2, column=1)
+
+        steps_frame = Frame(add_frame, bg="#f5f5f5")
+        steps_label = Label(steps_frame, text="Nombre d'étapes de la tâche: ")
+        steps_entry = IntEntry(steps_frame, value=1)
+        steps_label.grid(row=3, column=0)
+        steps_entry.grid(row=3, column=1)
+        steps_frame.pack(fill=X)
+
+        show_tags()
+        tags_frame.pack(fill=X)
+
+        def save_task() -> str or None:
+            """
+            Enregistrer la tâche et fermer ma fenêtre
+            """
+            name = name_entry.get()
+            if name == "":
+                messagebox.showerror("Erreur", "Le nom de la tâche ne peut pas être vide", parent=add_window)
+                return
+            if name in [tache["name"] for tache in tasks_list]:
+                messagebox.showerror("Erreur", "Une tâche avec ce nom existe déjà", parent=add_window)
+                return
+            task = {"name": name, "description": description_text.get("1.0", END), "location": location_entry.get(),
+                    "steps": steps_entry.get_value(), "type": task_type_name[type_choice.get()]}
+            if type_choice.get() == "Avec Validation":
+                task["keywords"] = keywords.get_tags()
+            elif type_choice.get() == "Avec Activation":
+                task["activ_keywords"] = activation.get_tags()
+            elif type_choice.get() == "Avec Activation et Validation":
+                task["keywords"] = keywords.get_tags()
+                task["activ_keywords"] = activation.get_tags()
+
+            tasks_list.append(task)
+
+            with open(f"taskList/{config['task_list']}.json", "w", encoding="utf-8") as file:
+                json.dump(tasks_list, file, indent=4)
+
+            add_window.destroy()
+            return name
+
+        save_button = Button(add_frame, text="Enregistrer", command=save_task)
+        save_button.pack(side=BOTTOM)
+        add_frame.pack(fill=X)
+
+        add_window.mainloop()
 
     def refresh_tasks():
         clear_frame(edit_task_frame)
@@ -193,6 +319,11 @@ def task_config():
             edit_button.grid(row=i, column=1)
             delete_button.grid(row=i, column=2)
             task_frame.pack(fill=X)
+
+        add_task_frame = Frame(edit_task_frame, bg="#f5f5f5")
+        add_task_button = Button(add_task_frame, text="Ajouter une tâche", command=add_task)
+        add_task_button.pack(side=BOTTOM)
+        add_task_frame.pack(fill=X)
 
     refresh_tasks()
 

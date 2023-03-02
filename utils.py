@@ -17,7 +17,7 @@ def clear_frame(frame: Widget):
         widget.destroy()
 
 
-class VerticalScrolledFrame:
+class VerticalScrolledFrame(Frame):
     """
     Code issu du Gist GitHub https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531
     Une Frame verticalement scrollable qui peut être traitée comme n'importe quelle autre Frame
@@ -34,6 +34,20 @@ class VerticalScrolledFrame:
         width = kwargs.pop('width', master.winfo_width())
         height = kwargs.pop('height', master.winfo_height())
         bg = kwargs.pop('bg', kwargs.pop('background', None))
+
+        is_width_height_window = width == master.winfo_width() and height == master.winfo_height()
+
+        def _on_configure(event):
+            # redimensionnement de la fenêtre
+            if is_width_height_window:
+                width = master.winfo_width()  # event.width if event.width > event.x else event.x
+                height = master.winfo_height()  # event.height if event.height > event.y else event.y
+                self.canvas.config(width=width, height=height)
+
+        # detect window size changes
+        master.bind("<Configure>", _on_configure)
+
+
         self.outer = Frame(master, **kwargs)
 
         self.vsb = Scrollbar(self.outer, orient=VERTICAL)
