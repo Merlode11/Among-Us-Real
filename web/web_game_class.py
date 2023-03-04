@@ -1,24 +1,37 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session
 from game_class import Game
-from classes import WebPlaye
-import json
+from classes import WebPlayer
+import os
+from threading import Timer
+from tkinter import Tk, Label, Button, Entry, StringVar, messagebox
 
 
 class WebGame(Game):
-    def __init__(self, ip: str, port: int, game_master: bool = None):
-        self.ip = ip
-        self.port = port
+    def __init__(self, game_master: bool = None):
         self.server = app = Flask(__name__)
         self.receive = False
         self.game_master = game_master
         self.config = None
 
+        app.secret_key = os.urandom(24) # It's for the session system of flask
+
+        @app.errorhandler(404)
+        def page_not_found(error):
+            return 'This page does not exist', 404
+
         @app.route("/")
         def index():
             return render_template("home.html")
 
-        @app.route("/joueur")
-        def joueur():
+        @app.route("/joueur", methods=["GET", "POST"])
+        def joueur_page():
+            if request.method == "POST":
+                # Get the passed informations in the json request
+                couleur_joueur = request.form["color"]
+                pseudo_joueur = request.form["nickname"]
+                ip_joueur = request.remote_addr
+                joueur = WebPlayer(ip_joueur, pseudo_joueur, couleur_joueur, [])
+
             return render_template("joueur.html", code_joueur="123456789", task_list=["tache1", "tache2", "tache3"])
 
         @app.get("/api/infos/<code_joueur>")
@@ -45,11 +58,12 @@ class WebGame(Game):
             player.popup = None
             return data
         
-        @app.post("/api/kill/<killer_id/<killed_id>")
-        def kill(killer_id, killed_id):
+        @app.post("/api/kill/<path:killer_path>")
+        def kill(killer_path):
             """
             Kill the player given in thz request
             """
+            killer_id, killed_id = killer_path.split("/")
             killer = self.get_player(killer_id)
             if killer is None:
                 return {"error": "Joueur assassin introuvable", "error_code": "executor_not_found"}
@@ -61,10 +75,11 @@ class WebGame(Game):
             if killed.dead:
                 return {"error": "Joueur assassiné déjà mort", "error_code": "target_dead"}
             self.kill_player(killed)
-            return {"success": True}
+            return {"success": True}, 200
         
-        @app.post("/api/done_task/<player_id>/<task_id>")
-        def done_task(player_id, task_id):
+        @app.post("/api/done_task/<path:task_path>")
+        def done_task(task_path):
+            player_id, task_id = task_path.split("/")
             # TODO: Chercher pour avoir les informations de la requête (si jamais un mot a été fourni)
             player = self.get_player(player_id)
             task = player.tasks[task_id]
@@ -73,29 +88,43 @@ class WebGame(Game):
             elif "activ" in task.type and not task.active: 
                 return {"error": "La tâche n'a pas été activée", "error_code": "task_inactive"}
             elif "valid" in task.type:
-                if req.body["keyword"] not in task.keywords: 
+                if request.form["keyword"] not in task.keywords:
                     return {"error": "Ce mot n'est pas valide", "error_code": "unknown_keyword"}
             self.task_done(player, task)
-            return {"success": True, "task": task}
+            return {"success": True, "task": task}, 200
         
-        @app.post("/api/activ_task/<player_id>/<task_id>")
-        def activ_task(player_id, task_id): 
+        @app.post("/api/activ_task/<path:task_path>")
+        def activ_task(task_path):
+            player_id, task_id = task_path.split("/")
             player = self.get_player(player_id)
             task = player.tasks[task_id]
             if "activ" not in task.type:
                 return {"error": "Le type de tâche n'est pas correct", "error_code": "invalid_task_type"}
             elif task.active:
                 return {"error": "La tâche est déjà active", "error_code": "task_active"}
-            elif req.body["keyword"] not in task.activ_keywords: 
+            elif request.body["keyword"] not in task.activ_keywords:
                 return {"error": "Ce mot n'est pas valide", "error_code": "unknown_keyword"}
             task.active = True
-            
 
-        super().__init__(game_master)
+        Timer(1, super().__init__, args=(game_master,)).start()
+        app.run(host="0.0.0.0", port=80, debug=True)
+
 
     def import_players(self):
-        used_passwords: list = []
-        used_id: list = []
+        """
+        Créé une fenêtre Tkinter popup pour attendre que les joueurs se connectent
+        :return:
+        """
+        self.players = [None] * 100
+        popup = Tk()
+        popup.title("Importation des joueurs")
+        popup.geometry("300x200")
+        popup.resizable(True, True)
+        popup.iconbitmap(self.path + "/assets/img/amongus.ico")
+        popup.configure(bg="#2c2f33")
+
+
+
 
 
     def send_info_all(self, message: str):
@@ -142,4 +171,4 @@ class WebGame(Game):
 
 
 if __name__ == '__main__':
-    SMSGame(True)
+    game = WebGame()

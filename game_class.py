@@ -8,11 +8,16 @@ from classes import Player, SMSPlayer, BasicTask
 from utils import clear_frame, VerticalScrolledFrame, Timer
 import json
 import random
-
+import os
 
 class Game:
     def __init__(self, game_master: bool = None):
-        with open("config.json", "r", encoding='utf-8') as f:
+        # Get the active path:
+        print(__file__)
+        self.path = os.path.dirname(os.path.abspath(__file__))
+        print(self.path)
+
+        with open(self.path + "/config.json", "r", encoding='utf-8') as f:
             self.config = json.load(f)
 
         # Game window
@@ -20,14 +25,14 @@ class Game:
         window.title(self.config["names"]["title"])
         window.geometry("800x600")
         window.resizable(True, True)
-        window.iconbitmap("assets/img/amongus.ico")
+        window.iconbitmap(self.path + "/assets/img/amongus.ico")
         window.state("zoomed")
 
-        self.players: list = []
+        self.players: list = [0]*100
         self.import_players()
 
         self.tasks: list = []
-        with open(r"./taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
+        with open(self.path + r"/taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
             data = json.load(f)
             self.tasks = [
                 BasicTask(task["name"], task["description"], task["type"], task["location"], task.get("other")) for
@@ -194,7 +199,7 @@ class Game:
             task_window.geometry("500x500")
             task_window.resizable(True, True)
             task_window.configure(background="white")
-            task_window.iconbitmap("assets/img/amongus.ico")
+            task_window.iconbitmap(self.path + "/assets/img/amongus.ico")
             task_window.focus_force()
 
             tasks_frame = Frame(task_window, bg="white")
@@ -273,7 +278,7 @@ class Game:
                 details.title(f"{str(task)} - Détails")
                 details.geometry("500x250")
                 details.resizable(True, True)
-                details.iconbitmap("assets/img/amongus.ico")
+                details.iconbitmap(self.path + "/assets/img/amongus.ico")
                 details.configure(background="white")
                 Label(details, text=task.description, bg="white", font="Arial 12",
                       wraplength=300, justify="center").pack()
@@ -295,7 +300,7 @@ class Game:
         sender.geometry("500x100")
         sender.resizable(True, True)
         sender.configure(background="white")
-        sender.iconbitmap("assets/img/amongus.ico")
+        sender.iconbitmap(self.path + "/assets/img/amongus.ico")
         sender.focus_force()
 
         message_frame = Frame(sender, bg="white")
@@ -418,7 +423,7 @@ class Game:
         sender.geometry("500x100")
         sender.resizable(True, True)
         sender.configure(background="white")
-        sender.iconbitmap("assets/img/amongus.ico")
+        sender.iconbitmap(self.path + "/assets/img/amongus.ico")
         sender.focus_force()
 
         messageFrame = Frame(sender, bg="white")
@@ -467,7 +472,7 @@ class Game:
         window.geometry("500x500")
         window.resizable(False, False)
         window.state("zoomed")
-        window.iconbitmap("assets/img/amongus.ico")
+        window.iconbitmap(self.path + "/assets/img/amongus.ico")
 
         Label(window, text="Réunion", font=("Arial", 30)).pack()
         Label(window, text="Veuillez choisir un joueur à éliminer", font=("Arial", 20)).pack()
@@ -543,7 +548,7 @@ class Game:
                         killed_window.geometry("500x500")
                         killed_window.resizable(False, False)
                         killed_window.state("zoomed")
-                        killed_window.iconbitmap("assets/img/amongus.ico")
+                        killed_window.iconbitmap(self.path + "/assets/img/amongus.ico")
 
                         Label(killed_window, text="Élimination", font=("Arial", 30)).pack(fill=BOTH, expand=True,
                                                                                           padx=10)
@@ -621,8 +626,8 @@ class Game:
                 Game(self.game_master)
             else:
                 self.window.destroy()
-        elif game.game_master:
-            messagebox.showinfo("Succès", f"{player.name} {player.lastname} a confirmé avoir réalisé la tâche {task.name} ! Son message est :\n {message}")
+        elif self.game_master:
+            messagebox.showinfo("Succès", f"{str(player)} a confirmé avoir réalisé la tâche {task.name} !")
 
 
 if __name__ == '__main__':
