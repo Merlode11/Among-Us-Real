@@ -41,7 +41,7 @@ class Player:
         """
         Renvoie le string de l'affichage du joueur
         :param game: Game: La partie
-        :return: str: Le string de l'affichage du joueur
+        :return: str: Le Modifier de l'affichage du joueur
         """
         pass
 

@@ -450,13 +450,14 @@ class Timer:
         root.resizable(False, False)
         root.state("zoomed")
         root.iconbitmap("assets/img/amongus.ico")
+        self.remining = remining
 
         timer_frame = Frame(root)
 
         title = Label(timer_frame, text=title, font=("Arial", 50))
         title.pack(fill=BOTH, expand=True, padx=10)
 
-        minutes, seconds = divmod(remining, 60)
+        minutes, seconds = divmod(self.remining, 60)
         timer = Label(timer_frame, text=f"{minutes:02d}:{seconds:02d}", font=("Arial", 55))
         timer.pack(fill=BOTH, expand=True, padx=10)
 
@@ -467,14 +468,14 @@ class Timer:
 
         self.show_players()
 
-        while remining > 0:
-            remining -= 1
+        while self.remining > 0:
+            self.remining -= 1
             minutes, seconds = divmod(remining, 60)
             timer.config(text=f"{minutes:02d}:{seconds:02d}")
-            if remining <= approx_time:
-                if remining == approx_time:
+            if self.remining <= approx_time:
+                if self.remining == approx_time:
                     playsound(r"assets/sounds/mid_time.mp3", block=False)
-                if remining % 2 == 0:
+                if self.remining % 2 == 0:
                     timer.config(fg="red")
                 else:
                     timer.config(fg="black")
@@ -502,6 +503,9 @@ class Timer:
             player_name = Label(player_frame, text=player.get_str(game), font=("Arial", 20))
             if game.meeting == "vote" and player.id in game.meeting_votes.keys():
                 player_name.config(fg="red")
+            if game.meeting == "vote" and len(game.meeting_votes.keys()) == len(game.players) - len(game.dead_players): 
+                self.remining = 0
+                
             player_name.pack(fill=BOTH, expand=True)
 
 

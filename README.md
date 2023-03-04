@@ -32,3 +32,22 @@ Vous devez ainsi définir l'adresse IP du téléphone Airmore dans la configurat
 - Soit, vous définissez l'adresse IP donnée par Airmore dans le fichier `config.json` sous le nom `ip`.
 - Sinon, vous pouvez lancer le logiciel et dans la fenêtre des paramètres, vous pouvez définir l'adresse IP donnée par AirMore via le texte ou via le bouton de recherche de l'adresse IP.
 
+### Configuration de la partie
+Vous avez de multiples options pour personnaliser au maximum votre partie.
+
+#### Les nombres 
+Vous pouvez définir le nombre de joueurs qui seront imposteurs, ingénieurs ou scientifique
+
+Vous pouvez ensuite définir le nombre de tâches qui seront distribués par personnes.
+
+Pour continuer avec les tâches, on a aussi le nombre de fois qu'une tâche peut-être distribuée.
+
+Pour le scientifique, on peut définir le nombre de fois que celui-ci peut consulter l'état de chaque joueur
+
+#### Les noms
+Vous pouvez configurer le nom de chaque rôle, pour avoir une partie avec un thème personnalisé
+
+
+## Système d'urgence
+Nous avons mis en place un système d'urgence en cas de problème avec un joueur. Ce mode stoppe la partie temporairement et informe les joueurs qu’une personne peut-être blessé et qu'il faut aller l'aider. 
+Ce mode peut-être déclenché manuellement par un joueur, en indiquant son problème ou alors de manière automatique, lorsque le joueur ne donne plus signe de vie.

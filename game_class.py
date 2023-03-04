@@ -58,8 +58,10 @@ class Game:
             self.game_master: bool = self.config["game_master"]
         else:
             self.game_master: bool = game_master
+        
         self.pause: bool = False
         self.unpause_code: str = ""
+        self.pause_reason: str = ""
 
         if self.config["impostors"] + self.config["engineers"] + self.config["scientists"] > len(self.players):
             messagebox.showerror("Erreur", "Le nombre de joueurs est insuffisant pour la configuration choisie")
@@ -454,8 +456,7 @@ class Game:
         Définir le code d'arrêt de la partie
         """
         code_int = random.randint(0, 1000)
-        code_str = f"{code_int}"
-        self.unpause_code = code_str
+        self.unpause_code = code_str = f"{code_int}"
         return code_str
 
     def start_meeting(self, message: str):
@@ -480,7 +481,7 @@ class Game:
         Label(window, text="à la prochaine étape", font=("Arial", 20)).pack()
 
         players_here_frame = VerticalScrolledFrame(window)
-        here_users = []
+        self.meeting_here_users = here_users = []
 
         def show_players():
             clear_frame(players_here_frame)
@@ -555,6 +556,7 @@ class Game:
                         Label(killed_window, text=f"{killed_name} a été éliminé !", font=("Arial", 20)).pack(fill=BOTH,
                                                                                                              expand=True,
                                                                                                              padx=10)
+                                                                                                             self.meeting_here_users = []
 
                         killed_window.after(10000, killed_window.destroy)
                         killed_window.mainloop()

@@ -7,6 +7,20 @@ from tkinter import Tk, Label, Button, Entry, StringVar, messagebox
 
 
 class WebGame(Game):
+    """
+    Initialise une partie de jeu en utilisant le mode de jeu web.
+    
+    Liste des requêtes API:
+        - GET /: Affiche la page principale
+        - GET /joueur: Affiche la page du joueur
+        - POST /joueur: Enregistre un joueur dans la partie
+        - GET /meeting: Affiche la page de réunion du joueur
+        - GET /paused: Affiche la page de pause de jeu en cas d'urgence
+        - GET /api/infos/<code_joueur>: Renvoie les informations actuelles du joueur
+        - POST /api/kill/killer_id/killed_id: Permet pour le tueur de tuer une personne
+        - POST /api/done_task/player_id/task_id: Permet de valider une tâche comme faite
+        - POST /api/activ_task/player_id/task_id: Permet d'activer une tâche du joueur
+    """
     def __init__(self, game_master: bool = None):
         self.server = app = Flask(__name__)
         self.receive = False
@@ -33,6 +47,14 @@ class WebGame(Game):
                 joueur = WebPlayer(ip_joueur, pseudo_joueur, couleur_joueur, [])
 
             return render_template("joueur.html", code_joueur="123456789", task_list=["tache1", "tache2", "tache3"])
+        
+        @app.route("/meeting")
+        def meeting(): 
+            return render_template("meeting.html", players=self.players)
+        
+        @app.route("/paused")
+        def paused(): 
+            return render_template("paused.html", game={"paused": self.pause, "message": self.pause_reason})
 
         @app.get("/api/infos/<code_joueur>")
         def infos(code_joueur):
@@ -53,9 +75,13 @@ class WebGame(Game):
                 "tasks": player.tasks,
                 "dead": player.dead,
                 "asks": player.asks,
-                "popup": player.popup
+                "popup": player.popup,
+                "meeting": self.meeting,
+                "in_meeting": player in self.meeting_here_users,
+                "game_pause": game.pause
             }
             player.popup = None
+            player.last_message = int(datetime.datetime.now().timestamp())
             return data
         
         @app.post("/api/kill/<path:killer_path>")
