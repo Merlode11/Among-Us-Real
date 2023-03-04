@@ -99,9 +99,16 @@ class TaskCommand(Command):
         try:
             task_number = int(message.split(" ")[1])
             task = player.tasks[task_number - 1]
-            string = f"{task.name} ({task.classe})\n"
+            string = f"{task.name}\n"
             string += f"Lieu: {task.location}\n"
             string += f"Description: {task.description}\n"
+            
+            if "activ" in task.type: 
+                string += "Activée: "
+                string += "Oui" if task.active else "Non"
+                string += "\n"
+            if task.done: 
+                "Tâche terminée !\n"
             send_sms(player.phone, string)
         except (Exception,):
             send_sms(player.phone, "Veuillez entrer un numéro de tâche valide !")
@@ -210,8 +217,7 @@ class MortCommand(Command):
         else:
             dead_str = message.split(" ")[1:]
             try:
-                dead_id = int(dead_str[0]) - 1
-                dead = game.players[dead_id]
+                dead = parse_player(message, game)
                 if not dead.dead:
                     send_sms(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
                     return
@@ -239,6 +245,8 @@ class DoneCommand(Command):
         :param message: str: Le message envoyé par le joueur
         :param game: La partie
         """
+        if player.role == "impostor":
+            return send_sms(player.phone, "Vous ne pouvez pas valider des tâches, vous êtes " + game.config["names"]["impostor"] + ".")
         try:
             task_number = int(message.split(" ")[1])
             task = player.tasks[task_number - 1]

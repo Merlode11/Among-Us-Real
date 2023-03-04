@@ -89,6 +89,7 @@ def task_config():
                 keywords_label.grid(row=1, column=0)
                 keywords.grid(row=1, column=1)
             elif type_choice.get() == "Avec Activation":
+                # TODO: Rajouter le message à envoyer une fois la tâche activée
                 activation_label = Label(tags_frame, text="Mots-clé d'activation: ")
                 activation_label.grid(row=1, column=0)
                 activation.grid(row=1, column=1)

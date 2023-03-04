@@ -18,7 +18,7 @@ def main():
     Affichage de la fenêtre d'accueil
     """
     window = Tk()
-    window.title("Menu principal")
+    window.title("Among Us Real - Menu principal")
     window.geometry("800x600")
     window.resizable(True, True)
     window.configure(background='#f5f5f5')
