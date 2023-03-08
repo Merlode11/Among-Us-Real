@@ -35,3 +35,8 @@ Cette tâche avec validation demande de faire la tâche, et pour la valider, il 
 Un tâche avec activation demande d'envoyer un mot par SMS. Si ce mot est correct, alors on reçoit les informations enregistrés dans la tâche. C'est seulement après que l'on peut faire la tâche et la valider avec la commande `fait TÂCHE` par SMS.
 
 #### La combinée
+Ce type de tâche est une combinaison des deux types précédents. La tache demande d'être activée en envoyant un mot par SMS. Une fois les consignes reçues en retour, il faut envoyer un autre mot par SMS pour valider celle-ci.
+
+
+### Tuer une personne
+Pour tuer une personne, les imposteurs doivent en premier lieu demander à la personne tuée son identifiant (*donné en début de partie et accessible à tout moment avec la commande `info`*). Une fois cette information demandée, l'imposteur peut faire la commande `tuer IDENTIFIANT` pour signaler au jeu que ce joueur a été tué.
