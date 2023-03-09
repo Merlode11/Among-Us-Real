@@ -202,6 +202,9 @@ def task_config():
         tags_frame = Frame(add_frame, bg="#f5f5f5")
 
         def show_tags():
+            global keywords
+            global activation
+
             clear_frame(tags_frame)
 
             keywords = TagsEntry(tags_frame)
@@ -225,9 +228,6 @@ def task_config():
                 activation = TagsEntry(tags_frame)
                 activation_label.grid(row=2, column=0)
                 activation.grid(row=2, column=1)
-            global keywords
-            global activation
-
         type_frame = Frame(add_frame, bg="#f5f5f5")
         type_label = Label(type_frame, text="Type de tâche: ")
         type_choice = StringVar()
@@ -325,9 +325,9 @@ def task_config():
         add_task_button = Button(add_task_frame, text="Ajouter une tâche", command=add_task)
         add_task_button.pack(side=BOTTOM)
         add_task_frame.pack(fill=X)
+        edit_task_frame.pack(fill=X)
 
     refresh_tasks()
-
     edit_task_frame.pack(fill=X)
 
     window.mainloop()
