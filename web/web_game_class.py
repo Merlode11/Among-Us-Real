@@ -4,7 +4,7 @@ from classes import WebPlayer
 import os
 from threading import Timer
 from tkinter import Tk, Label, Button, Entry, StringVar, messagebox
-
+from utils import clear_frame
 
 class WebGame(Game):
     """
@@ -47,6 +47,10 @@ class WebGame(Game):
                 joueur = WebPlayer(ip_joueur, pseudo_joueur, couleur_joueur, [])
 
             return render_template("joueur.html", code_joueur="123456789", task_list=["tache1", "tache2", "tache3"])
+            
+        @app.route("/loading")
+        def loading(): 
+            return render_template("loading.html")
         
         @app.route("/meeting")
         def meeting(): 
@@ -141,15 +145,25 @@ class WebGame(Game):
         Créé une fenêtre Tkinter popup pour attendre que les joueurs se connectent
         :return:
         """
+        
+        if self.import_window:
+            clear_frame()
+            return None
+        
         self.players = [None] * 100
-        popup = Tk()
+        self.import_window = popup = Tk()
         popup.title("Importation des joueurs")
         popup.geometry("300x200")
         popup.resizable(True, True)
         popup.iconbitmap(self.path + "/assets/img/amongus.ico")
         popup.configure(bg="#2c2f33")
-
-
+        
+        main_frame = Frame(popup)
+        
+        start_button = Button(main_frame)
+        
+        self.import_players_frame = VerticalScrolledFrame(popup)
+        
 
 
 
