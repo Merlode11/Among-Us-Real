@@ -408,21 +408,33 @@ class TimerEntry(Frame):
         return self.seconds
 
     def set_value_minutes(self, value: int) -> None:
+        """
+        Définie la valeur du nombre de minutes précisément
+        """
         self.minutes = value
         self.string_var_minutes.set(str(self.minutes))
         self.entry_minutes.delete(0, END)
         self.entry_minutes.insert(0, str(self.minutes))
 
     def set_value_seconds(self, value: int) -> None:
-        self.seconds = value
+        """
+        Définie la valeur du nombre de seconde précisément, sans modifier les minutes
+        """
+        self.seconds = value % 60
         self.string_var_seconds.set(str(self.seconds))
         self.entry_seconds.delete(0, END)
         self.entry_seconds.insert(0, str(self.seconds))
 
     def get_total_seconds(self) -> int:
+        """
+        Renvoie le nombre total de secondes, en incluant les minutes, converties en secondes avant.
+        """
         return self.minutes * 60 + self.seconds
 
     def set_total_seconds(self, value: int) -> int:
+        """
+        Défini le temps, en spécifiant le nombre de secondes total. Cette méthode modifie également les minutes
+        """
         self.minutes = value // 60
         self.seconds = value % 60
         self.string_var_minutes.set(str(self.minutes))
@@ -433,7 +445,10 @@ class TimerEntry(Frame):
         self.entry_seconds.insert(0, str(self.seconds))
 
     def add_seconds(self, seconds: int):
-        self.set_total_seconds(self.get_total_seconds())
+        """
+        Ajoute un certain nombre de secondes au compteur total, en modifiant également les minutes
+        """
+        self.set_total_seconds(self.get_total_seconds() + seconds)
 
 
 class TagsEntry(Frame):
@@ -445,7 +460,7 @@ class TagsEntry(Frame):
     def __init__(self, master, tags: list = None, **kwargs):
         super().__init__(master, **kwargs)
 
-        self.tags = tags if tags is not None else []
+        self.tags: list = tags if tags is not None else []
 
         self.string_var = StringVar()
         self.entry = Entry(self, textvariable=self.string_var)
@@ -460,30 +475,45 @@ class TagsEntry(Frame):
 
         self._update_tags()
 
-    def _add_tag(self, event=None):
+    def _add_tag(self, event=None) -> None:
+        """
+        Ajoute une nouvelle étiquette dans la liste
+        """
         tag = self.entry.get()
         if tag not in self.tags and tag != "":
             self.tags.append(tag)
             self.entry.delete(0, END)
             self._update_tags()
 
-    def _remove_tag(self, tag):
-        self.tags.remove(tag)
+    def _remove_tag(self, tag: str) -> None:
+        """
+        Retire une étiquette de la liste
+        """
+        self.tags.self(self.tags.index(tag))
         self._update_tags()
 
     def _update_tags(self):
+        """
+        Modifie l'affichage des étiquettes
+        """
         clear_frame(self.frame_tags.inner)
         for tag in self.tags:
             button = Button(self.frame_tags.inner, text=tag + " ⨂", command=lambda tag=tag: self._remove_tag(tag))
             button.pack(side=LEFT)
 
     def _on_click(self, event):
+        """
+        Cet événement se déclenche lorsque l'utilisateur clique sur une étiquette
+        """
         widget = event.widget
         index = widget.curselection()[0]
         tag = widget.get(index)
         self._remove_tag(tag)
 
-    def get_tags(self):
+    def get_tags(self) -> list:
+        """
+        Renvoie la liste des étiquettes enregistrées.
+        """
         return self.tags
 
 
@@ -539,6 +569,7 @@ class Timer:
         # root.mainloop()
 
     def show_players(self):
+        
         players_frame = self.players_frame
         game = self.game
         # show players in a grid adapted to the number of players

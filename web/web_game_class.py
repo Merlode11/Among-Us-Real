@@ -45,11 +45,15 @@ class WebGame(Game):
                 pseudo_joueur = request.form["nickname"]
                 ip_joueur = request.remote_addr
                 joueur = WebPlayer(ip_joueur, pseudo_joueur, couleur_joueur, [])
+                session["player_id"]: int = joueur.id
 
             return render_template("joueur.html", code_joueur="123456789", task_list=["tache1", "tache2", "tache3"])
             
         @app.route("/loading")
         def loading(): 
+            player_id = session["player_id"]
+            if not player_id:
+                return redirect_url("/")
             return render_template("loading.html")
         
         @app.route("/meeting")

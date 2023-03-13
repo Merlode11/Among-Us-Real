@@ -39,15 +39,15 @@ class Player:
 
     def get_str(self, game):
         """
-        Renvoie le string de l'affichage du joueur
-        :param game: Game: La partie
-        :return: str: Le Modifier de l'affichage du joueur
+        Renvoie un affichage du joueur afin de l'afficher dans la fenêtre de la partie
+        :param game: Game: La partie actuelle
+        :return: str: L'affichage de l'identité du joueur
         """
         pass
 
     def get_name(self) -> str:
         """
-        Renvoie le nom du joueur
+        Renvoie l'affichage du nom du joueur pour les autres joueurs
         :return: str: Le nom du joueur
         """
         pass
@@ -73,6 +73,11 @@ class SMSPlayer(Player):
         self.popup: str or None = None
 
     def get_str(self, game) -> str:
+        """
+        Renvoie un affichage du joueur afin de l'afficher dans la fenêtre de la partie
+        :param game: Game: La partie actuelle
+        :return: str: L'affichage de l'identité du joueur
+        """
         if game.game_master:
             if self.dead:
                 return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): \
@@ -86,7 +91,11 @@ class SMSPlayer(Player):
                 {show_phone_number(self.phone)}"
         return f"{self.name} {self.lastname}: {show_phone_number(self.phone)}"
 
-    def get_name(self):
+    def get_name(self) -> str:
+        """
+        Renvoie l'affichage du nom du joueur pour les autres joueurs
+        :return: str: Le nom du joueur
+        """
         return f"{self.name} {self.lastname}"
 
 
@@ -99,6 +108,11 @@ class WebPlayer(Player):
         self.id: str = color
 
     def get_str(self, game: WebGame) -> str:
+        """
+        Renvoie un affichage du joueur afin de l'afficher dans la fenêtre de la partie
+        :param game: Game: La partie actuelle
+        :return: str: L'affichage de l'identité du joueur
+        """
         if game.game_master:
             if self.dead:
                 return f"☠ {self.nickname} ({self.ip}), {game.config['names'][self.role]}"
@@ -110,7 +124,11 @@ class WebPlayer(Player):
                 return f"☠ {self.nickname} ({self.ip}), {game.config['names'][self.role]}"
         return f"{self.nickname} ({self.ip})"
 
-    def get_name(self):
+    def get_name(self) -> str:
+        """
+        Renvoie l'affichage du nom du joueur pour les autres joueurs
+        :return: str: Le nom du joueur
+        """
         return self.nickname
 
 
@@ -139,6 +157,15 @@ class BasicTask:
 
     def __str__(self):
         return f"{self.name} ({self.steps})"
+    
+    def to_dict(self) -> dict: 
+        """
+        Renvoie la tâche sous forme de dictionnaire
+        """
+        return {
+            "name": self.name,
+            "description"
+        }
 
 
 class ValidateBasicTask(BasicTask):
@@ -189,6 +216,9 @@ class ActivValidTask(ValidateBasicTask):
 
 
 def set_task(task_dict: dict) -> BasicTask or ActivateBasicTask or ValidateBasicTask or ActivValidTask:
+    """
+    Créer un object caractérisant une classe spéciale de tâche et le renvoie
+    """
     if task_dict["type"] == "basic":
         return BasicTask(task_dict["name"], task_dict["description"], task_dict["steps"], task_dict["location"])
     elif task_dict["type"] == "validate_basic":
