@@ -107,7 +107,7 @@ class VerticalScrolledFrame(Frame):
 
 class HorizontalScrolledFrame:
     """
-    Code issu du Gist GitHub https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531
+    Code issu du Gist GitHub https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531 et modifié pour avoir quelque une barre horizontale
     Une Frame horizontalement scrollable qui peut être traitée comme n'importe quelle autre Frame
     ie elle a besoin d'un master et d'un layout, et elle peut être un master.
     :width:, :height:, :bg: sont passés au Canvas sous-jacent
@@ -188,6 +188,9 @@ class HorizontalScrolledFrame:
 
 
 class YesNoButton(Button):
+    """
+    Affiche un bouton stylisé par une image pour une entrée de type oui/non
+    """
     def __init__(self, master, value=False, **kwargs):
         super().__init__(master, **kwargs)
 
@@ -197,21 +200,37 @@ class YesNoButton(Button):
         self.value = value
         self.config(image=self.yes if value else self.no, command=self.toggle)
 
-    def toggle(self):
+    def toggle(self) -> None:
+        """
+        Échange la valeur du bouton
+        """
         self.value = not self.value
         self.config(image=self.yes if self.value else self.no)
 
-    def set_value(self, value):
+    def set_value(self, value: bool) -> None:
+        """
+        Défini la valeur du bouton en la nouvelle spécifiée
+        """
+        assert isinstance(value, bool), "value doit-être un booléen"
         self.value = value
         self.config(image=self.yes if value else self.no)
 
-    def get_value(self):
+    def get_value(self) -> bool:
+        """
+        Renvoie la valeur actuelle du bouton
+        """
         return self.value
 
 
 class IntEntry(Frame):
+    """
+    Créé une entrée spécifique pour les nombres entiers. Cette entrée accepte uniquement les nombres et possède deux boutons sur le côté pour incrémenter ou décrémenter.
+    """
     def __init__(self, master, value: int = 0, min_value: int = 0, max_value: int = 10, **kwargs):
-        def _validate(val):
+        def _validate(val: str) -> bool:
+            """
+            Vérifie si la valeur entrée correspond bien à un nombre
+            """
             if val == "":
                 return True
             try:
@@ -247,14 +266,23 @@ class IntEntry(Frame):
         self.button_plus.pack(side=LEFT)
 
     def _increment(self):
+        """
+        Ajoute plus un à la valeur actuelle si la valeur ne depasse pas le maximum
+        """
         if self.value < self.max_value:
             self.set_value(self.value + 1)
 
     def _decrement(self):
+        """
+        Retire un à la valeur actuelle si la valeur n'est pas en dessous du minimum
+        """
         if self.value > self.min_value:
             self.set_value(self.value - 1)
 
     def _on_focus_out(self, event):
+        """
+        Gère la valeur de l'entrée une fois celui-ci quitté par l'utilisateur.
+        """
         if self.string_var.get() == "":
             self.string_var.set(str(self.value))
         elif self.string_var.get() == "-":
@@ -270,10 +298,17 @@ class IntEntry(Frame):
         elif self.value < self.min_value:
             self.set_value(self.min_value)
 
-    def get_value(self):
+    def get_value(self) -> int:
+        """
+        Renvoie la valeur actuelle de l'entrée 
+        """
         return self.value
 
-    def set_value(self, value):
+    def set_value(self, value: int) -> None:
+        """
+        Définie une nouvelle valeur pour l'entrée
+        """
+        assert isinstance(value, int), "value doit-être un nombre entier (integer)"
         self.value = value
         self.string_var.set(str(self.value))
         self.entry.delete(0, END)
@@ -281,8 +316,14 @@ class IntEntry(Frame):
 
 
 class TimerEntry(Frame):
+    """
+    Affiche une entrée pour configurer les minuteurs des réunions
+    """
     def __init__(self, master, minutes: int = 0, seconds: int = 0, **kwargs):
-        def _validate(val):
+        def _validate(val: str) -> bool:
+            """
+            Vérifie que l'entrée donné est bien un nombre entier
+            """
             if val == "":
                 return True
             try:
@@ -354,28 +395,34 @@ class TimerEntry(Frame):
                 self.seconds = 0
                 self.string_var_seconds.set(str(self.seconds))
 
-    def get_value_minutes(self):
+    def get_value_minutes(self) -> int:
+        """
+        Renvoie la valeur des minutes de cette entrée
+        """
         return self.minutes
 
-    def get_value_seconds(self):
+    def get_value_seconds(self) -> int:
+        """
+        Renvoie la valeur des secondes de cette entrée
+        """
         return self.seconds
 
-    def set_value_minutes(self, value):
+    def set_value_minutes(self, value: int) -> None:
         self.minutes = value
         self.string_var_minutes.set(str(self.minutes))
         self.entry_minutes.delete(0, END)
         self.entry_minutes.insert(0, str(self.minutes))
 
-    def set_value_seconds(self, value):
+    def set_value_seconds(self, value: int) -> None:
         self.seconds = value
         self.string_var_seconds.set(str(self.seconds))
         self.entry_seconds.delete(0, END)
         self.entry_seconds.insert(0, str(self.seconds))
 
-    def get_total_seconds(self):
+    def get_total_seconds(self) -> int:
         return self.minutes * 60 + self.seconds
 
-    def set_total_seconds(self, value):
+    def set_total_seconds(self, value: int) -> int:
         self.minutes = value // 60
         self.seconds = value % 60
         self.string_var_minutes.set(str(self.minutes))
