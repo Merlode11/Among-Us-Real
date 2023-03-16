@@ -1,4 +1,5 @@
 /** Default configuration **/
+const colorHiddenInput = document.getElementById('color');
 
 Coloris({
     parent: '.container',
@@ -75,4 +76,5 @@ document.addEventListener('coloris:pick', function (e) {
     svg.querySelectorAll('.second-color-stroke').forEach(function (el) {
         el.style.stroke = darkenedColor;
     });
+    colorHiddenInput.value = color;
 });

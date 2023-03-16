@@ -1,10 +1,16 @@
-from flask import Flask, render_template, session
-from game_class import Game
-from classes import WebPlayer
 import os
-from threading import Timer
-from tkinter import Tk, Label, Button, Entry, StringVar, messagebox
-from utils import clear_frame
+from threading import Thread
+from tkinter import *
+
+import qrcode
+from flask import Flask, render_template, session, url_for, redirect, request
+
+from classes import WebPlayer
+from game_class import Game
+from utils import clear_frame, VerticalScrolledFrame
+import datetime
+import socket
+
 
 class WebGame(Game):
     """
@@ -21,57 +27,75 @@ class WebGame(Game):
         - POST /api/done_task/player_id/task_id: Permet de valider une tâche comme faite
         - POST /api/activ_task/player_id/task_id: Permet d'activer une tâche du joueur
     """
+
     def __init__(self, game_master: bool = None):
         self.server = app = Flask(__name__)
-        self.receive = False
-        self.game_master = game_master
-        self.config = None
+        self.receive: bool = False
+        self.game_master: bool = game_master
+        self.config: dict or None = None
+        self.import_window: Tk or None = None
+        self.players: list[WebPlayer] = []
+        self.used_passwords: list[str] = []
+        self.used_id: list[int] = []
+        self.ip: str = socket.gethostbyname(socket.gethostname())
 
-        app.secret_key = os.urandom(24) # It's for the session system of flask
+        app.secret_key = os.urandom(24)  # It's for the session system of flask
+
+        print("http://" + self.ip + ":80")
 
         @app.errorhandler(404)
         def page_not_found(error):
-            return 'This page does not exist', 404
+            return 'This page does not exist <a href="/">Go home</a>', 404
 
         @app.route("/")
         def index():
+            if session.get("player_id"):
+                print(session.get("player_id"))
+                return redirect(url_for("/player"))
             return render_template("home.html")
 
-        @app.route("/joueur", methods=["GET", "POST"])
+        @app.route("/player")
         def joueur_page():
+            player_id = session["player_id"]
+            if not player_id:
+                return redirect(url_for("/"))
+            joueur = self.get_player(player_id)
+
+            return render_template("joueur.html", code_joueur=str(joueur.id), task_list=["tache1", "tache2", "tache3"])
+
+        @app.route("/loading", methods=["GET", "POST"])
+        def loading():
             if request.method == "POST":
-                # Get the passed informations in the json request
                 couleur_joueur = request.form["color"]
                 pseudo_joueur = request.form["nickname"]
                 ip_joueur = request.remote_addr
-                joueur = WebPlayer(ip_joueur, pseudo_joueur, couleur_joueur, [])
+                joueur = WebPlayer(ip_joueur, pseudo_joueur, couleur_joueur, self.used_passwords, self.used_id)
+                self.players.append(joueur)
                 session["player_id"]: int = joueur.id
+                self.import_players()
+            return render_template("loading.html")
 
-            return render_template("joueur.html", code_joueur="123456789", task_list=["tache1", "tache2", "tache3"])
-            
-        @app.route("/loading")
-        def loading(): 
+        @app.route("/meeting")
+        def meeting():
             player_id = session["player_id"]
             if not player_id:
-                return redirect_url("/")
-            return render_template("loading.html")
-        
-        @app.route("/meeting")
-        def meeting(): 
+                return redirect(url_for("/"))
             return render_template("meeting.html", players=self.players)
-        
+
         @app.route("/paused")
-        def paused(): 
+        def paused():
+            player_id = session["player_id"]
+            if not player_id:
+                return redirect(url_for("/"))
             return render_template("paused.html", game={"paused": self.pause, "message": self.pause_reason})
 
-        @app.get("/api/infos/<code_joueur>")
-        def infos(code_joueur):
+        @app.get("/api/infos/")
+        def infos():
             """
             Returns a json with the information of the player
-            :param code_joueur:
             :return:
             """
-            player = self.get_player(code_joueur)
+            player = self.get_player(session["player_id"])
             if player is None:
                 return {"error": "Joueur introuvable", "error_code": "executor_not_found"}
             data = {
@@ -91,46 +115,44 @@ class WebGame(Game):
             player.popup = None
             player.last_message = int(datetime.datetime.now().timestamp())
             return data
-        
-        @app.post("/api/kill/<path:killer_path>")
-        def kill(killer_path):
+
+        @app.post("/api/kill/<int:killed_id>")
+        def kill(killed_id):
             """
             Kill the player given in thz request
             """
-            killer_id, killed_id = killer_path.split("/")
-            killer = self.get_player(killer_id)
+
+            killer = self.get_player(session["player_id"])
             if killer is None:
                 return {"error": "Joueur assassin introuvable", "error_code": "executor_not_found"}
             killed = self.get_player(killed_id)
             if killed is None:
                 return {"error": "Joueur assassiné introuvable", "error_code": "target_not_found"}
-            if killer.role != "impostor": 
+            if killer.role != "impostor":
                 return {"error": "Joueur n'étant pas imposteur", "error_code": "not_impostor"}
             if killed.dead:
                 return {"error": "Joueur assassiné déjà mort", "error_code": "target_dead"}
             self.kill_player(killed)
             return {"success": True}, 200
-        
-        @app.post("/api/done_task/<path:task_path>")
-        def done_task(task_path):
-            player_id, task_id = task_path.split("/")
+
+        @app.post("/api/done_task/<int:task_id>")
+        def done_task(task_id):
             # TODO: Chercher pour avoir les informations de la requête (si jamais un mot a été fourni)
-            player = self.get_player(player_id)
+            player = self.get_player(session["player_id"])
             task = player.tasks[task_id]
             if task.done:
                 return {"error": "La tâche a déjà été faite", "error_code": "task_already_done"}
-            elif "activ" in task.type and not task.active: 
+            elif "activ" in task.type and not task.active:
                 return {"error": "La tâche n'a pas été activée", "error_code": "task_inactive"}
             elif "valid" in task.type:
                 if request.form["keyword"] not in task.keywords:
                     return {"error": "Ce mot n'est pas valide", "error_code": "unknown_keyword"}
             self.task_done(player, task)
             return {"success": True, "task": task}, 200
-        
-        @app.post("/api/activ_task/<path:task_path>")
-        def activ_task(task_path):
-            player_id, task_id = task_path.split("/")
-            player = self.get_player(player_id)
+
+        @app.post("/api/activ_task/<int:task_id>")
+        def activ_task(task_id):
+            player = self.get_player(session["player_id"])
             task = player.tasks[task_id]
             if "activ" not in task.type:
                 return {"error": "Le type de tâche n'est pas correct", "error_code": "invalid_task_type"}
@@ -140,8 +162,14 @@ class WebGame(Game):
                 return {"error": "Ce mot n'est pas valide", "error_code": "unknown_keyword"}
             task.active = True
 
-        Timer(1, super().__init__, args=(game_master,)).start()
-        app.run(host="0.0.0.0", port=80, debug=True)
+        @app.get("/api/game_is_started")
+        def game_is_started():
+            return self.import_window is not None, 200
+
+        flt = Thread(target=lambda: app.run(host="0.0.0.0", port=80, debug=False))
+        flt.daemon = True
+        flt.start()
+        super().__init__()
 
 
     def import_players(self):
@@ -149,32 +177,40 @@ class WebGame(Game):
         Créé une fenêtre Tkinter popup pour attendre que les joueurs se connectent
         :return:
         """
-        
+
         if self.import_window:
-            clear_frame()
+            clear_frame(self.import_window)
             return None
-        
+
         self.players = [None] * 100
         self.import_window = popup = Tk()
         popup.title("Importation des joueurs")
         popup.geometry("300x200")
         popup.resizable(True, True)
         popup.iconbitmap(self.path + "/assets/img/amongus.ico")
-        popup.configure(bg="#2c2f33")
-        
+
         main_frame = Frame(popup)
-        
+
+        qrcode_frame = Frame(main_frame)
+
+        game_qrcode = qrcode.make(f"http://{self.ip}:80/")
+        game_qrcode = game_qrcode.resize((200, 200))
+        PhotoImage(game_qrcode, master=qrcode_frame)
+
+        qrcode_frame.pack(fill=BOTH, expand=True)
+
         start_button = Button(main_frame)
-        
-        self.import_players_frame = VerticalScrolledFrame(popup)
-        
 
+        self.import_players_frame = VerticalScrolledFrame(main_frame)
 
+        main_frame.pack(fill=BOTH, expand=True)
+
+        popup.mainloop()
 
     def send_info_all(self, message: str):
         for player in self.players:
             # replace the variable in the message
-            new_message = message.replace("{name}", player.name)
+            new_message = message.replace("{name}", player.nickname)
             new_message = new_message.replace("{lastname}", player.lastname)
             new_message = new_message.replace("{role}", self.config["names"][player.role])
             new_message = new_message.replace("{id}", player.id)

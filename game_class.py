@@ -556,15 +556,15 @@ class Game:
                         Label(killed_window, text=f"{killed_name} a été éliminé !", font=("Arial", 20)).pack(fill=BOTH,
                                                                                                              expand=True,
                                                                                                              padx=10)
-                                                                                                             self.meeting_here_users = []
+                        self.meeting_here_users = []
 
                         killed_window.after(10000, killed_window.destroy)
                         killed_window.mainloop()
 
                         self.meeting = None
                     return
-            else:
-                messagebox.showerror("Erreur", "Mot de passe incorrect")
+                else:
+                    messagebox.showerror("Erreur", "Mot de passe incorrect")
 
         Label(window, text="", ).pack()
         present_label = Label(window, text="Indiquer que vous êtes présent :", font=("Arial", 20))

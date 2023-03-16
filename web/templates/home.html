@@ -11,12 +11,12 @@
 
 <h1 class="center">Bienvenue sur le jeu Among Us Real !</h1>
 
-<form method="post" action="/player">
+<form method="post" action="/loading">
     <div class="group">
-        <input required="" type="text" class="input" id="pseudo" maxlength="50" name="color">
+        <input required="" type="text" class="input" id="nickname" maxlength="50" name="nickname">
         <span class="highlight"></span>
         <span class="bar"></span>
-        <label for="pseudo">Pseudo</label>
+        <label for="nickname">Pseudo</label>
     </div>
 
     <div class="center">
@@ -109,7 +109,8 @@
 
         <div class="grid-child">
             <div class="container"></div>
-            <input type="text" class="coloris" style="display: none;" id="color" name="color">
+            <input type="text" class="coloris" style="display: none;" id="coloris" name="coloris">
+            <input type="hidden" name="color" id="color" value="#C51211">
         </div>
     </div>
 
