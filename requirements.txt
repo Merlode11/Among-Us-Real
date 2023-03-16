@@ -2,3 +2,5 @@ future~=0.18.3
 pyairmore~=0.2.1a1
 playsound==1.2.2
 Flask~=2.2.3
+qrcode~=7.3
+pillow~=9.4.0

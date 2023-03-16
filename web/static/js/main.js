@@ -29,3 +29,8 @@ window.onclick = function (event) {
         event.target.style.display = "none";
     }
 };
+
+// Redirect to /player if url is /api/register_player
+if (window.location.pathname === '/api/register_player') {
+    window.location.pathname = '/player';
+}

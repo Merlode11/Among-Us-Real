@@ -4,6 +4,8 @@ misc/*
 /.idea/
 /__pycache__/
 /venv/
+/venv/*
+/venv
 /taskList/*
 
 # Ignore the .DS_Store mac file

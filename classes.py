@@ -15,7 +15,7 @@ class WebGame:
 
 
 class Player:
-    def __init__(self, used_passwords: list):
+    def __init__(self, used_passwords: list, used_id: list):
         self.tasks: list = []
         self.role: str = ""
         self.dead: bool = False
@@ -29,6 +29,12 @@ class Player:
         while self.password in used_passwords:
             self.password = "".join([str(random.randint(0, 9)) for _ in range(8)])
         used_passwords.append(self.password)
+
+        player_id = random.randint(0, 999)
+        while player_id in used_id:
+            player_id = random.randint(0, 999)
+        used_id.append(player_id)
+        self.id = f"{player_id:03}"
 
     def __repr__(self) -> str:
         """
@@ -100,12 +106,11 @@ class SMSPlayer(Player):
 
 
 class WebPlayer(Player):
-    def __init__(self, ip: str, nickname: str, color: str, used_passwords: list):
-        super().__init__(used_passwords)
+    def __init__(self, ip: str, nickname: str, color: str, used_passwords: list, used_id: list):
+        super().__init__(used_passwords, used_id)
         self.ip: str = ip
         self.nickname: str = nickname
         self.color: str = color
-        self.id: str = color
 
     def get_str(self, game: WebGame) -> str:
         """
@@ -164,7 +169,7 @@ class BasicTask:
         """
         return {
             "name": self.name,
-            "description"
+            "description": self.description,
         }
 
 
