@@ -2,7 +2,7 @@ import os
 from threading import Thread
 from tkinter import *
 
-import qrcode
+import pyqrcode
 from flask import Flask, render_template, session, url_for, redirect, request
 
 from classes import WebPlayer
@@ -29,6 +29,7 @@ class WebGame(Game):
     """
 
     def __init__(self, game_master: bool = None):
+        self.import_players_frame = None
         self.server = app = Flask(__name__)
         self.receive: bool = False
         self.game_master: bool = game_master
@@ -61,7 +62,7 @@ class WebGame(Game):
                 return redirect(url_for("/"))
             joueur = self.get_player(player_id)
 
-            return render_template("joueur.html", code_joueur=str(joueur.id), task_list=["tache1", "tache2", "tache3"])
+            return render_template("joueur.html", code_joueur=str(joueur.id), task_list=joueur.tasks, player=joueur)
 
         @app.route("/loading", methods=["GET", "POST"])
         def loading():
@@ -158,7 +159,7 @@ class WebGame(Game):
                 return {"error": "Le type de tâche n'est pas correct", "error_code": "invalid_task_type"}
             elif task.active:
                 return {"error": "La tâche est déjà active", "error_code": "task_active"}
-            elif request.body["keyword"] not in task.activ_keywords:
+            elif request.form["keyword"] not in task.activ_keywords:
                 return {"error": "Ce mot n'est pas valide", "error_code": "unknown_keyword"}
             task.active = True
 
@@ -170,7 +171,6 @@ class WebGame(Game):
         flt.daemon = True
         flt.start()
         super().__init__()
-
 
     def import_players(self):
         """
@@ -188,18 +188,28 @@ class WebGame(Game):
         popup.geometry("300x200")
         popup.resizable(True, True)
         popup.iconbitmap(self.path + "/assets/img/amongus.ico")
+        popup.state("zoomed")
 
         main_frame = Frame(popup)
 
         qrcode_frame = Frame(main_frame)
 
-        game_qrcode = qrcode.make(f"http://{self.ip}:80/")
-        game_qrcode = game_qrcode.resize((200, 200))
-        PhotoImage(game_qrcode, master=qrcode_frame)
+        game_qrcode = pyqrcode.create(f"http://{self.ip}:80/")
+
+        game_qrcode.png(self.path + "/assets/img/qrcode.png", scale=6)
+
+        qrcode = PhotoImage(file=self.path + "/assets/img/qrcode.png", master=qrcode_frame)
+
+        qrcode_label = Label(qrcode_frame, image=qrcode)
+        qrcode_label.pack()
+
+        url_label = Label(qrcode_frame, text=f"http://{self.ip}:80/", font=("Arial", 28))
+        url_label.pack()
 
         qrcode_frame.pack(fill=BOTH, expand=True)
 
-        start_button = Button(main_frame)
+        start_button = Button(main_frame, text="Démarrer la partie")
+        start_button.pack()
 
         self.import_players_frame = VerticalScrolledFrame(main_frame)
 
