@@ -28,7 +28,7 @@ class Game:
         window.iconbitmap(self.path + "/assets/img/amongus.ico")
         window.state("zoomed")
 
-        self.players: list = [0]*100
+        self.players: list = []
         self.import_players()
 
         self.tasks: list = []
@@ -592,7 +592,7 @@ class Game:
         :return: Player: Joueur
         """
         for player in self.players:
-            if player.id == player_id:
+            if isinstance(player, Player) and player.id == player_id:
                 return player
         else:
             return None

@@ -171,12 +171,14 @@ class WebGame(Game):
         flt.start()
         super().__init__()
 
-
     def import_players(self):
         """
         Créé une fenêtre Tkinter popup pour attendre que les joueurs se connectent
         :return:
         """
+        def start_game():
+            self.import_window.destroy()
+            self.import_window = None
 
         if self.import_window:
             clear_frame(self.import_window)
@@ -185,9 +187,10 @@ class WebGame(Game):
         self.players = [None] * 100
         self.import_window = popup = Tk()
         popup.title("Importation des joueurs")
-        popup.geometry("300x200")
+        popup.geometry("800x600")
         popup.resizable(True, True)
         popup.iconbitmap(self.path + "/assets/img/amongus.ico")
+        popup.state("zoomed")
 
         main_frame = Frame(popup)
 
@@ -197,13 +200,16 @@ class WebGame(Game):
         game_qrcode = game_qrcode.resize((200, 200))
         PhotoImage(game_qrcode, master=qrcode_frame)
 
+
         qrcode_frame.pack(fill=BOTH, expand=True)
 
-        start_button = Button(main_frame)
+        start_button = Button(main_frame, text="Démarrer la partie", command=start_game)
+        start_button.pack(fill=BOTH, expand=True)
 
         self.import_players_frame = VerticalScrolledFrame(main_frame)
 
         main_frame.pack(fill=BOTH, expand=True)
+
 
         popup.mainloop()
 
