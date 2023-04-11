@@ -15,10 +15,14 @@
 <h1 class="center"></h1>
 
 <h1> Code joueur: {{(code_joueur)}}</h1>
-
+ {% if player.role == "impostor"%}
 <button2 class="ask" data-modal="Kill" tabindex=0>Tuer joueur</button2>
-
+{% endif %}
+ {% if player.role == "scientist"%}
+<button2 class="ask" data-modal="deads" tabindex=0>voir les morts</button2>
+{% endif %}
 <button2 class="ask" data-modal="Report" tabindex=0>Reporter un corps</button2>
+
 
 
 {% for task in task_list %}
@@ -56,8 +60,10 @@
         <div class="contact-form">
             <a class="close" tabindex="0">&times;</a>
             <h2>Qui voulez-vous tuer ?</h2>
-            <input placeholder="La personne à tuer" type="text" name="text" class="input">
-            <input type="submit">
+            <form action= "/api/kill" method="post">
+                <input placeholder="La personne à tuer" type="text"  name="killed_id" id="killed_id" class="input">
+                <input type="submit">
+            </form>>
         </div>
     </div>
 </div>
@@ -67,7 +73,9 @@
         <div class="contact-form">
             <a class="close" tabindex="0">&times;</a>
             <h2>Quelle personne a été tuée ?</h2>
-            <input placeholder="Reporter le corps du joueur" type="text" name="text" class="input">
+            <form action= "/api/report_dead" method="post">
+                <input placeholder="Reporter le corps du joueur" type="text" name="dead_player_id" id="dead_player_id" class="input">
+            </form>
         </div>
     </div>
 </div>
@@ -80,8 +88,10 @@
         <div class="contact-form">
             <a class="close" tabindex="0">&times;</a>
             <h2>Valider la tâche</h2>
-            <input placeholder="Code de validation" type="text" name="text" class="input">
-            <input type="submit" value="Valider">
+            <form action= "/api/done_task" method="post">
+                <input placeholder="Code de validation" type="text" name="text" class="input">
+                <input type="submit" value="Valider">
+            </form>
         </div>
     </div>
 </div>
@@ -92,7 +102,9 @@
         <div class="contact-form">
             <a class="close" tabindex="0">&times;</a>
             <h2>Activer la tâche</h2>
-            <input placeholder="Mot clé d'activation " type="text" name="text" class="input">
+            <form action= "/api/activ_task" method="post">
+                <input placeholder="Mot clé d'activation " type="text" name="text" class="input">
+            </form>
         </div>
     </div>
 </div>

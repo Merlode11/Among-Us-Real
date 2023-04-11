@@ -592,7 +592,7 @@ class Game:
         :return: Player: Joueur
         """
         for player in self.players:
-            if player.id == player_id:
+            if player is not None and player.id == player_id:
                 return player
         else:
             return None
