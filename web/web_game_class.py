@@ -23,9 +23,9 @@ class WebGame(Game):
         - GET /meeting: Affiche la page de réunion du joueur
         - GET /paused: Affiche la page de pause de jeu en cas d'urgence
         - GET /api/infos/<code_joueur>: Renvoie les informations actuelles du joueur
-        - POST /api/kill/killer_id/killed_id: Permet pour le tueur de tuer une personne
-        - POST /api/done_task/player_id/task_id: Permet de valider une tâche comme faite
-        - POST /api/activ_task/player_id/task_id: Permet d'activer une tâche du joueur
+        - POST /api/kill: Permet pour le tueur de tuer une personne
+        - POST /api/done_task/task_id: Permet de valider une tâche comme faite
+        - POST /api/activ_task/task_id: Permet d'activer une tâche du joueur
     """
 
     def __init__(self, game_master: bool = None):
@@ -117,16 +117,16 @@ class WebGame(Game):
             player.last_message = int(datetime.datetime.now().timestamp())
             return data
 
-        @app.post("/api/kill/<int:killed_id>")
-        def kill(killed_id):
+        @app.post("/api/kill/")
+        def kill():
             """
-            Kill the player given in thz request
+            Kill the player given in the request
             """
 
             killer = self.get_player(session["player_id"])
             if killer is None:
                 return {"error": "Joueur assassin introuvable", "error_code": "executor_not_found"}
-            killed = self.get_player(killed_id)
+            killed = self.get_player(request.form["killed_id"])
             if killed is None:
                 return {"error": "Joueur assassiné introuvable", "error_code": "target_not_found"}
             if killer.role != "impostor":
@@ -162,6 +162,17 @@ class WebGame(Game):
             elif request.form["keyword"] not in task.activ_keywords:
                 return {"error": "Ce mot n'est pas valide", "error_code": "unknown_keyword"}
             task.active = True
+            return {"success": True, "task": task}, 200
+
+        @app.post("/api/report_dead")
+        def report_dead():
+            player = self.get_player(session["player_id"])
+            dead_player = self.get_player(request.form["dead_player_id"])
+            if dead_player is None:
+                return {"error": "Joueur assassiné introuvable", "error_code": "target_not_found"}
+            if not dead_player.dead:
+                return {"error": "Joueur assassiné n'est pas mort", "error_code": "target_not_dead"}
+            self.s
 
         @app.get("/api/game_is_started")
         def game_is_started():
@@ -177,45 +188,70 @@ class WebGame(Game):
         Créé une fenêtre Tkinter popup pour attendre que les joueurs se connectent
         :return:
         """
-
+        already_started: bool = self.import_window is not None
         if self.import_window:
             clear_frame(self.import_window)
-            return None
+            popup = self.import_window
 
-        self.players = [None] * 100
-        self.import_window = popup = Tk()
-        popup.title("Importation des joueurs")
-        popup.geometry("300x200")
-        popup.resizable(True, True)
-        popup.iconbitmap(self.path + "/assets/img/amongus.ico")
-        popup.state("zoomed")
+            game_qrcode = pyqrcode.create(f"http://{self.ip}:80/")
+            game_qrcode.png(self.path + "/assets/img/qrcode.png", scale=6)
+        else:
+            self.players = [None] * 100
+            self.import_window = popup = Tk()
+            popup.title("Importation des joueurs")
+            popup.geometry("300x200")
+            popup.resizable(True, True)
+            popup.iconbitmap(self.path + "/assets/img/amongus.ico")
+            popup.state("zoomed")
+
+        def start_game() -> None:
+            """
+            Démarre la partie, une fois que les joueurs sont importés
+            :return: None
+            """
+            self.import_window = None
+            self.players = [player for player in self.players if player is not None]
+            popup.destroy()
 
         main_frame = Frame(popup)
 
         qrcode_frame = Frame(main_frame)
-
-        game_qrcode = pyqrcode.create(f"http://{self.ip}:80/")
-
-        game_qrcode.png(self.path + "/assets/img/qrcode.png", scale=6)
 
         qrcode = PhotoImage(file=self.path + "/assets/img/qrcode.png", master=qrcode_frame)
 
         qrcode_label = Label(qrcode_frame, image=qrcode)
         qrcode_label.pack()
 
-        url_label = Label(qrcode_frame, text=f"http://{self.ip}:80/", font=("Arial", 28))
+        url_label = Label(qrcode_frame, text=f"http://{self.ip}:80/", font=("Arial", 28), fg="blue", cursor="hand2")
         url_label.pack()
 
         qrcode_frame.pack(fill=BOTH, expand=True)
 
-        start_button = Button(main_frame, text="Démarrer la partie")
-        start_button.pack()
+        valid_players = [player for player in self.players if player is not None]
 
-        self.import_players_frame = VerticalScrolledFrame(main_frame)
+        import_players_frame = VerticalScrolledFrame(main_frame)
+
+        for player in valid_players:
+            player_frame = Frame(import_players_frame)
+
+            player_label = Label(player_frame, text=player.get_name(), font=("Arial", 28), fg=player.color)
+            player_label.pack()
+
+            player_frame.pack(fill=BOTH, expand=True)
+
+        import_players_frame.pack(fill=BOTH, expand=True)
+
+        start_button = Button(main_frame, text="Démarrer la partie", command=start_game)
+
+        if len(valid_players) < 4:
+            start_button.config(state=DISABLED)
+
+        start_button.pack()
 
         main_frame.pack(fill=BOTH, expand=True)
 
-        popup.mainloop()
+        if not already_started:
+            popup.mainloop()
 
     def send_info_all(self, message: str):
         for player in self.players:
