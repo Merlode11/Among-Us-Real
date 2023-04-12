@@ -17,7 +17,7 @@ def clear_frame(frame: Widget):
         widget.destroy()
 
 
-class VerticalScrolledFrame(Frame):
+class VerticalScrolledFrame:
     """
     Code issu du Gist GitHub https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531
     Une Frame verticalement scrollable qui peut être traitée comme n'importe quelle autre Frame

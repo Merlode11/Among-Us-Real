@@ -5,6 +5,7 @@ from tkinter import messagebox, ttk
 import os
 from config_settings import config_settings
 from player_config import player_config
+from task_config import task_config
 from utils import clear_frame
 
 
@@ -79,6 +80,13 @@ def main():
             players = json.load(p)
         show_config()
 
+    def config_tasks():
+        global tasks
+        task_config()
+        with open("tasks.json", "r", encoding="utf-8") as t:
+            tasks = json.load(t)
+        show_config()
+
     def show_config():
         """
         Affiche dans la fenêtre la configuration actuelle de la partie
@@ -91,7 +99,7 @@ def main():
         player_button.grid(row=0, column=1)
 
         task_label = Label(edits_frame, text=f"{len(tasks)} tâches")
-        task_button = Button(edits_frame, text="Modifier")
+        task_button = Button(edits_frame, text="Modifier", command=config_tasks)
         task_label.grid(row=1, column=0)
         task_button.grid(row=1, column=1)
 
