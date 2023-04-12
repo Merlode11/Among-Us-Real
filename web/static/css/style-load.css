@@ -1,63 +1,72 @@
-body{
-  background-color:#2b2b2b;
+body {
+    background-color: #2b2b2b;
 }
 
-  .container {
+.container {
     position: absolute;
     top: 50%;
     left: 50%;
     border-radius: 50%;
     height: 75px;
-    width: 75px; 
+    width: 75px;
     animation: rotate_3922 1.2s linear infinite;
     background-color: #ffffff;
     background-image: linear-gradient(#ff0000, #2d2d2d, #0800ff);
-  }
+}
 
 .container span {
-  position: absolute;
-  border-radius: 100%;
-  height: 100%;
-  width: 100%;
-  background-color: #ffffff;
-  background-image: linear-gradient(#ff0000, #2d2d2d, #0800ff);
+    position: absolute;
+    border-radius: 100%;
+    height: 100%;
+    width: 100%;
+    background-color: #ffffff;
+    background-image: linear-gradient(#ff0000, #2d2d2d, #0800ff);
 }
 
 .container span:nth-of-type(1) {
-  filter: blur(5px);
+    filter: blur(5px);
 }
 
 
 .container span:nth-of-type(2) {
-  filter: blur(10px);
+    filter: blur(10px);
 }
 
 .container span:nth-of-type(3) {
-  filter: blur(25px);
+    filter: blur(25px);
 }
 
 .container span:nth-of-type(4) {
-  filter: blur(50px);
+    filter: blur(50px);
 }
 
 .container::after {
-  content: "";
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
-  background-color: #2d2d2d;
-  border: solid 1px #202020;
-  border-radius: 50%;
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    background-color: #2d2d2d;
+    border: solid 1px #202020;
+    border-radius: 50%;
 }
 
 @keyframes rotate_3922 {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
 
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.center {
+    position: absolute;
+    top: 57%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #ffffff;
 }
