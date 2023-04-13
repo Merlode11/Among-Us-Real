@@ -18,6 +18,7 @@ class SMSGame(Game):
         self.send_messages = []
         Timer(1, self.start_recieve_sms).start()
         super().__init__(game_master)
+        self.start_game()
 
     def import_players(self):
         used_passwords: list = []

@@ -140,22 +140,15 @@ class WebPlayer(Player):
 class BasicTask:
     type: str = "basic"
 
-    def __init__(self, name: str, description: str, steps: int, location: str, other: dict = None):
+    def __init__(self, name: str, description: str, steps: int, location: str):
         self.name: str = name
         self.description: str = description
         self.steps: int = steps
         self.location: str = location
         self.done: bool = False
-        self.other: dict = other
         self.nb_given: int = 0
         self.success: int = 0
 
-        if self.other and self.other.get("questions"):
-            random.shuffle(self.other["questions"])
-            questions = []
-            for i in range(3):
-                questions.append(self.other["questions"][i])
-            self.other["questions"] = questions
 
     def __repr__(self):
         return f"{self.name} ({self.steps}): {self.description} | {self.location}"
@@ -170,6 +163,8 @@ class BasicTask:
         return {
             "name": self.name,
             "description": self.description,
+            "steps": self.steps,
+            "location": self.location,
         }
 
 
@@ -177,7 +172,7 @@ class ValidateBasicTask(BasicTask):
     type: str = "validate_basic"
 
     def __init__(self, name: str, description: str, steps: int, location: str, valid_keywords: list):
-        super().__init__(name, description, steps, location, {})
+        super().__init__(name, description, steps, location)
         self.keywords: list = valid_keywords
 
     def __repr__(self):
@@ -186,12 +181,24 @@ class ValidateBasicTask(BasicTask):
     def __str__(self):
         return f"{self.name} ({self.steps})"
 
+    def to_dict(self) -> dict:
+        """
+        Renvoie la tâche sous forme de dictionnaire
+        """
+        return {
+            "name": self.name,
+            "description": self.description,
+            "steps": self.steps,
+            "location": self.location,
+            "keywords": self.keywords,
+        }
+
 
 class ActivateBasicTask(BasicTask):
     type: str = "activate_basic"
 
     def __init__(self, name: str, description: str, steps: int, location: str, activ_keywords: list, message: str):
-        super().__init__(name, description, steps, location, {})
+        super().__init__(name, description, steps, location)
         self.activ_keywords: list = activ_keywords
         self.message: str = message
         self.active: bool = False
@@ -201,6 +208,19 @@ class ActivateBasicTask(BasicTask):
 
     def __str__(self):
         return f"{self.name} ({self.steps})"
+
+    def to_dict(self) -> dict:
+        """
+        Renvoie la tâche sous forme de dictionnaire
+        """
+        return {
+            "name": self.name,
+            "description": self.description,
+            "steps": self.steps,
+            "location": self.location,
+            "activ_keywords": self.activ_keywords,
+            "message": self.message,
+        }
 
 
 class ActivValidTask(ValidateBasicTask):
@@ -218,6 +238,20 @@ class ActivValidTask(ValidateBasicTask):
 
     def __str__(self):
         return f"{self.name} ({self.steps})"
+
+    def to_dict(self) -> dict:
+        """
+        Renvoie la tâche sous forme de dictionnaire
+        """
+        return {
+            "name": self.name,
+            "description": self.description,
+            "steps": self.steps,
+            "location": self.location,
+            "keywords": self.keywords,
+            "activ_keywords": self.activ_keywords,
+            "message": self.message,
+        }
 
 
 def set_task(task_dict: dict) -> BasicTask or ActivateBasicTask or ValidateBasicTask or ActivValidTask:

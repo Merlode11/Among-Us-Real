@@ -4,7 +4,7 @@
 from tkinter import *
 from tkinter import messagebox, ttk
 
-from classes import Player, SMSPlayer, BasicTask
+from classes import Player, SMSPlayer, set_task
 from utils import clear_frame, VerticalScrolledFrame, Timer
 import json
 import random
@@ -20,31 +20,6 @@ class Game:
         with open(self.path + "/config.json", "r", encoding='utf-8') as f:
             self.config = json.load(f)
 
-        # Game window
-        self.window = window = Tk()
-        window.title(self.config["names"]["title"])
-        window.geometry("800x600")
-        window.resizable(True, True)
-        window.iconbitmap(self.path + "/assets/img/amongus.ico")
-        window.state("zoomed")
-
-        self.players: list = []
-        self.import_players()
-
-        self.tasks: list = []
-        with open(self.path + r"/taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            self.tasks = [
-                BasicTask(task["name"], task["description"], task["type"], task["location"], task.get("other")) for
-                task in data]
-
-        if len(self.tasks) < self.config["tasks"]:
-            messagebox.showerror("Erreur",
-                                 "Le nombre de tâches à donner est supérieur au nombre de tâches disponibles !",
-                                 parent=window)
-            self.window.destroy()
-            return
-
         self.given_tasks: int = 0
 
         self.crewmates: list = []
@@ -58,10 +33,49 @@ class Game:
             self.game_master: bool = self.config["game_master"]
         else:
             self.game_master: bool = game_master
-        
+
         self.pause: bool = False
         self.unpause_code: str = ""
         self.pause_reason: str = ""
+
+        # Game window
+        self.window = window = Tk()
+        window.title(self.config["names"]["title"])
+        window.geometry("800x600")
+        window.resizable(True, True)
+        window.iconbitmap(self.path + "/assets/img/amongus.ico")
+        window.state("zoomed")
+
+        self.tasks: list = []
+        with open(self.path + r"/taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
+            data = json.load(f)
+            self.tasks = [set_task(task) for task in data]
+
+        self.players: list = []
+        self.import_players()
+
+        self.__label_title = None
+        self.__buttons_frame = None
+        self.__tasks_progress = None
+        self.__label_tasks = None
+        self.__tasks_progress_bar = None
+        self.__play_frame = None
+
+        window.mainloop()
+
+    def start_game(self):
+        """
+        Démarre la partie
+        :return:
+        """
+        window = self.window
+
+        if len(self.tasks) < self.config["tasks"]:
+            messagebox.showerror("Erreur",
+                                 "Le nombre de tâches à donner est supérieur au nombre de tâches disponibles !",
+                                 parent=window)
+            self.window.destroy()
+            return
 
         if self.config["impostors"] + self.config["engineers"] + self.config["scientists"] > len(self.players):
             messagebox.showerror("Erreur", "Le nombre de joueurs est insuffisant pour la configuration choisie")
@@ -242,7 +256,7 @@ class Game:
 
             show_tasks_frame()
 
-            def task_done(task: BasicTask):
+            def task_done(task):
                 """
                 Marque une tâche comme faite
                 :param task: BasicTask: Tâche à marquer comme faite
@@ -258,7 +272,7 @@ class Game:
                     return True
                 show_tasks_frame()
 
-            def task_undone(task: BasicTask):
+            def task_undone(task):
                 """
                 Marque une tâche comme non faite
                 :param task: BasicTask: Tâche à marquer comme non faite
@@ -270,7 +284,7 @@ class Game:
                 self.__label_tasks.config(text=f"{len(self.done_tasks)}/{self.given_tasks} tâches données")
                 show_tasks_frame()
 
-            def show_details(task: BasicTask):
+            def show_details(task):
                 """
                 Affiche les détails d'une tâche
                 :param task:
@@ -395,7 +409,7 @@ class Game:
         for i in range(self.config["scientists"]):
             self.crewmates[i + self.config["engineers"]].role = "scientist"
 
-        self.players = sorted(self.players, key=lambda joueur: joueur.name)
+        self.players = sorted(self.players, key=lambda joueur: joueur.get_name())
 
     def define_tasks(self) -> None:
         """
@@ -404,8 +418,7 @@ class Game:
         for player in self.players:
             random.shuffle(self.tasks)
             for i in range(self.config["tasks"]):
-                player.tasks.append(BasicTask(self.tasks[i].name, self.tasks[i].description, self.tasks[i].classe,
-                                              self.tasks[i].location, self.tasks[i].other))
+                player.tasks.append(set_task(self.tasks[i].to_dict()))
                 self.tasks[i].nb_given += 1
                 if self.tasks[i].nb_given >= self.config["max_task_given"]:
                     del self.tasks[i]
@@ -608,7 +621,7 @@ class Game:
     def send_info(self, player: Player, message: str):
         pass
 
-    def task_done(self, player: Player, task: BasicTask):
+    def task_done(self, player: Player, task):
         task.done = True
         self.done_tasks.append(task)
         self.__tasks_progress_bar.config(value=len(self.done_tasks) / self.given_tasks * 100)
