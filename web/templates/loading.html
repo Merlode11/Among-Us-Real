@@ -29,8 +29,16 @@
             wait.innerHTML = "";
         else
             wait.innerHTML += ".";
-    }, 300);
 
+        const is_started = fetch("/api/game_is_started")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                if (data) {
+                    window.location.href = "/player";
+                }
+            })
+    }, 300);
 </script>
 
 </body>

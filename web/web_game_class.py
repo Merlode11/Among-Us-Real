@@ -1,9 +1,11 @@
+import json
 import os
 from threading import Thread
 from tkinter import *
+from tkinter import messagebox
 
 import pyqrcode
-from flask import Flask, render_template, session, url_for, redirect, request
+from flask import Flask, render_template, session, redirect, request
 
 from classes import WebPlayer
 from game_class import Game
@@ -42,7 +44,18 @@ class WebGame(Game):
 
         app.secret_key = os.urandom(24)  # It's for the session system of flask
 
-        print("http://" + self.ip + ":80")
+        def where_redirect(sess) -> str:
+            if sess.get("player_id"):
+                if self.import_window is not None:
+                    return "/loading"
+                elif self.meeting:
+                    return "/meeting"
+                elif self.pause:
+                    return "/paused"
+                else:
+                    return "/player"
+            else:
+                return "/"
 
         @app.errorhandler(404)
         def page_not_found(error):
@@ -50,18 +63,18 @@ class WebGame(Game):
 
         @app.route("/")
         def index():
-            if session.get("player_id"):
-                print(session.get("player_id"))
-                return redirect(url_for("/player"))
+            redirection = where_redirect(session)
+            if redirection != "/":
+                return redirect(redirection)
             return render_template("home.html")
 
         @app.route("/player")
         def joueur_page():
-            player_id = session["player_id"]
-            if not player_id:
-                return redirect(url_for("/"))
+            player_id = session.get("player_id")
+            redirection = where_redirect(session)
+            if redirection != "/player":
+                return redirect(redirection)
             joueur = self.get_player(player_id)
-
             return render_template("joueur.html", code_joueur=str(joueur.id), task_list=joueur.tasks, player=joueur)
 
         @app.route("/loading", methods=["GET", "POST"])
@@ -74,20 +87,26 @@ class WebGame(Game):
                 self.players.append(joueur)
                 session["player_id"]: int = joueur.id
                 self.import_players()
+            elif request.method == "GET":
+                redirection = where_redirect(session)
+                if redirection != "/loading":
+                    return redirect(redirection)
             return render_template("loading.html")
 
         @app.route("/meeting")
         def meeting():
-            player_id = session["player_id"]
-            if not player_id:
-                return redirect(url_for("/"))
+            player_id = session.get("player_id")
+            redirection = where_redirect(session)
+            if redirection != "/meeting":
+                return redirect(redirection)
             return render_template("meeting.html", players=self.players)
 
         @app.route("/paused")
         def paused():
-            player_id = session["player_id"]
-            if not player_id:
-                return redirect(url_for("/"))
+            player_id = session.get("player_id")
+            redirection = where_redirect(session)
+            if redirection != "/paused":
+                return redirect(redirection)
             return render_template("paused.html", game={"paused": self.pause, "message": self.pause_reason})
 
         @app.get("/api/infos/")
@@ -96,7 +115,7 @@ class WebGame(Game):
             Returns a json with the information of the player
             :return:
             """
-            player = self.get_player(session["player_id"])
+            player = self.get_player(session.get("player_id"))
             if player is None:
                 return {"error": "Joueur introuvable", "error_code": "executor_not_found"}
             data = {
@@ -122,8 +141,7 @@ class WebGame(Game):
             """
             Kill the player given in the request
             """
-
-            killer = self.get_player(session["player_id"])
+            killer = self.get_player(session.get("player_id"))
             if killer is None:
                 return {"error": "Joueur assassin introuvable", "error_code": "executor_not_found"}
             killed = self.get_player(request.form["killed_id"])
@@ -138,8 +156,7 @@ class WebGame(Game):
 
         @app.post("/api/done_task/<int:task_id>")
         def done_task(task_id):
-            # TODO: Chercher pour avoir les informations de la requête (si jamais un mot a été fourni)
-            player = self.get_player(session["player_id"])
+            player = self.get_player(session.get("player_id"))
             task = player.tasks[task_id]
             if task.done:
                 return {"error": "La tâche a déjà été faite", "error_code": "task_already_done"}
@@ -153,7 +170,7 @@ class WebGame(Game):
 
         @app.post("/api/activ_task/<int:task_id>")
         def activ_task(task_id):
-            player = self.get_player(session["player_id"])
+            player = self.get_player(session.get("player_id"))
             task = player.tasks[task_id]
             if "activ" not in task.type:
                 return {"error": "Le type de tâche n'est pas correct", "error_code": "invalid_task_type"}
@@ -166,12 +183,21 @@ class WebGame(Game):
 
         @app.post("/api/report_dead")
         def report_dead():
-            player = self.get_player(session["player_id"])
+            player = self.get_player(session.get("player_id"))
             dead_player = self.get_player(request.form["dead_player_id"])
             if dead_player is None:
                 return {"error": "Joueur assassiné introuvable", "error_code": "target_not_found"}
             if not dead_player.dead:
                 return {"error": "Joueur assassiné n'est pas mort", "error_code": "target_not_dead"}
+
+        @app.post("/api/see_deads")
+        def see_deads():
+            player = self.get_player(session.get("player_id"))
+            if player is None:
+                return {"error": "Joueur introuvable", "error_code": "executor_not_found"}
+            if player.role != "scientist":
+                return {"error": "Joueur n'est pas scientifique", "error_code": "not_scientist"}
+            return {"success": True, "deads": json.dumps(self.dead_players)}, 200
 
         @app.get("/api/game_is_started")
         def game_is_started():
@@ -210,6 +236,16 @@ class WebGame(Game):
             self.import_window = None
             self.players = [player for player in self.players if player is not None]
             popup.destroy()
+            self.start_game()
+            return None
+
+        def closing():
+            """
+            Fonction de fermeture de la fenêtre
+            """
+            if messagebox.askokcancel("Quitter", "Êtes vous sûr de quitter ?"):
+                popup.destroy()
+                self.window.destroy()
 
         main_frame = Frame(popup)
 
@@ -223,13 +259,16 @@ class WebGame(Game):
         url_label = Label(qrcode_frame, text=f"http://{self.ip}:80/", font=("Arial", 28), fg="blue", cursor="hand2")
         url_label.pack()
 
-
         qrcode_frame.pack(fill=BOTH, expand=True)
 
-        start_button = Button(main_frame, text="Démarrer la partie", command=start_game)
-        start_button.pack(fill=BOTH, expand=True)
-
         valid_players = [player for player in self.players if player is not None]
+
+        start_button = Button(main_frame, text="Démarrer la partie", command=start_game)
+
+        if len(valid_players) < 4:
+            start_button.config(state=DISABLED)
+
+        start_button.pack()
 
         import_players_frame = VerticalScrolledFrame(main_frame)
 
@@ -242,13 +281,6 @@ class WebGame(Game):
             player_frame.pack(fill=BOTH, expand=True)
 
         import_players_frame.pack(fill=BOTH, expand=True)
-
-        start_button = Button(main_frame, text="Démarrer la partie", command=start_game)
-
-        if len(valid_players) < 4:
-            start_button.config(state=DISABLED)
-
-        start_button.pack()
 
         main_frame.pack(fill=BOTH, expand=True)
 
