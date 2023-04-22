@@ -10,7 +10,16 @@
 
 <body>
 <h1 class="center">
+  <form class="form">
 
+    <h2>VOTEZ POUR UN JOUEUR À ÉLIMINER</h2>
+{%for joueur in players%}
+    <div class="inputGroup">
+      <input id="{{joueur.id}}" name="radio" type="radio"/>
+      <label for="radio1">{{joueur.nikname}}</label>
+  </div>
+{%endfor%}
+  </form>
 </h1>
 
 <div class="container">
