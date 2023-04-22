@@ -3,11 +3,8 @@ window.setInterval( function() {
         .then(response => response.json())
         .then(data => { 
             console.log(data)
-            if (data.game_pause) {
-                window.location.href = "/paused";
-            }
-            else if(data.meeting) {
-                window.location.href = "/meeting";
+            if (!data.meeting) {
+                window.location.href = "/joueur";
             }
         })
 }, 300);
