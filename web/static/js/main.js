@@ -11,6 +11,7 @@ modalBtns.forEach(function (btn) {
         }
     };
 });
+
 let closeBtns = [...document.getElementsByClassName("close")];
 console.log(closeBtns);
 closeBtns.forEach(function (btn) {
@@ -25,6 +26,7 @@ closeBtns.forEach(function (btn) {
         }
     };
 });
+
 window.onclick = function (event) {
     if (event.target.className === "modal") {
         event.target.style.display = "none";

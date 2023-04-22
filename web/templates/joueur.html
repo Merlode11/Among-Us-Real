@@ -61,7 +61,7 @@
             <a class="close" tabindex="0">&times;</a>
             <h2>Qui voulez-vous tuer ?</h2>
             <form action= "/api/kill" method="post">
-                <input placeholder="La personne à tuer" type="text"  name="killed_id" id="killed_id" class="input">
+                <input placeholder="La personne à tuer" type="number"  name="killed_id" id="killed_id" class="input" min="0">
                 <input type="submit">
             </form>>
         </div>
@@ -74,7 +74,7 @@
             <a class="close" tabindex="0">&times;</a>
             <h2>Quelle personne a été tuée ?</h2>
             <form action= "/api/report_dead" method="post">
-                <input placeholder="Reporter le corps du joueur" type="text" name="dead_player_id" id="dead_player_id" class="input">
+                <input placeholder="Reporter le corps du joueur" type="number" name="dead_player_id" id="dead_player_id" class="input" min="0">
             </form>
         </div>
     </div>
@@ -89,7 +89,7 @@
             <a class="close" tabindex="0">&times;</a>
             <h2>Valider la tâche</h2>
             <form action= "/api/done_task" method="post">
-                <input placeholder="Code de validation" type="text" name="text" class="input">
+                <input placeholder="Mot clé de validation" type="text" name="text" class="input">
                 <input type="submit" value="Valider">
             </form>
         </div>
@@ -108,6 +108,18 @@
         </div>
     </div>
 </div>
+
+{% if popup %}
+<div id="popup" class="modal" style="display: block">
+    <div class="modal-content">
+        <div class="contact-form">
+            <a class="close" tabindex="0">&times;</a>
+            <h2>{{popup["title"]}}</h2>
+            <p>{{popup["message"]}}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 
 </body>

@@ -96,18 +96,18 @@ class WebGame(Game):
         @app.route("/meeting")
         def meeting():
             player_id = session.get("player_id")
+            player = self.get_player(player_id)
             redirection = where_redirect(session)
             if redirection != "/meeting":
                 return redirect(redirection)
-            return render_template("meeting.html", players=self.players)
+            return render_template("meeting.html", players=self.players, player=player, game=self)
 
         @app.route("/paused")
         def paused():
-            player_id = session.get("player_id")
             redirection = where_redirect(session)
             if redirection != "/paused":
                 return redirect(redirection)
-            return render_template("paused.html", game={"paused": self.pause, "message": self.pause_reason})
+            return render_template("paused.html", message=self.pause_reason)
 
         @app.get("/api/infos/")
         def infos():
@@ -123,6 +123,7 @@ class WebGame(Game):
                 "nickname": player.nickname,
                 "color": player.color,
                 "id": player.id,
+                "password": player.password,
                 "role": player.role,
                 "tasks": player.tasks,
                 "dead": player.dead,
@@ -146,62 +147,230 @@ class WebGame(Game):
                 return {"error": "Joueur assassin introuvable", "error_code": "executor_not_found"}
             killed = self.get_player(request.form["killed_id"])
             if killed is None:
-                return {"error": "Joueur assassiné introuvable", "error_code": "target_not_found"}
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(killer.id),
+                    task_list=killer.tasks,
+                    player=killer,
+                    popup={"title": "Erreur",
+                           "message": "Le joueur que vous souhaitez assassiner n'a pas été trouvé, merci de bien vouloir réessayer."}
+                ), 400
             if killer.role != "impostor":
-                return {"error": "Joueur n'étant pas imposteur", "error_code": "not_impostor"}
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(killer.id),
+                    task_list=killer.tasks,
+                    player=killer,
+                    popup={"title": "Erreur",
+                           "message": "Vous n'êtes pas imposteur, vous ne pouvez pas assassiner de joueur."}
+                ), 400
             if killed.dead:
-                return {"error": "Joueur assassiné déjà mort", "error_code": "target_dead"}
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(killer.id),
+                    task_list=killer.tasks,
+                    player=killer,
+                    popup={"title": "Erreur", "message": "Le joueur que vous souhaitez assassiner est déjà mort."}
+                ), 400
             self.kill_player(killed)
-            return {"success": True}, 200
+            return render_template(
+                "joueur.html",
+                code_joueur=str(killer.id),
+                task_list=killer.tasks,
+                player=killer,
+                popup={"title": "Joueur assasiné",
+                       "message": "Vous avez bien assassiné le joueur " + killed.get_name() + "."}
+            ), 200
 
         @app.post("/api/done_task/<int:task_id>")
         def done_task(task_id):
             player = self.get_player(session.get("player_id"))
             task = player.tasks[task_id]
             if task.done:
-                return {"error": "La tâche a déjà été faite", "error_code": "task_already_done"}
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(player.id),
+                    task_list=player.tasks,
+                    player=player,
+                    popup={"title": "Erreur", "message": "La tâche a déjà été faite."}
+                ), 400
             elif "activ" in task.type and not task.active:
-                return {"error": "La tâche n'a pas été activée", "error_code": "task_inactive"}
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(player.id),
+                    task_list=player.tasks,
+                    player=player,
+                    popup={"title": "Erreur",
+                           "message": "La tâche n'a pas été activée. Elle doit-être activée par un mot clé avant de piuvoir la validée."}
+                ), 400
             elif "valid" in task.type:
                 if request.form["keyword"] not in task.keywords:
-                    return {"error": "Ce mot n'est pas valide", "error_code": "unknown_keyword"}
+                    return render_template(
+                        "joueur.html",
+                        code_joueur=str(player.id),
+                        task_list=player.tasks,
+                        player=player,
+                        popup={"title": "Erreur", "message": "Le mot clé pour valider la tâche n'est pas valide."}
+                    ), 400
             self.task_done(player, task)
-            return {"success": True, "task": task}, 200
+            return render_template(
+                "joueur.html",
+                code_joueur=str(player.id),
+                task_list=player.tasks,
+                player=player,
+                popup={"title": "Tâche validée", "message": "Vous avez bien validé la tâche " + task.name + "."}
+            ), 200
 
         @app.post("/api/activ_task/<int:task_id>")
         def activ_task(task_id):
             player = self.get_player(session.get("player_id"))
             task = player.tasks[task_id]
             if "activ" not in task.type:
-                return {"error": "Le type de tâche n'est pas correct", "error_code": "invalid_task_type"}
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(player.id),
+                    task_list=player.tasks,
+                    player=player,
+                    popup={"title": "Erreur", "message": "La tâche n'est pas une tâche activable."}
+                ), 400
             elif task.active:
-                return {"error": "La tâche est déjà active", "error_code": "task_active"}
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(player.id),
+                    task_list=player.tasks,
+                    player=player,
+                    popup={"title": "Erreur", "message": "La tâche a déjà été activée."}
+                ), 400
             elif request.form["keyword"] not in task.activ_keywords:
-                return {"error": "Ce mot n'est pas valide", "error_code": "unknown_keyword"}
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(player.id),
+                    task_list=player.tasks,
+                    player=player,
+                    popup={"title": "Erreur", "message": "Le mot clé pour activer la tâche n'est pas valide."}
+                ), 400
             task.active = True
-            return {"success": True, "task": task}, 200
+            return render_template(
+                "joueur.html",
+                code_joueur=str(player.id),
+                task_list=player.tasks,
+                player=player,
+                popup={"title": "Tâche activée", "message": "Vous avez bien activé la tâche " + task.name + "."}
+            ), 200
 
         @app.post("/api/report_dead")
         def report_dead():
             player = self.get_player(session.get("player_id"))
             dead_player = self.get_player(request.form["dead_player_id"])
             if dead_player is None:
-                return {"error": "Joueur assassiné introuvable", "error_code": "target_not_found"}
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(player.id),
+                    task_list=player.tasks,
+                    player=player,
+                    popup={"title": "Erreur",
+                           "message": "Le joueur mort n'a pas été trouvé, merci de bien vouloir réessayer avec un identifiant correct."}
+                ), 400
             if not dead_player.dead:
-                return {"error": "Joueur assassiné n'est pas mort", "error_code": "target_not_dead"}
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(player.id),
+                    task_list=player.tasks,
+                    player=player,
+                    popup={"title": "Erreur", "message": "Le joueur que vous souhaitez déclarer mort n'est pas mort."}
+                ), 400
+            if self.game_master:
+                response = messagebox.askokcancel("Mort détecté",
+                                                  f"{player.name} {player.lastname} découvert un corps ! Il a découvert {dead_player.get_name()}.\n Voulez-vous lancer une réunion ?")
+                if response == "ok":
+                    game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
+                elif response == "cancel":
+                    self.send_info(player, "Votre demande a été refusée par l'organisateur.ice de la partie.")
+            self.start_meeting("Un cadavre a été signalé.")
+            return render_template(
+                "joueur.html",
+                code_joueur=str(player.id),
+                task_list=player.tasks,
+                player=player,
+                popup={"title": "Joueur signalé",
+                       "message": "Vous avez bien signalé le joueur " + dead_player.get_name() + " comme mort."}
+            ), 200
 
         @app.post("/api/see_deads")
         def see_deads():
             player = self.get_player(session.get("player_id"))
             if player is None:
-                return {"error": "Joueur introuvable", "error_code": "executor_not_found"}
+                return {"error": "Joueur non trouvé", "error_code": "player_not_found"}, 400
             if player.role != "scientist":
-                return {"error": "Joueur n'est pas scientifique", "error_code": "not_scientist"}
-            return {"success": True, "deads": json.dumps(self.dead_players)}, 200
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(player.id),
+                    task_list=player.tasks,
+                    player=player,
+                    popup={"title": "Erreur",
+                           "message": "Vous n'avez pas le droit de voir les morts. Seul les scientifiques peuvent le faire."}
+                ), 400
+            if player.asks >= self.config["max_dead_check"]:
+                return render_template(
+                    "joueur.html",
+                    code_joueur=str(player.id),
+                    task_list=player.tasks,
+                    player=player,
+                    popup={"title": "Erreur", "message": "Vous avez déjà vu les morts trop de fois."}
+                ), 400
+            player_status: str = ""
+            for joueur in self.players:
+                player_status += f'<span style="color: {joueur.color}">{joueur.get_name()}</span> : {"mort" if joueur.dead else "vivant"}<br>'
+            return render_template(
+                "joueur.html",
+                code_joueur=str(player.id),
+                task_list=player.tasks,
+                player=player,
+                popup={"title": "Voici l'état de chaque joueur actuellement", "message": player_status}
+            ), 200
 
         @app.get("/api/game_is_started")
         def game_is_started():
             return self.import_window is not None, 200
+
+        @app.post("/api/vote")
+        def vote():
+            player = self.get_player(session.get("player_id"))
+            if player is None:
+                return {"error": "Joueur non trouvé", "error_code": "player_not_found"}, 400
+            voted_player = self.get_player(request.form["voted_player_id"])
+            if voted_player is None:
+                return render_template(
+                    "meeting.html",
+                    players=self.players,
+                    player=player,
+                    popup={"title": "Erreur", "message": "Le joueur que vous souhaitez voter n'a pas été trouvé."},
+                    game=self
+                ), 400
+            if player.voted:
+                return render_template(
+                    "meeting.html",
+                    players=self.players,
+                    player=player,
+                    popup={"title": "Erreur", "message": "Vous avez déjà voté."},
+                    game=self
+                ), 400
+            player.voted = True
+
+
+
+        @app.get("/api/sos")
+        def sos():
+            player = self.get_player(session.get("player_id"))
+            if player is None:
+                return {"error": "Joueur non trouvé", "error_code": "player_not_found"}, 400
+            if player.role != "doctor":
+                return {"error": "Vous n'êtes pas le docteur", "error_code": "not_doctor"}, 400
+            if player.sos_used:
+                return {"error": "Vous avez déjà utilisé votre SOS", "error_code": "sos_already_used"}, 400
+            player.sos_used = True
+            player.sos_used_in = self.meeting
+            return {"message": "Vous avez bien utilisé votre SOS"}, 200
 
         flt = Thread(target=lambda: app.run(host="0.0.0.0", port=80, debug=False))
         flt.daemon = True

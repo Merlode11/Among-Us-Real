@@ -598,7 +598,7 @@ class Game:
 
         window.mainloop()
 
-    def get_player(self, player_id: str):
+    def get_player(self, player_id: str) -> Player or None:
         """
         Récupérer un joueur à partir de son ID
         :param player_id: str: ID du joueur

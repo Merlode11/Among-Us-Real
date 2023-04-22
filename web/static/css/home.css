@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Fredoka%20One&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Manrope&display=swap');
 
+/* Debugging: show a border with a red color for each element */
+* {
+    border: 1px solid red;
+}
+
 h1 {
     font-family: 'Fredoka One', cursive;
     font-size: 50px;
@@ -37,6 +42,7 @@ h2 {
     position: relative;
     left: 43%;
     font-family: "Manrope", sans-serif;
+    margin-right: -500px;
 }
 
 .input {

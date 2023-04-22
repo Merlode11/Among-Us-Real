@@ -210,19 +210,16 @@ class MortCommand(Command):
             response = messagebox.askokcancel("Mort détecté",
                                               f"{player.name} {player.lastname} découvert un corps ! Son message est :\n {message}")
             if response == "ok":
-                game.send_message_to_all(
-                    "Un cadavre a été signalé.\nMerci de vous rendre immédiatement au point de rendez vous !")
+                game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             elif response == "cancel":
                 send_sms(player.phone, "Votre demande a été refusée par l'organisateur.ice")
         else:
-            dead_str = message.split(" ")[1:]
             try:
                 dead = parse_player(message, game)
                 if not dead.dead:
                     send_sms(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
-                    return
                 else:
-                    send_sms(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
+                    game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             except (Exception,):
                 send_sms(player.phone, "Veuillez entrer un joueur valide !")
 
