@@ -1,7 +1,8 @@
 import json
 from tkinter import *
 from tkinter import messagebox, ttk
-# from sms.sms_game_class import SMSGame
+from sms.sms_game_class import SMSGame
+from web.web_game_class import WebGame
 import os
 from config_settings import config_settings
 from player_config import player_config
@@ -83,7 +84,7 @@ def main():
     def config_tasks():
         global tasks
         task_config()
-        with open("tasks.json", "r", encoding="utf-8") as t:
+        with open(f"taskList/{config['task_list']}.json", "r", encoding="utf-8") as t:
             tasks = json.load(t)
         show_config()
 
@@ -140,7 +141,12 @@ def main():
         :return: None
         """
         window.destroy()
-        SMSGame(game_master)
+        if config["manager_type"] == "sms":
+            SMSGame(game_master)
+        elif config["manager_type"] == "web":
+            WebGame(game_master)
+        else:
+            messagebox.showerror("Erreur", "Le gestionnaire de jeu n'est pas reconnu")
         main()
 
     window.mainloop()

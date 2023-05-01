@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from tkinter import messagebox, ttk
-from airmore_manager import send_sms, get_new_messages
+from sms.airmore_manager import send_sms, get_new_messages
 from classes import SMSPlayer, BasicTask
 from game_class import Game
 import json
 import random
-from commands import commands
+from sms.commands import commands
 import datetime
 from threading import Timer
 
@@ -18,6 +18,11 @@ class SMSGame(Game):
         self.send_messages = []
         Timer(1, self.start_recieve_sms).start()
         super().__init__(game_master)
+
+        messagebox.showinfo("Bienvenue", "Bienvenue dans le jeu " + self.config["names"]["title"] + "\n" +
+                            "Une nouvelle partie va commencer.\n" +
+                            "Êtes-vous prêt à jouer ?")
+
         self.start_game()
 
     def import_players(self):
@@ -68,7 +73,7 @@ class SMSGame(Game):
         message += "Vos tâches sont:\n"
         for i in range(len(player.tasks)):
             task = player.tasks[i]
-            message += f"{i + 1}: {task.name} ({task.classe})\n"
+            message += f"{i + 1}: {task.name} ({task.steps} étapes)\n"
         message += "\n"
         message += f"Votre identifiant est {player.id}\n"
         message += "\n"

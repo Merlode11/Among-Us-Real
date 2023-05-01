@@ -118,7 +118,7 @@ def config_settings():
         config = json.load(f)
 
     with open("players.json", "r", encoding='utf-8') as f:
-        players = json.load(f)
+        players = [player for player in json.load(f) if player["play"]]
 
     def set_recommended_imposters():
         impostors_entry.set_value(int(0.4927 + 0.2481 * len(players)))
@@ -270,12 +270,14 @@ def config_settings():
 
     names_frame.pack(fill=X)
 
-    frame.pack(fill=X)
+    ttk.Separator(frame, orient="horizontal").pack(fill="x")
 
-    save_button = Button(window, text="Enregistrer", command=save_config, width=20)
+    save_button = Button(frame, text="Enregistrer", command=save_config, width=20)
     save_button.pack(side=BOTTOM)
-    save_button_close = Button(window, text="Enregistrer et fermer", command=lambda: save_config(True), width=20)
+    save_button_close = Button(frame, text="Enregistrer et fermer", command=lambda: save_config(True), width=20)
     save_button_close.pack(side=BOTTOM)
+
+    frame.pack(fill=X)
 
     window.mainloop()
 

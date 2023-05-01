@@ -47,7 +47,7 @@ def get_new_messages(game) -> list:
         if message.phone not in last_messages:
             last_messages[message.phone] = message
         elif message.datetime != last_messages[message.phone].datetime and message.type == MessageType.RECEIVED:
-            print("New message from {}: {}".format(message.phone, message.content))
+            print(f"New message from {message.phone}: {message.content}")
             player = [p for p in players if p.phone == message.phone][0]
             last_messages[message.phone] = message
             new_messages.append(message)

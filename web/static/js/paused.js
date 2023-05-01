@@ -1,9 +1,7 @@
-
 window.setInterval( function() {
-    const is_started = fetch("/api/infos")
+    fetch("/api/infos")
         .then(response => response.json())
-        .then(data => { 
-            console.log(data)
+        .then(data => {
             if (!data.game_pause) {
                 window.location.href = "/joueur";
             }

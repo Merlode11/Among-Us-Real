@@ -5,7 +5,7 @@ from tkinter import *
 from tkinter import messagebox
 
 import pyqrcode
-from flask import Flask, render_template, session, redirect, request
+from flask import Flask, render_template, session, redirect, request, Markup
 
 from classes import WebPlayer
 from game_class import Game
@@ -48,6 +48,8 @@ class WebGame(Game):
             if sess.get("player_id"):
                 if self.import_window is not None:
                     return "/loading"
+                elif self.end:
+                    return "/end"
                 elif self.meeting:
                     return "/meeting"
                 elif self.pause:
@@ -59,7 +61,7 @@ class WebGame(Game):
 
         @app.errorhandler(404)
         def page_not_found(error):
-            return 'This page does not exist <a href="/">Go home</a>', 404
+            return f'This page does not exist <a href="{where_redirect(session)}">Go home</a>', 404
 
         @app.route("/")
         def index():
@@ -75,17 +77,31 @@ class WebGame(Game):
             if redirection != "/player":
                 return redirect(redirection)
             joueur = self.get_player(player_id)
-            return render_template("joueur.html", code_joueur=str(joueur.id), task_list=joueur.tasks, player=joueur)
+            popup = {"title": Markup(joueur.popup["title"]), "message": Markup(joueur.popup["message"])} if joueur.popup is not None else None
+            sound = joueur.popup.get("sound") if joueur.popup is not None else None
+            joueur.popup = None
+
+            return render_template("joueur.html", code_joueur=str(joueur.id), task_list=enumerate(joueur.tasks), player=joueur, popup=popup, player_role=self.config["names"][joueur.role], is_max_asks=joueur.asks >= self.config["max_dead_check"], sound=sound)
 
         @app.route("/loading", methods=["GET", "POST"])
         def loading():
             if request.method == "POST":
+                if self.import_window is None:
+                    return redirect("/")
                 couleur_joueur = request.form["color"]
                 pseudo_joueur = request.form["nickname"]
                 ip_joueur = request.remote_addr
                 joueur = WebPlayer(ip_joueur, pseudo_joueur, couleur_joueur, self.used_passwords, self.used_id)
                 self.players.append(joueur)
                 session["player_id"]: int = joueur.id
+
+                # TODO: Remove the generation of fake players used for testing
+                self.players.extend([
+                    WebPlayer("92.168.0.22", "Joueur 1", "#FF0000", self.used_passwords, self.used_id),
+                    WebPlayer("92.168.0.22", "Joueur 2", "#FF0000", self.used_passwords, self.used_id),
+                    WebPlayer("92.168.0.22", "Joueur 3", "#FF0000", self.used_passwords, self.used_id),
+                ])
+
                 self.import_players()
             elif request.method == "GET":
                 redirection = where_redirect(session)
@@ -100,7 +116,13 @@ class WebGame(Game):
             redirection = where_redirect(session)
             if redirection != "/meeting":
                 return redirect(redirection)
-            return render_template("meeting.html", players=self.players, player=player, game=self)
+            popup = {"title": Markup(player.popup["title"]), "message": Markup(player.popup["message"])} if player.popup is not None else None
+            sound = player.popup.get("sound") if player.popup is not None else None
+            if self.meeting == "coming":
+                sound = "emergency_meeting.mp3"
+            player.popup = None
+            return render_template("meeting.html", players=self.players, player=player, popup=popup, state=self.meeting, password=player.password,
+                                   has_voted=player.id in self.meeting_votes.keys(), sound=sound)
 
         @app.route("/paused")
         def paused():
@@ -108,6 +130,14 @@ class WebGame(Game):
             if redirection != "/paused":
                 return redirect(redirection)
             return render_template("paused.html", message=self.pause_reason)
+
+        @app.route("/end")
+        def end():
+            redirection = where_redirect(session)
+            if redirection != "/end":
+                return redirect(redirection)
+            del session["player_id"]
+            return render_template("end.html")
 
         @app.get("/api/infos/")
         def infos():
@@ -124,20 +154,37 @@ class WebGame(Game):
                 "color": player.color,
                 "id": player.id,
                 "password": player.password,
-                "role": player.role,
-                "tasks": player.tasks,
+                "role": self.config["names"][player.role],
+                "tasks": [task.to_dict() for task in player.tasks],
                 "dead": player.dead,
                 "asks": player.asks,
                 "popup": player.popup,
                 "meeting": self.meeting,
                 "in_meeting": player in self.meeting_here_users,
-                "game_pause": game.pause
+                "has_voted": player.id in self.meeting_votes.keys(),
+                "game_pause": self.pause,
+                "end": self.end
             }
-            player.popup = None
             player.last_message = int(datetime.datetime.now().timestamp())
+            for joueur in self.players:
+                if joueur.last_message and joueur.last_message + self.config["min_before_inactiv_warn"] * 60 < int(
+                        datetime.datetime.now().timestamp()):
+                    if player.last_warning and player.last_warning + self.config["min_before_inactiv_kick"] * 60 < int(
+                            datetime.datetime.now().timestamp()):
+                        if player.warnings >= self.config["max_warns"]:
+                            self.send_info_all(
+                                f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur")
+                            self.pause = True
+                            if self.game_master:
+                                messagebox.showerror("Un joueur ne répond pas",
+                                                     f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur. Un message a été envoyé à tout le monde.")
+                    else:
+                        player.warnings += 1
+                        player.last_warning = int(datetime.datetime.now().timestamp())
+                player.popup = None
             return data
 
-        @app.post("/api/kill/")
+        @app.post("/api/kill")
         def kill():
             """
             Kill the player given in the request
@@ -147,232 +194,164 @@ class WebGame(Game):
                 return {"error": "Joueur assassin introuvable", "error_code": "executor_not_found"}
             killed = self.get_player(request.form["killed_id"])
             if killed is None:
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(killer.id),
-                    task_list=killer.tasks,
-                    player=killer,
-                    popup={"title": "Erreur",
-                           "message": "Le joueur que vous souhaitez assassiner n'a pas été trouvé, merci de bien vouloir réessayer."}
-                ), 400
+                self.send_info(killer, {"title": "Erreur", "message": "Le joueur que vous souhaitez assassiner n'a pas été trouvé, merci de bien vouloir réessayer."})
+                return redirect("/player")
             if killer.role != "impostor":
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(killer.id),
-                    task_list=killer.tasks,
-                    player=killer,
-                    popup={"title": "Erreur",
-                           "message": "Vous n'êtes pas imposteur, vous ne pouvez pas assassiner de joueur."}
-                ), 400
+                self.send_info(killer, {"title": "Erreur", "message": "Vous n'êtes pas un imposteur, vous ne pouvez donc pas assassiner de joueur."})
+                return redirect("/player")
             if killed.dead:
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(killer.id),
-                    task_list=killer.tasks,
-                    player=killer,
-                    popup={"title": "Erreur", "message": "Le joueur que vous souhaitez assassiner est déjà mort."}
-                ), 400
+                self.send_info(killer, {"title": "Erreur", "message": "Le joueur que vous souhaitez assassiner est déjà mort."})
+                return redirect("/player")
+            if killed.role == "impostor":
+                self.send_info(killer, {"title": "Erreur", "message": "Vous ne pouvez pas assassiner un autre " + self.config["names"]["impostor"] + " !"})
+                return redirect("/player")
             self.kill_player(killed)
-            return render_template(
-                "joueur.html",
-                code_joueur=str(killer.id),
-                task_list=killer.tasks,
-                player=killer,
-                popup={"title": "Joueur assasiné",
-                       "message": "Vous avez bien assassiné le joueur " + killed.get_name() + "."}
-            ), 200
+            self.send_info(killed, {
+                           "title": "Vous êtes mort",
+                           "message": "Vous avez été assassiné par " + killer.get_name() + ".",
+                            "sound": "killing.mp3"
+            })
+            self.send_info(killer, {
+                "title": "Joueur assassiné",
+                "message": "Vous avez bien assassiné le joueur " + killed.get_name() + ".",
+                "sound": "kill.mp3"
+            })
+            return redirect("/player")
 
-        @app.post("/api/done_task/<int:task_id>")
-        def done_task(task_id):
+        @app.post("/api/done_task")
+        def done_task():
             player = self.get_player(session.get("player_id"))
+            task_id = int(request.form.get("task_id"))
             task = player.tasks[task_id]
             if task.done:
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(player.id),
-                    task_list=player.tasks,
-                    player=player,
-                    popup={"title": "Erreur", "message": "La tâche a déjà été faite."}
-                ), 400
+                self.send_info(player, {"title": "Erreur", "message": "La tâche a déjà été faite."})
+                return redirect("/player")
+            if player.role == "impostor":
+                self.send_info(player, {"title": "Erreur", "message": "Vous êtes imposteur, vous ne pouvez pas valider de tâches"})
+                return redirect("/player")
             elif "activ" in task.type and not task.active:
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(player.id),
-                    task_list=player.tasks,
-                    player=player,
-                    popup={"title": "Erreur",
-                           "message": "La tâche n'a pas été activée. Elle doit-être activée par un mot clé avant de piuvoir la validée."}
-                ), 400
+                self.send_info(player, {"title": "Erreur", "message": "La tâche n'a pas été activée. Elle doit-être activée par un mot clé avant de pouvoir la valider."})
+                return redirect("/player")
             elif "valid" in task.type:
-                if request.form["keyword"] not in task.keywords:
-                    return render_template(
-                        "joueur.html",
-                        code_joueur=str(player.id),
-                        task_list=player.tasks,
-                        player=player,
-                        popup={"title": "Erreur", "message": "Le mot clé pour valider la tâche n'est pas valide."}
-                    ), 400
-            self.task_done(player, task)
-            return render_template(
-                "joueur.html",
-                code_joueur=str(player.id),
-                task_list=player.tasks,
-                player=player,
-                popup={"title": "Tâche validée", "message": "Vous avez bien validé la tâche " + task.name + "."}
-            ), 200
+                if request.form.get("keyword") not in task.keywords:
+                    self.send_info(player, {"title": "Erreur", "message": "Le mot clé pour valider la tâche n'est pas valide."})
+                    return redirect("/player")
 
-        @app.post("/api/activ_task/<int:task_id>")
-        def activ_task(task_id):
+            self.send_info(player, {
+                "title": "Tâche validée",
+                "message": "Vous avez bien validé la tâche " + task.name + ".",
+                "sound": "task_complete.mp3"
+            })
+            self.task_done(player, task)
+            return redirect("/player")
+
+        @app.post("/api/activ_task")
+        def activ_task():
             player = self.get_player(session.get("player_id"))
+            task_id = int(request.form.get("task_id"))
             task = player.tasks[task_id]
+            if player.role == "impostor":
+                self.send_info(player, {"title": "Erreur", "message": "Vous êtes imposteur, vous ne pouvez pas activer de tâches"})
+                return redirect("/player")
             if "activ" not in task.type:
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(player.id),
-                    task_list=player.tasks,
-                    player=player,
-                    popup={"title": "Erreur", "message": "La tâche n'est pas une tâche activable."}
-                ), 400
+                self.send_info(player, {"title": "Erreur", "message": "La tâche n'est pas activable."})
+                return redirect("/player")
             elif task.active:
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(player.id),
-                    task_list=player.tasks,
-                    player=player,
-                    popup={"title": "Erreur", "message": "La tâche a déjà été activée."}
-                ), 400
-            elif request.form["keyword"] not in task.activ_keywords:
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(player.id),
-                    task_list=player.tasks,
-                    player=player,
-                    popup={"title": "Erreur", "message": "Le mot clé pour activer la tâche n'est pas valide."}
-                ), 400
+                self.send_info(player, {"title": "Erreur", "message": "Cette tâche a déjà été activée."})
+                return redirect("/player")
+            elif request.form.get("keyword") not in task.activ_keywords:
+                self.send_info(player, {"title": "Erreur", "message": "Le mot clé pour activer la tâche n'est pas valide."})
+                return redirect("/player")
             task.active = True
-            return render_template(
-                "joueur.html",
-                code_joueur=str(player.id),
-                task_list=player.tasks,
-                player=player,
-                popup={"title": "Tâche activée", "message": "Vous avez bien activé la tâche " + task.name + "."}
-            ), 200
+            self.send_info(player, "Vous avez bien activé la tâche " + task.name + ".")
+            return redirect("/player")
 
         @app.post("/api/report_dead")
         def report_dead():
             player = self.get_player(session.get("player_id"))
             dead_player = self.get_player(request.form["dead_player_id"])
             if dead_player is None:
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(player.id),
-                    task_list=player.tasks,
-                    player=player,
-                    popup={"title": "Erreur",
-                           "message": "Le joueur mort n'a pas été trouvé, merci de bien vouloir réessayer avec un identifiant correct."}
-                ), 400
+                self.send_info(player, {"title": "Erreur", "message": "Le joueur mort n'a pas été trouvé, merci de bien vouloir réessayer avec un identifiant correct."})
+                return redirect("/player")
+            if player.dead:
+                self.send_info(player, {"title": "Erreur", "message": "Vous êtes mort, vous ne pouvez donc pas signaler un joueur comme mort."})
+                return redirect("/player")
             if not dead_player.dead:
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(player.id),
-                    task_list=player.tasks,
-                    player=player,
-                    popup={"title": "Erreur", "message": "Le joueur que vous souhaitez déclarer mort n'est pas mort."}
-                ), 400
+                self.send_info(player, {"title": "Erreur", "message": "Le joueur que vous souhaitez déclarer mort n'est pas mort."})
+                return redirect("/player")
             if self.game_master:
                 response = messagebox.askokcancel("Mort détecté",
-                                                  f"{player.name} {player.lastname} découvert un corps ! Il a découvert {dead_player.get_name()}.\n Voulez-vous lancer une réunion ?")
+                                                  f"{player.get_name()} découvert un corps ! Il a découvert {dead_player.get_name()}.\n Voulez-vous lancer une réunion ?")
                 if response == "ok":
-                    game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
+                    self.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
                 elif response == "cancel":
                     self.send_info(player, "Votre demande a été refusée par l'organisateur.ice de la partie.")
+            self.send_info(player, "Vous avez bien signalé le joueur " + dead_player.get_name() + " comme mort.")
             self.start_meeting("Un cadavre a été signalé.")
-            return render_template(
-                "joueur.html",
-                code_joueur=str(player.id),
-                task_list=player.tasks,
-                player=player,
-                popup={"title": "Joueur signalé",
-                       "message": "Vous avez bien signalé le joueur " + dead_player.get_name() + " comme mort."}
-            ), 200
+            return redirect("/player")
 
-        @app.post("/api/see_deads")
+        @app.get("/api/see_deads")
         def see_deads():
             player = self.get_player(session.get("player_id"))
             if player is None:
                 return {"error": "Joueur non trouvé", "error_code": "player_not_found"}, 400
             if player.role != "scientist":
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(player.id),
-                    task_list=player.tasks,
-                    player=player,
-                    popup={"title": "Erreur",
-                           "message": "Vous n'avez pas le droit de voir les morts. Seul les scientifiques peuvent le faire."}
-                ), 400
+                self.send_info(player, "Vous n'avez pas le droit de voir les morts. Seul les scientifiques peuvent le faire.")
+                return redirect("/player")
             if player.asks >= self.config["max_dead_check"]:
-                return render_template(
-                    "joueur.html",
-                    code_joueur=str(player.id),
-                    task_list=player.tasks,
-                    player=player,
-                    popup={"title": "Erreur", "message": "Vous avez déjà vu les morts trop de fois."}
-                ), 400
+                self.send_info(player, "Vous avez déjà vu les morts trop de fois.")
+                return redirect("/player")
             player_status: str = ""
             for joueur in self.players:
                 player_status += f'<span style="color: {joueur.color}">{joueur.get_name()}</span> : {"mort" if joueur.dead else "vivant"}<br>'
-            return render_template(
-                "joueur.html",
-                code_joueur=str(player.id),
-                task_list=player.tasks,
-                player=player,
-                popup={"title": "Voici l'état de chaque joueur actuellement", "message": player_status}
-            ), 200
+            self.send_info(player, player_status)
+            player.asks += 1
+            return redirect("/player")
 
         @app.get("/api/game_is_started")
         def game_is_started():
-            return self.import_window is not None, 200
+            return {"started": self.import_window is None}, 200
 
         @app.post("/api/vote")
         def vote():
             player = self.get_player(session.get("player_id"))
             if player is None:
                 return {"error": "Joueur non trouvé", "error_code": "player_not_found"}, 400
-            voted_player = self.get_player(request.form["voted_player_id"])
-            if voted_player is None:
-                return render_template(
-                    "meeting.html",
-                    players=self.players,
-                    player=player,
-                    popup={"title": "Erreur", "message": "Le joueur que vous souhaitez voter n'a pas été trouvé."},
-                    game=self
-                ), 400
-            if player.voted:
-                return render_template(
-                    "meeting.html",
-                    players=self.players,
-                    player=player,
-                    popup={"title": "Erreur", "message": "Vous avez déjà voté."},
-                    game=self
-                ), 400
+            if player.dead:
+                self.send_info(player, "Vous êtes mort, vous ne pouvez donc pas voter.")
+                return redirect("/meeting")
+            player_id = request.form["vote"]
+            voted_player = self.get_player(player_id) if player_id != "skip" else None
+            if voted_player is None and player_id != "skip":
+                self.send_info(player, "Le joueur que vous souhaitez voter n'a pas été trouvé, merci de bien vouloir réessayer avec un identifiant correct.")
+                return redirect("/meeting")
+            if player.id in self.meeting_votes.keys():
+                self.send_info(player, "Vous avez déjà voté.")
+                return redirect("/meeting")
             player.voted = True
-
-
+            self.meeting_votes[player.id] = player_id if voted_player is not None else "skip"
+            print(self.meeting_votes)
+            self.send_info(player, {
+                "title": "Vote enregistré",
+                "message": "Vous avez bien voté pour " + (voted_player.get_name() if voted_player is not None else "passer"),
+                "sound": "avote.mp3"
+            })
+            self.window.after(0, self.timer.show_players)
+            return redirect("/meeting")
 
         @app.get("/api/sos")
         def sos():
             player = self.get_player(session.get("player_id"))
             if player is None:
                 return {"error": "Joueur non trouvé", "error_code": "player_not_found"}, 400
-            if player.role != "doctor":
-                return {"error": "Vous n'êtes pas le docteur", "error_code": "not_doctor"}, 400
-            if player.sos_used:
-                return {"error": "Vous avez déjà utilisé votre SOS", "error_code": "sos_already_used"}, 400
-            player.sos_used = True
-            player.sos_used_in = self.meeting
-            return {"message": "Vous avez bien utilisé votre SOS"}, 200
+            message = request.form.get("message")
+            self.pause = True
+            self.pause_reason = message if message else "Aide demandé par "+player.get_name()
+            code = self.set_pause_game()
+            self.send_info(player, {"title": "Demande envoyée", "message": f"Votre demande d'aide a bien été envoyée. Votre code pour annuler l'urgence est {code}"})
+            return redirect("/player")
 
-        flt = Thread(target=lambda: app.run(host="0.0.0.0", port=80, debug=False))
+        self.flt = flt = Thread(target=lambda: app.run(host="0.0.0.0", port=80, debug=False))
         flt.daemon = True
         flt.start()
         super().__init__()
@@ -386,8 +365,6 @@ class WebGame(Game):
         if self.import_window:
             clear_frame(self.import_window)
             popup = self.import_window
-            game_qrcode = pyqrcode.create(f"http://{self.ip}:80/")
-            game_qrcode.png(self.path + "/assets/img/qrcode.png", scale=6)
         else:
             self.players = [None] * 100
             self.import_window = popup = Tk()
@@ -396,6 +373,8 @@ class WebGame(Game):
             popup.resizable(True, True)
             popup.iconbitmap(self.path + "/assets/img/amongus.ico")
             popup.state("zoomed")
+            game_qrcode = pyqrcode.create(f"http://{self.ip}:80/")
+            game_qrcode.png(self.path + "/assets/img/qrcode.png", scale=6)
 
         def start_game() -> None:
             """
@@ -415,6 +394,8 @@ class WebGame(Game):
             if messagebox.askokcancel("Quitter", "Êtes vous sûr de quitter ?"):
                 popup.destroy()
                 self.window.destroy()
+
+        popup.protocol("WM_DELETE_WINDOW", closing)
 
         main_frame = Frame(popup)
 
@@ -460,43 +441,54 @@ class WebGame(Game):
         for player in self.players:
             # replace the variable in the message
             new_message = message.replace("{name}", player.nickname)
-            new_message = new_message.replace("{lastname}", player.lastname)
+            new_message = new_message.replace("{lastname}", player.get_name())
             new_message = new_message.replace("{role}", self.config["names"][player.role])
             new_message = new_message.replace("{id}", player.id)
-            new_message = new_message.replace("{phone}", player.phone)
+            new_message = new_message.replace("{phone}", player.ip)
             new_message = new_message.replace("{tasks}", "\n".join([task.name for task in player.tasks]))
             new_message = new_message.replace("{password}", player.password)
 
-            print(player.name, ":", new_message)
-            player.popup = new_message
+            print(player.get_name(), ":", new_message)
+            player.popup = {"title": "Information", "message": new_message}
 
-    def send_info(self, player: WebPlayer, message: str):
-        print(player.nickname, ":", message)
-        player.popup = message
+    def send_info(self, player: WebPlayer, dictionnaire: dict or str = {"title": "Information", "message": ""}):
+        if isinstance(dictionnaire, str):
+            dictionnaire = {"title": "Information", "message": dictionnaire}
+        print(player.nickname, ":", dictionnaire["message"])
+        dictionnaire["message"] = dictionnaire["message"].replace("\n", "<br/>")
+        player.popup = dictionnaire
 
     def send_role(self, player) -> None:
         """
         Envoie un message au joueur indiquant son role et ses tâches
         :param player: WebPlayer: Le joueur avec son numéro de téléphone
         """
-        message = f"Bonjour {player.name} {player.lastname},\n"
+        message = f"Bonjour {player.get_name()},<br/>"
         message += "Vous êtes un " + self.config["names"][player.role].upper()
         if player.role == "impostor":
-            impostors = " ".join([(joueur.name + " " + joueur.lastname) for joueur in self.impostors])
-            message += " avec " + impostors + "\n\n"
+            impostors = " ".join([(joueur.get_name()) for joueur in self.impostors])
+            message += " avec " + impostors + "<br/><br/>"
         else:
-            message += "\n\n"
-        message += "Vos tâches sont:\n"
+            message += "<br/><br/>"
+        message += "Vos tâches sont:<br/>"
         for i in range(len(player.tasks)):
             task = player.tasks[i]
-            message += f"{i + 1}: {task.name} ({task.classe})\n"
-        message += "\n"
-        message += f"Votre identifiant est {player.id}\n"
-        message += "\n"
-        message += "Pour voir toutes les commandes, vous pouvez taper \"help\"\n"
+            message += f"{i + 1}: {task.name} ({task.steps} étapes)<br/>"
+        message += "<br/>"
+        message += f"Votre identifiant est {player.id}<br/>"
+        message += "<br/>"
         message += "Nous vous souhaitons une bonne partie !"
 
         self.send_info(player, message)
+
+    def end_game(self):
+        """
+        Termine la partie
+        :return:
+        """
+        self.window.destroy()
+        self.flt.join()
+        exit(0)
 
 
 if __name__ == '__main__':

@@ -8,8 +8,7 @@ window.setInterval(function () {
     const is_started = fetch("/api/game_is_started")
         .then(response => response.json())
         .then(data => {
-            console.log(data)
-            if (data) {
+            if (data.started) {
                 window.location.href = "/player";
             }
         })

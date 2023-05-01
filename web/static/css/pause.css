@@ -1,0 +1,131 @@
+body {
+    background-color: #30b4d1
+}
+
+.L1 {
+    color: #000000;
+    opacity: 0;
+    animation: pass 2s ease-in-out infinite;
+    animation-delay: 0.2s;
+    letter-spacing: 0.5em;
+    text-shadow: 2px 2px 2px #67dd12;
+}
+
+.L2 {
+    color: #000000;
+    opacity: 0;
+    animation: pass 2s ease-in-out infinite;
+    animation-delay: 0.4s;
+    letter-spacing: 0.5em;
+    text-shadow: 2px 2px 2px #67dd12;
+}
+
+.L3 {
+    color: #000000;
+    opacity: 0;
+    animation: pass 2s ease-in-out infinite;
+    animation-delay: 0.6s;
+    letter-spacing: 0.5em;
+    text-shadow: 2px 2px 2px #67dd12;
+}
+
+.L4 {
+    color: #000000;
+    opacity: 0;
+    animation: pass 2s ease-in-out infinite;
+    animation-delay: 0.8s;
+    letter-spacing: 0.5em;
+    text-shadow: 2px 2px 2px #67dd12;
+}
+
+.L5 {
+    color: #000000;
+    opacity: 0;
+    animation: pass 2s ease-in-out infinite;
+    animation-delay: 1s;
+    letter-spacing: 0.5em;
+    text-shadow: 2px 2px 2px #67dd12;
+}
+
+.L6 {
+    color: #000000;
+    opacity: 0;
+    animation: pass 2s ease-in-out infinite;
+    animation-delay: 1.2s;
+    letter-spacing: 0.5em;
+    text-shadow: 2px 2px 2px #67dd12;
+}
+
+.L7 {
+    color: #000000;
+    opacity: 0;
+    animation: pass 2s ease-in-out infinite;
+    animation-delay: 1.4s;
+    letter-spacing: 0.5em;
+    text-shadow: 2px 2px 2px #67dd12;
+}
+
+.L8 {
+    color: #000000;
+    opacity: 0;
+    animation: pass 2s ease-in-out infinite;
+    animation-delay: 1.6s;
+    letter-spacing: 0.5em;
+    text-shadow: 2px 2px 2px #67dd12;
+}
+
+.L9 {
+    color: #000000;
+    opacity: 0;
+    animation: pass 2s ease-in-out infinite;
+    animation-delay: 2s;
+    letter-spacing: 0.5em;
+    text-shadow: 2px 2px 2px #67dd12;
+}
+
+
+@keyframes pass {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* The animation */
+@keyframes marquee {
+    0% {
+        transform: translateX(-300%);
+    }
+    100% {
+        transform: translateX(300%);
+    }
+}
+
+/* media query to enable animation for only those who want it */
+@media (prefers-reduced-motion: no-preference) {
+    .moving-text {
+        animation: marquee 10s linear infinite;
+    }
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0;
+  flex-direction: column;
+}
+
+.center h1 {
+    font-size: 3rem;
+    margin: 0;
+    padding: 0;
+}
