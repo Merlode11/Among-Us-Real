@@ -1,5 +1,5 @@
 from tkinter import messagebox
-from airmore_manager import send_sms
+from sms.airmore_manager import send_sms
 import re  # Importation du module pour faire des tests d'expressions régulières
 
 
@@ -48,6 +48,7 @@ class Command:
         :param game: La partie
         :return: bool: Renvoie la bonne utilisation de la commande
         """
+        is_necessary = self.name in ["help", "sos"]
         # Check permission
         if self.permission and player.role != self.permission:
             perm: str = self.permission
@@ -56,10 +57,12 @@ class Command:
 
             send_sms(player.phone, "Vous ne pouvez pas utiliser cette commande car vous n'êtes pas" + perm + " !")
             return True
-        elif game.pause and self.name not in ["help", "sos"]:
+        elif game.pause and not is_necessary:
             send_sms(player.phone, "La partie est actuellement en pause. Vous ne pouvez pas faire de commandes")
             return True
-        elif game.meeting and self.name not in ["help", "sos"]:
+        elif game.end and not is_necessary:
+            send_sms(player.phone, "La partie est actuellement terminée. Vous ne pouvez plus faire de commandes")
+        elif game.meeting and self.name not in ["help", "sos", "vote"]:
             send_sms(player.phone, "Une réunion est en cours. Vous ne pouvez pas faire de commandes")
             return True
         else:
@@ -141,7 +144,7 @@ class InfoCommand(Command):
                 done += 1
             else:
                 remining += 1
-                string += f"{i + 1}: {task.name} ({task.classe})\n"
+                string += f"{i + 1}: {task.name} ({task.steps} étapes)\n"
         string = f"Il vous reste {remining} tâches à accomplir.\n" + string
         if done == len(player.tasks):
             string += "Vous avez accompli toutes vos tâches !\n"
@@ -321,6 +324,7 @@ class SOSCommand(Command):
         game.send_message_to_all(
             f"{player.name} {player.lastname} a besoin d'aide en URGENCE ! Son message:\n{' '.join(message.split(' ')[1:])}")
         game.pause = True
+        game.pause_reason = ' '.join(message.split(' ')[1:])
         code = game.set_pause_game()
         send_sms(player.phone,
                  f"Votre demande d'aide a bien été transmise aux autres joueurs. Le code pour rétablir la partie normalement est '{code}'")

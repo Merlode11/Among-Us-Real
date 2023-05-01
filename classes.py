@@ -1,19 +1,6 @@
 import random
 
 
-class WebGame:
-    def __init__(self, ip: str, port: int):
-        super().__init__()
-        self.ip = ip
-        self.port = port
-        self.server = None
-        self.receive = False
-        self.game_master = False
-        self.players = []
-        self.impostors = []
-        self.config = None
-
-
 class Player:
     def __init__(self, used_passwords: list, used_id: list):
         self.tasks: list = []
@@ -111,8 +98,9 @@ class WebPlayer(Player):
         self.ip: str = ip
         self.nickname: str = nickname
         self.color: str = color
+        self.popup: str or None = None
 
-    def get_str(self, game: WebGame) -> str:
+    def get_str(self, game) -> str:
         """
         Renvoie un affichage du joueur afin de l'afficher dans la fenêtre de la partie
         :param game: Game: La partie actuelle
@@ -149,7 +137,6 @@ class BasicTask:
         self.nb_given: int = 0
         self.success: int = 0
 
-
     def __repr__(self):
         return f"{self.name} ({self.steps}): {self.description} | {self.location}"
 
@@ -161,11 +148,17 @@ class BasicTask:
         Renvoie la tâche sous forme de dictionnaire
         """
         return {
+            "type": "basic",
             "name": self.name,
             "description": self.description,
             "steps": self.steps,
             "location": self.location,
+            "done": self.done,
         }
+
+    # JSON serializable
+    def __json__(self):
+        return self.to_dict()
 
 
 class ValidateBasicTask(BasicTask):
@@ -176,7 +169,7 @@ class ValidateBasicTask(BasicTask):
         self.keywords: list = valid_keywords
 
     def __repr__(self):
-        return f"ValidateBasicTask({self.name}, {self.description}, {self.steps}, {self.location}, {self.other})"
+        return f"ValidateBasicTask({self.name}, {self.description}, {self.steps}, {self.location})"
 
     def __str__(self):
         return f"{self.name} ({self.steps})"
@@ -186,11 +179,13 @@ class ValidateBasicTask(BasicTask):
         Renvoie la tâche sous forme de dictionnaire
         """
         return {
+            "type": "validate_basic",
             "name": self.name,
             "description": self.description,
             "steps": self.steps,
             "location": self.location,
             "keywords": self.keywords,
+            "done": self.done,
         }
 
 
@@ -204,7 +199,7 @@ class ActivateBasicTask(BasicTask):
         self.active: bool = False
 
     def __repr__(self):
-        return f"ActivateBasicTask({self.name}, {self.description}, {self.steps}, {self.location}, {self.other})"
+        return f"ActivateBasicTask({self.name}, {self.description}, {self.steps}, {self.location})"
 
     def __str__(self):
         return f"{self.name} ({self.steps})"
@@ -214,12 +209,15 @@ class ActivateBasicTask(BasicTask):
         Renvoie la tâche sous forme de dictionnaire
         """
         return {
+            "type": "activate_basic",
             "name": self.name,
             "description": self.description,
             "steps": self.steps,
             "location": self.location,
             "activ_keywords": self.activ_keywords,
             "message": self.message,
+            "active": self.active,
+            "done": self.done,
         }
 
 
@@ -234,7 +232,7 @@ class ActivValidTask(ValidateBasicTask):
         self.active: bool = False
 
     def __repr__(self):
-        return f"ActivValidTask({self.name}, {self.description}, {self.steps}, {self.location}, {self.other})"
+        return f"ActivValidTask({self.name}, {self.description}, {self.steps}, {self.location})"
 
     def __str__(self):
         return f"{self.name} ({self.steps})"
@@ -244,6 +242,7 @@ class ActivValidTask(ValidateBasicTask):
         Renvoie la tâche sous forme de dictionnaire
         """
         return {
+            "type": "activ_valid",
             "name": self.name,
             "description": self.description,
             "steps": self.steps,
@@ -251,6 +250,8 @@ class ActivValidTask(ValidateBasicTask):
             "keywords": self.keywords,
             "activ_keywords": self.activ_keywords,
             "message": self.message,
+            "active": self.active,
+            "done": self.done,
         }
 
 
@@ -258,19 +259,19 @@ def set_task(task_dict: dict) -> BasicTask or ActivateBasicTask or ValidateBasic
     """
     Créer un object caractérisant une classe spéciale de tâche et le renvoie
     """
-    if task_dict["type"] == "basic":
-        return BasicTask(task_dict["name"], task_dict["description"], task_dict["steps"], task_dict["location"])
-    elif task_dict["type"] == "validate_basic":
-        return ValidateBasicTask(task_dict["name"], task_dict["description"], task_dict["steps"],
-                                 task_dict["location"],
-                                 task_dict["keywords"])
-    elif task_dict["type"] == "activate_basic":
-        return ActivateBasicTask(task_dict["name"], task_dict["description"], task_dict["steps"],
-                                 task_dict["location"],
-                                 task_dict["keywords"], task_dict["message"])
-    elif task_dict["type"] == "activ_valid":
-        return ActivValidTask(task_dict["name"], task_dict["description"], task_dict["steps"], task_dict["location"],
-                              task_dict["valid_keywords"], task_dict["activ_keywords"], task_dict["message"])
+    if task_dict.get("type") == "basic":
+        return BasicTask(task_dict.get("name", ""), task_dict.get("description", ""), task_dict.get("steps", 1), task_dict.get("location", ""))
+    elif task_dict.get("type") == "validate_basic":
+        return ValidateBasicTask(task_dict.get("name", ""), task_dict.get("description", ""), task_dict.get("steps", 1),
+                                 task_dict.get("location", ""),
+                                 task_dict.get("keywords", []))
+    elif task_dict.get("type") == "activate_basic":
+        return ActivateBasicTask(task_dict.get("name", ""), task_dict.get("description", ""), task_dict.get("steps", 1),
+                                 task_dict.get("location", ""),
+                                 task_dict.get("activ_keywords", []), task_dict.get("message", ""))
+    elif task_dict.get("type") == "activ_valid":
+        return ActivValidTask(task_dict.get("name", ""), task_dict.get("description", ""), task_dict.get("steps", 1), task_dict.get("location", ""),
+                              task_dict.get("keywords", []), task_dict.get("activ_keywords", []), task_dict.get("message", ""))
 
 
 # Show a phone number with "+33768330645" and "0768330645"

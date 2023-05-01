@@ -1,7 +1,7 @@
 {
     "impostors": 1,
-    "engineers": 0,
-    "scientists": 0,
+    "engineers": 1,
+    "scientists": 1,
     "tasks": 3,
     "max_task_given": 2,
     "ip": "192.168.0.24",
@@ -17,8 +17,8 @@
     "show_dead_roles": false,
     "discussion_time": 120,
     "vote_time": 30,
-    "task_list": "tasks-exemple",
-    "manager_type": "sms",
+    "task_list": "Plop",
+    "manager_type": "web",
     "min_before_inactiv_warn": 5,
     "max_warns": 3
 }

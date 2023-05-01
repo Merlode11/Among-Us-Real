@@ -547,7 +547,7 @@ class Timer:
 
         while self.remining > 0:
             self.remining -= 1
-            minutes, seconds = divmod(remining, 60)
+            minutes, seconds = divmod(self.remining, 60)
             timer.config(text=f"{minutes:02d}:{seconds:02d}")
             if self.remining <= approx_time:
                 if self.remining == approx_time:
@@ -566,25 +566,24 @@ class Timer:
             root.destroy()
             return
 
-        # root.mainloop()
-
     def show_players(self):
-        
-        players_frame = self.players_frame
-        game = self.game
-        # show players in a grid adapted to the number of players
-        players = game.players
-        for i, player in enumerate(players):
-            # set a border around the player frame
-            player_frame = Frame(players_frame, borderwidth=2, relief="groove")
-            player_frame.grid(row=i // 2, column=i % 2, padx=10, pady=10)
-            player_name = Label(player_frame, text=player.get_str(game), font=("Arial", 20))
-            if game.meeting == "vote" and player.id in game.meeting_votes.keys():
-                player_name.config(fg="red")
-            if game.meeting == "vote" and len(game.meeting_votes.keys()) == len(game.players) - len(game.dead_players): 
-                self.remining = 0
-                
-            player_name.pack(fill=BOTH, expand=True)
+        if self.root and self.root.winfo_exists():
+            players_frame = self.players_frame
+            game = self.game
+            players = game.players
+            for i, player in enumerate(players):
+                player_frame = Frame(players_frame, borderwidth=2, relief="groove")
+                player_frame.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+                player_name = player.get_name()
+                if player.dead:
+                    player_name = "☠ " + player_name
+                player_name = Label(player_frame, text=player_name, font=("Arial", 20))
+                if game.meeting == "vote" and player.id in game.meeting_votes.keys():
+                    player_name.config(fg="red")
+                if game.meeting == "vote" and len(game.meeting_votes.keys()) >= len(game.players) - len(game.dead_players):
+                    self.remining = 0
+
+                player_name.pack(fill=BOTH, expand=True)
 
 
 if __name__ == "__main__":

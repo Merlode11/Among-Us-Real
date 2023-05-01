@@ -1,11 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Fredoka%20One&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Manrope&display=swap');
 
-/* Debugging: show a border with a red color for each element */
-* {
-    border: 1px solid red;
-}
-
 h1 {
     font-family: 'Fredoka One', cursive;
     font-size: 50px;
@@ -35,14 +30,14 @@ h2 {
 .grid-child svg {
     margin: -90px -400px -400px;
     width: 820px;
-    height: 820px;
+    height: 530px;
 }
 
 .group {
     position: relative;
     left: 43%;
     font-family: "Manrope", sans-serif;
-    margin-right: -500px;
+    margin-right: 700px;
 }
 
 .input {
