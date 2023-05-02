@@ -17,7 +17,7 @@
     "show_dead_roles": false,
     "discussion_time": 120,
     "vote_time": 30,
-    "task_list": "Plop",
+    "task_list": "demo",
     "manager_type": "web",
     "min_before_inactiv_warn": 5,
     "max_warns": 3

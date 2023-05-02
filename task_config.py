@@ -323,7 +323,7 @@ def task_config():
             if location == "":
                 messagebox.showerror("Erreur", "L'emplacement de la tâche ne peut pas être vide", parent=add_window)
                 return
-            task = {"name": name, "description": re.sub(r"\n+$", "", description_text.get("1.0", END), flags=re.G), "location": location,
+            task = {"name": name, "description": re.sub(r"\n+$", "", description_text.get("1.0", END)), "location": location,
                     "steps": steps_entry.get_value(), "type": task_type_name[type_choice.get()]}
             if type_choice.get() == "Avec Validation":
                 if obj["keywords"] and obj["keywords"].get_tags() == []:

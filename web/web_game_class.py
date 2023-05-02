@@ -77,15 +77,23 @@ class WebGame(Game):
             if redirection != "/player":
                 return redirect(redirection)
             joueur = self.get_player(player_id)
-            popup = {"title": Markup(joueur.popup["title"]), "message": Markup(joueur.popup["message"])} if joueur.popup is not None else None
+            popup = {"title": Markup(joueur.popup["title"]), "message": Markup(joueur.popup["message"])} \
+                if joueur.popup is not None else None
             sound = joueur.popup.get("sound") if joueur.popup is not None else None
             joueur.popup = None
 
-            return render_template("joueur.html", code_joueur=str(joueur.id), task_list=enumerate(joueur.tasks), player=joueur, popup=popup, player_role=self.config["names"][joueur.role], is_max_asks=joueur.asks >= self.config["max_dead_check"], sound=sound)
-
+            return render_template(
+                "joueur.html",
+                code_joueur=str(joueur.id),
+                task_list=enumerate(joueur.tasks),
+                player=joueur, popup=popup,
+                player_role=self.config["names"][joueur.role],
+                is_max_asks=joueur.asks >= self.config["max_dead_check"],
+                sound=sound
+            )
         @app.route("/loading", methods=["GET", "POST"])
         def loading():
-            if request.method == "POST":
+            if request.method == "POST" and not session.get("player_id"):
                 if self.import_window is None:
                     return redirect("/")
                 couleur_joueur = request.form["color"]
@@ -95,12 +103,12 @@ class WebGame(Game):
                 self.players.append(joueur)
                 session["player_id"]: int = joueur.id
 
-                # TODO: Remove the generation of fake players used for testing
-                self.players.extend([
-                    WebPlayer("92.168.0.22", "Joueur 1", "#FF0000", self.used_passwords, self.used_id),
-                    WebPlayer("92.168.0.22", "Joueur 2", "#FF0000", self.used_passwords, self.used_id),
-                    WebPlayer("92.168.0.22", "Joueur 3", "#FF0000", self.used_passwords, self.used_id),
-                ])
+                # # TODO: Remove the generation of fake players used for testing
+                # self.players.extend([
+                #     WebPlayer("92.168.0.22", "Joueur 1", "#FF0000", self.used_passwords, self.used_id),
+                #     WebPlayer("92.168.0.22", "Joueur 2", "#FF0000", self.used_passwords, self.used_id),
+                #     WebPlayer("92.168.0.22", "Joueur 3", "#FF0000", self.used_passwords, self.used_id),
+                # ])
 
                 self.import_players()
             elif request.method == "GET":
@@ -116,13 +124,15 @@ class WebGame(Game):
             redirection = where_redirect(session)
             if redirection != "/meeting":
                 return redirect(redirection)
-            popup = {"title": Markup(player.popup["title"]), "message": Markup(player.popup["message"])} if player.popup is not None else None
+            popup = {"title": Markup(player.popup["title"]), "message": Markup(player.popup["message"])} \
+                if player.popup is not None else None
             sound = player.popup.get("sound") if player.popup is not None else None
             if self.meeting == "coming":
                 sound = "emergency_meeting.mp3"
             player.popup = None
-            return render_template("meeting.html", players=self.players, player=player, popup=popup, state=self.meeting, password=player.password,
-                                   has_voted=player.id in self.meeting_votes.keys(), sound=sound)
+            return render_template("meeting.html", players=self.players, player=player, popup=popup, state=self.meeting,
+                                   password=player.password, has_voted=player.id in self.meeting_votes.keys(),
+                                   sound=sound)
 
         @app.route("/paused")
         def paused():
@@ -173,11 +183,16 @@ class WebGame(Game):
                             datetime.datetime.now().timestamp()):
                         if player.warnings >= self.config["max_warns"]:
                             self.send_info_all(
-                                f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur")
+                                f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis "
+                                f"{self.config['min_before_inactiv_warn'] * player.warnings} minutes. "
+                                f"Le jeu est donc en pause le temps qu'on retrouve le joueur")
                             self.pause = True
                             if self.game_master:
                                 messagebox.showerror("Un joueur ne répond pas",
-                                                     f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur. Un message a été envoyé à tout le monde.")
+                                                     f"{player.name} {player.lastname} n'a pas donné de ses nouvelles d"
+                                                     f"epuis {self.config['min_before_inactiv_warn'] * player.warnings}"
+                                                     f" minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur."
+                                                     f" Un message a été envoyé à tout le monde.")
                     else:
                         player.warnings += 1
                         player.last_warning = int(datetime.datetime.now().timestamp())
@@ -194,22 +209,27 @@ class WebGame(Game):
                 return {"error": "Joueur assassin introuvable", "error_code": "executor_not_found"}
             killed = self.get_player(request.form["killed_id"])
             if killed is None:
-                self.send_info(killer, {"title": "Erreur", "message": "Le joueur que vous souhaitez assassiner n'a pas été trouvé, merci de bien vouloir réessayer."})
+                self.send_info(killer, {"title": "Erreur", "message":
+                    "Le joueur que vous souhaitez assassiner n'a pas été trouvé, merci de bien vouloir réessayer."})
                 return redirect("/player")
             if killer.role != "impostor":
-                self.send_info(killer, {"title": "Erreur", "message": "Vous n'êtes pas un imposteur, vous ne pouvez donc pas assassiner de joueur."})
+                self.send_info(killer, {"title": "Erreur", "message":
+                    "Vous n'êtes pas un imposteur, vous ne pouvez donc pas assassiner de joueur."})
                 return redirect("/player")
             if killed.dead:
-                self.send_info(killer, {"title": "Erreur", "message": "Le joueur que vous souhaitez assassiner est déjà mort."})
+                self.send_info(killer,
+                               {"title": "Erreur", "message": "Le joueur que vous souhaitez assassiner est déjà mort."})
                 return redirect("/player")
             if killed.role == "impostor":
-                self.send_info(killer, {"title": "Erreur", "message": "Vous ne pouvez pas assassiner un autre " + self.config["names"]["impostor"] + " !"})
+                self.send_info(killer, {"title": "Erreur",
+                                        "message": "Vous ne pouvez pas assassiner un autre " + self.config["names"][
+                                            "impostor"] + " !"})
                 return redirect("/player")
             self.kill_player(killed)
             self.send_info(killed, {
-                           "title": "Vous êtes mort",
-                           "message": "Vous avez été assassiné par " + killer.get_name() + ".",
-                            "sound": "killing.mp3"
+                "title": "Vous êtes mort",
+                "message": "Vous avez été assassiné par " + killer.get_name() + ".",
+                "sound": "killing.mp3"
             })
             self.send_info(killer, {
                 "title": "Joueur assassiné",
@@ -227,14 +247,17 @@ class WebGame(Game):
                 self.send_info(player, {"title": "Erreur", "message": "La tâche a déjà été faite."})
                 return redirect("/player")
             if player.role == "impostor":
-                self.send_info(player, {"title": "Erreur", "message": "Vous êtes imposteur, vous ne pouvez pas valider de tâches"})
+                self.send_info(player, {"title": "Erreur",
+                                        "message": "Vous êtes imposteur, vous ne pouvez pas valider de tâches"})
                 return redirect("/player")
             elif "activ" in task.type and not task.active:
-                self.send_info(player, {"title": "Erreur", "message": "La tâche n'a pas été activée. Elle doit-être activée par un mot clé avant de pouvoir la valider."})
+                self.send_info(player, {"title": "Erreur",
+                                        "message": "La tâche n'a pas été activée. Elle doit-être activée par un mot clé avant de pouvoir la valider."})
                 return redirect("/player")
             elif "valid" in task.type:
                 if request.form.get("keyword") not in task.keywords:
-                    self.send_info(player, {"title": "Erreur", "message": "Le mot clé pour valider la tâche n'est pas valide."})
+                    self.send_info(player,
+                                   {"title": "Erreur", "message": "Le mot clé pour valider la tâche n'est pas valide."})
                     return redirect("/player")
 
             self.send_info(player, {
@@ -251,7 +274,8 @@ class WebGame(Game):
             task_id = int(request.form.get("task_id"))
             task = player.tasks[task_id]
             if player.role == "impostor":
-                self.send_info(player, {"title": "Erreur", "message": "Vous êtes imposteur, vous ne pouvez pas activer de tâches"})
+                self.send_info(player, {"title": "Erreur",
+                                        "message": "Vous êtes imposteur, vous ne pouvez pas activer de tâches"})
                 return redirect("/player")
             if "activ" not in task.type:
                 self.send_info(player, {"title": "Erreur", "message": "La tâche n'est pas activable."})
@@ -260,7 +284,8 @@ class WebGame(Game):
                 self.send_info(player, {"title": "Erreur", "message": "Cette tâche a déjà été activée."})
                 return redirect("/player")
             elif request.form.get("keyword") not in task.activ_keywords:
-                self.send_info(player, {"title": "Erreur", "message": "Le mot clé pour activer la tâche n'est pas valide."})
+                self.send_info(player,
+                               {"title": "Erreur", "message": "Le mot clé pour activer la tâche n'est pas valide."})
                 return redirect("/player")
             task.active = True
             self.send_info(player, "Vous avez bien activé la tâche " + task.name + ".")
@@ -271,13 +296,16 @@ class WebGame(Game):
             player = self.get_player(session.get("player_id"))
             dead_player = self.get_player(request.form["dead_player_id"])
             if dead_player is None:
-                self.send_info(player, {"title": "Erreur", "message": "Le joueur mort n'a pas été trouvé, merci de bien vouloir réessayer avec un identifiant correct."})
+                self.send_info(player, {"title": "Erreur",
+                                        "message": "Le joueur mort n'a pas été trouvé, merci de bien vouloir réessayer avec un identifiant correct."})
                 return redirect("/player")
             if player.dead:
-                self.send_info(player, {"title": "Erreur", "message": "Vous êtes mort, vous ne pouvez donc pas signaler un joueur comme mort."})
+                self.send_info(player, {"title": "Erreur",
+                                        "message": "Vous êtes mort, vous ne pouvez donc pas signaler un joueur comme mort."})
                 return redirect("/player")
             if not dead_player.dead:
-                self.send_info(player, {"title": "Erreur", "message": "Le joueur que vous souhaitez déclarer mort n'est pas mort."})
+                self.send_info(player, {"title": "Erreur",
+                                        "message": "Le joueur que vous souhaitez déclarer mort n'est pas mort."})
                 return redirect("/player")
             if self.game_master:
                 response = messagebox.askokcancel("Mort détecté",
@@ -296,7 +324,8 @@ class WebGame(Game):
             if player is None:
                 return {"error": "Joueur non trouvé", "error_code": "player_not_found"}, 400
             if player.role != "scientist":
-                self.send_info(player, "Vous n'avez pas le droit de voir les morts. Seul les scientifiques peuvent le faire.")
+                self.send_info(player,
+                               "Vous n'avez pas le droit de voir les morts. Seul les scientifiques peuvent le faire.")
                 return redirect("/player")
             if player.asks >= self.config["max_dead_check"]:
                 self.send_info(player, "Vous avez déjà vu les morts trop de fois.")
@@ -323,7 +352,8 @@ class WebGame(Game):
             player_id = request.form["vote"]
             voted_player = self.get_player(player_id) if player_id != "skip" else None
             if voted_player is None and player_id != "skip":
-                self.send_info(player, "Le joueur que vous souhaitez voter n'a pas été trouvé, merci de bien vouloir réessayer avec un identifiant correct.")
+                self.send_info(player,
+                               "Le joueur que vous souhaitez voter n'a pas été trouvé, merci de bien vouloir réessayer avec un identifiant correct.")
                 return redirect("/meeting")
             if player.id in self.meeting_votes.keys():
                 self.send_info(player, "Vous avez déjà voté.")
@@ -333,10 +363,10 @@ class WebGame(Game):
             print(self.meeting_votes)
             self.send_info(player, {
                 "title": "Vote enregistré",
-                "message": "Vous avez bien voté pour " + (voted_player.get_name() if voted_player is not None else "passer"),
+                "message": "Vous avez bien voté pour " + (
+                    voted_player.get_name() if voted_player is not None else "passer"),
                 "sound": "avote.mp3"
             })
-            self.window.after(0, self.timer.show_players)
             return redirect("/meeting")
 
         @app.get("/api/sos")
@@ -346,9 +376,10 @@ class WebGame(Game):
                 return {"error": "Joueur non trouvé", "error_code": "player_not_found"}, 400
             message = request.form.get("message")
             self.pause = True
-            self.pause_reason = message if message else "Aide demandé par "+player.get_name()
+            self.pause_reason = message if message else "Aide demandé par " + player.get_name()
             code = self.set_pause_game()
-            self.send_info(player, {"title": "Demande envoyée", "message": f"Votre demande d'aide a bien été envoyée. Votre code pour annuler l'urgence est {code}"})
+            self.send_info(player, {"title": "Demande envoyée",
+                                    "message": f"Votre demande d'aide a bien été envoyée. Votre code pour annuler l'urgence est {code}"})
             return redirect("/player")
 
         self.flt = flt = Thread(target=lambda: app.run(host="0.0.0.0", port=80, debug=False))

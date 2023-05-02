@@ -50,10 +50,20 @@ class Game:
         window.iconbitmap(self.path + "/assets/img/amongus.ico")
         window.state("zoomed")
 
+        # Check if the task list exists
+        if not os.path.exists(self.path + r"/taskList/" + self.config["task_list"] + ".json"):
+            messagebox.showerror("Erreur", "La liste de tâches sélectionnée n'existe pas !")
+            self.window.destroy()
+            return
         self.tasks: list = []
         with open(self.path + r"/taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
             data = json.load(f)
             self.tasks = [set_task(task) for task in data]
+        if len(self.tasks) < self.config["tasks"]:
+            messagebox.showerror("Erreur", "Le nombre de tâches à donner est supérieur au nombre de tâches "
+                                           "disponibles !")
+            self.window.destroy()
+            return
 
         self.players: list = []
         self.import_players()
@@ -355,7 +365,8 @@ class Game:
         if len(self.crewmates) <= len(self.impostors):
             self.send_info_all(
                 "Tous les " + self.config["names"]["crewmate"].lower() + " sont morts, les " + self.config["names"][
-                    "impostor"].lower() + "s ont gagné !\nMerci de vous rendre immédiatement au point de rendez-vous !\n")
+                    "impostor"].lower() + "s ont gagné !\nMerci de vous rendre immédiatement au point de rendez-vous "
+                                          "!\n")
             self.end = True
             self.show_players()
             response = messagebox.askyesno("Game Over",
@@ -371,7 +382,8 @@ class Game:
             self.end = True
             self.send_info_all(
                 "Tous les " + self.config["names"]["impostor"].lower() + "s sont morts, les " + self.config["names"][
-                    "crewmate"].lower() + "s ont gagné !\nMerci de vous rendre immédiatement au point de rendez-vous !\n")
+                    "crewmate"].lower() + "s ont gagné !\nMerci de vous rendre immédiatement au point de rendez-vous "
+                                          "!\n")
             messagebox.askyesno("Game Over",
                                 "Les " + self.config["names"]["crewmate"].lower() + " ont gagné !\n"
                                                                                     "Tous les " +
@@ -495,7 +507,8 @@ class Game:
         """
         self.meeting = "coming"
         self.send_info_all(
-            message + "\nMerci de vous rendre immédiatement au point de rendez-vous !\nRappel de votre code de présence: {password}")
+            message + "\nMerci de vous rendre immédiatement au point de rendez-vous !\nRappel de votre code de "
+                      "présence: {password}")
         window = Tk()
         window.title("Réunion")
         window.geometry("500x500")
@@ -535,8 +548,8 @@ class Game:
                         messagebox.showerror("Erreur", "Vous êtes déjà présent", parent=window)
                     else:
                         # temporary for testing TODO: remove
-                        here_users.extend(self.players)
-                        # here_users.append(player)
+                        # here_users.extend(self.players)
+                        here_users.append(player)
                     show_players()
                     present_entry.delete(0, END)
 
@@ -569,7 +582,6 @@ class Game:
                             if vote_number > votes.get(voted_player_id, 0):
                                 voted_player_id = player_id
 
-
                         killed_window = Tk()
                         killed_window.title("Élimination")
                         killed_window.geometry("500x500")
@@ -585,9 +597,9 @@ class Game:
 
                         Label(killed_window, text="Élimination", font=("Arial", 30)).pack(fill=BOTH, expand=True,
                                                                                           padx=10)
-                        Label(killed_window, text=f"{killed_name} a été éliminé !", font=("Arial", 20)).pack(fill=BOTH,
-                                                                                                             expand=True,
-                                                                                                             padx=10)
+                        Label(killed_window, text=f"{killed_name} a été éliminé !",
+                              font=("Arial", 20)).pack(fill=BOTH, expand=True, padx=10)
+
                         self.meeting_here_users = []
                         self.meeting = None
                         self.meeting_votes = {}
@@ -654,7 +666,8 @@ class Game:
                     "crewmate"] + " ont gagné car ils ont terminé toutes leurs tâches !\nMerci de vous rendre "
                                   "immédiatement au point de rendez vous !")
             messagebox.askyesno("Game Over", "Les " + self.config["names"]["crewmate"] + " ont gagné !\n"
-                                                                                         "Toutes les tâches ont été finies.\n"
+                                                                                         "Toutes les tâches ont été "
+                                                                                         "finies.\n"
                                                                                          "Voulez-vous recommencer ?")
             self.end_game()
         elif self.game_master:
