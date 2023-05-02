@@ -10,11 +10,6 @@ from task_config import task_config
 from utils import clear_frame
 
 
-class SMSGame:
-    def __init__(self, game_master: bool or None = None):
-        self.game_master = game_master
-
-
 def main():
     """
     Affichage de la fenêtre d'accueil

@@ -1,4 +1,5 @@
 import random
+from datetime import datetime
 
 
 class Player:
@@ -7,7 +8,7 @@ class Player:
         self.role: str = ""
         self.dead: bool = False
         self.asks: int = 0
-        self.last_message: int = 0
+        self.last_message: int = int(datetime.now().timestamp())
         self.warnings: int = 0
         self.last_warning: int = 0
         self.id: str = "0"
