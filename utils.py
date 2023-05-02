@@ -19,11 +19,12 @@ def clear_frame(frame: Widget) -> None:
 
 class VerticalScrolledFrame:
     """
-    Code issu du Gist GitHub https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531
-    Une Frame verticalement scrollable qui peut être traitée comme n'importe quelle autre Frame
-    ie elle a besoin d'un master et d'un layout, et elle peut être un master.
+    Code issu du Gist GitHub
+    https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531
+    Une Frame verticalement scrollable qui peut être traitée comme n'importe quelle autre Frame,
+    c'est-à-dire, elle a besoin d'un master et d'un layout, et elle peut être un master.
     :width:, :height:, :bg: sont passés au Canvas sous-jacent
-    :bg: et tous les autres arguments clé sont passés à la Frame interne
+    :bg: et tous les autres arguments clé sont passés à la Frame interne,
     il faut noter que le widget disposé dans cette frame aura un self.master 3 niveaux plus profonds,
     (outer Frame, Canvas, inner Frame) donc
     si vous sous-classez ceci, il n'y a pas de moyen intégré pour que les enfants y accèdent.
@@ -47,7 +48,6 @@ class VerticalScrolledFrame:
         # detect window size changes
         master.bind("<Configure>", _on_configure)
 
-
         self.outer = Frame(master, **kwargs)
 
         self.vsb = Scrollbar(self.outer, orient=VERTICAL)
@@ -55,7 +55,7 @@ class VerticalScrolledFrame:
         self.canvas = Canvas(self.outer, highlightthickness=0, width=width, height=height, bg=bg)
         self.canvas.pack(side=LEFT, fill=BOTH, expand=True)
         self.canvas.config(yscrollcommand=self.vsb.set)
-        # Défilement de la souris ne semble pas fonctionner avec juste "bind"; Vous avez besoin d'utiliser
+        # Défilement de la souris ne semble pas fonctionner avec juste "bind"; vous avez besoin d'utiliser
         # "bind_all". Par conséquent, pour utiliser plusieurs fenêtres, vous devez bind_all dans le widget actuel
         self.canvas.bind("<Enter>", self._bind_mouse)
         self.canvas.bind("<Leave>", self._unbind_mouse)
@@ -71,7 +71,7 @@ class VerticalScrolledFrame:
 
     def __getattr__(self, item):
         if item in self.outer_attr:
-            # Attribus de géométrie, etc. eg pack, destroy, tkraise) sont transmis à self.outer
+            # Attribus de géométrie, etc. eg (pack, destroy, tkraise) sont transmis à self.outer
             return getattr(self.outer, item)
         else:
             # Tous les autres attributs (_w, children, etc.) sont passés à self.inner
@@ -107,14 +107,16 @@ class VerticalScrolledFrame:
 
 class HorizontalScrolledFrame:
     """
-    Code issu du Gist GitHub https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531 et modifié pour avoir quelque une barre horizontale
-    Une Frame horizontalement scrollable qui peut être traitée comme n'importe quelle autre Frame
-    ie elle a besoin d'un master et d'un layout, et elle peut être un master.
+    Code issu du Gist GitHub
+    https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531
+    et modifié pour avoir quelqu'une barre horizontale
+    Une Frame horizontalement scrollable qui peut être traitée comme n'importe quelle autre Frame,
+    c'est-à-dire, elle a besoin d'un master et d'un layout, et elle peut être un master.
     :width:, :height:, :bg: sont passés au Canvas sous-jacent
-    :bg: et tous les autres arguments clé sont passés à la Frame interne
+    :bg: et tous les autres arguments clé sont passés à la Frame interne,
     il faut noter que le widget disposé dans cette frame aura un self.master 3 niveaux plus profonds,
     (outer Frame, Canvas, inner Frame) donc
-    si vous sous classez ceci, il n'y a pas de moyen intégré pour que les enfants y accèdent.
+    si vous sous-classer ceci, il n'y a pas de moyen intégré pour que les enfants y accèdent.
     Vous devez fournir le contrôleur séparément.
     """
 
@@ -129,7 +131,7 @@ class HorizontalScrolledFrame:
         self.canvas = Canvas(self.outer, highlightthickness=0, width=width, height=height, bg=bg)
         self.canvas.pack(side=LEFT, fill=BOTH, expand=True)
         self.canvas.config(yscrollcommand=self.vsb.set)
-        # Défilement de la souris ne semble pas fonctionner avec juste "bind"; Vous avez besoin d'utiliser
+        # Défilement de la souris ne semble pas fonctionner avec juste "bind"; vous avez besoin d'utiliser
         # "bind_all". Par conséquent, pour utiliser plusieurs fenêtres, vous devez bind_all dans le widget actuel
         self.canvas.bind("<Enter>", self._bind_mouse)
         self.canvas.bind("<Leave>", self._unbind_mouse)
@@ -153,7 +155,7 @@ class HorizontalScrolledFrame:
 
     def __getattr__(self, item):
         if item in self.outer_attr:
-            # Attribus de géométrie, etc. eg pack, destroy, tkraise) sont transmis à self.outer
+            # Attribus de géométrie, etc. eg (pack, destroy, tkraise) sont transmis à self.outer
             return getattr(self.outer, item)
         else:
             # Tous les autres attributs (_w, children, etc.) sont passés à self.inner
@@ -224,7 +226,8 @@ class YesNoButton(Button):
 
 class IntEntry(Frame):
     """
-    Créé une entrée spécifique pour les nombres entiers. Cette entrée accepte uniquement les nombres et possède deux boutons sur le côté pour incrémenter ou décrémenter.
+    Créé une entrée spécifique pour les nombres entiers. Cette entrée accepte uniquement les nombres et possède
+    deux boutons sur le côté pour incrémenter ou décrémenter.
     """
     def __init__(self, master, value: int = 0, min_value: int = 0, max_value: int = 10, **kwargs):
         def _validate(val: str) -> bool:
@@ -322,7 +325,7 @@ class TimerEntry(Frame):
     def __init__(self, master, minutes: int = 0, seconds: int = 0, **kwargs):
         def _validate(val: str) -> bool:
             """
-            Vérifie que l'entrée donné est bien un nombre entier
+            Vérifie que l'entrée donnée est bien un nombre entier
             """
             if val == "":
                 return True
@@ -418,7 +421,7 @@ class TimerEntry(Frame):
 
     def set_value_seconds(self, value: int) -> None:
         """
-        Définie la valeur du nombre de seconde précisément, sans modifier les minutes
+        Définie la valeur du nombre de secondes précisément, sans modifier les minutes
         """
         self.seconds = value % 60
         self.string_var_seconds.set(str(self.seconds))
@@ -431,9 +434,9 @@ class TimerEntry(Frame):
         """
         return self.minutes * 60 + self.seconds
 
-    def set_total_seconds(self, value: int) -> int:
+    def set_total_seconds(self, value: int):
         """
-        Défini le temps, en spécifiant le nombre de secondes total. Cette méthode modifie également les minutes
+        Défini le temps, en spécifiant le nombre de secondes totales. Cette méthode modifie également les minutes
         """
         self.minutes = value // 60
         self.seconds = value % 60
@@ -580,7 +583,8 @@ class Timer:
                 player_name = Label(player_frame, text=player_name, font=("Arial", 20))
                 if game.meeting == "vote" and player.id in game.meeting_votes.keys():
                     player_name.config(fg="red")
-                if game.meeting == "vote" and len(game.meeting_votes.keys()) >= len(game.players) - len(game.dead_players):
+                if game.meeting == "vote" and len(game.meeting_votes.keys()) >= len(game.players) - \
+                        len(game.dead_players):
                     self.remining = 0
 
                 player_name.pack(fill=BOTH, expand=True)
