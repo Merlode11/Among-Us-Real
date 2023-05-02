@@ -251,7 +251,8 @@ class WebGame(Game):
                 return redirect("/player")
             elif "activ" in task.type and not task.active:
                 self.send_info(player, {"title": "Erreur",
-                                        "message": "La tâche n'a pas été activée. Elle doit-être activée par un mot clé avant de pouvoir la valider."})
+                                        "message": "La tâche n'a pas été activée. Elle doit-être activée par un mot "
+                                                   "clé avant de pouvoir la valider."})
                 return redirect("/player")
             elif "valid" in task.type:
                 if request.form.get("keyword") not in task.keywords:
@@ -296,11 +297,13 @@ class WebGame(Game):
             dead_player = self.get_player(request.form["dead_player_id"])
             if dead_player is None:
                 self.send_info(player, {"title": "Erreur",
-                                        "message": "Le joueur mort n'a pas été trouvé, merci de bien vouloir réessayer avec un identifiant correct."})
+                                        "message": "Le joueur mort n'a pas été trouvé, merci de bien vouloir "
+                                                   "réessayer avec un identifiant correct."})
                 return redirect("/player")
             if player.dead:
                 self.send_info(player, {"title": "Erreur",
-                                        "message": "Vous êtes mort, vous ne pouvez donc pas signaler un joueur comme mort."})
+                                        "message": "Vous êtes mort, vous ne pouvez donc pas signaler un joueur comme "
+                                                   "mort."})
                 return redirect("/player")
             if not dead_player.dead:
                 self.send_info(player, {"title": "Erreur",
@@ -308,7 +311,8 @@ class WebGame(Game):
                 return redirect("/player")
             if self.game_master:
                 response = messagebox.askokcancel("Mort détecté",
-                                                  f"{player.get_name()} découvert un corps ! Il a découvert {dead_player.get_name()}.\n Voulez-vous lancer une réunion ?")
+                                                  f"{player.get_name()} découvert un corps ! Il a découvert "
+                                                  f"{dead_player.get_name()}.\n Voulez-vous lancer une réunion ?")
                 if response == "ok":
                     self.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
                 elif response == "cancel":
@@ -331,7 +335,8 @@ class WebGame(Game):
                 return redirect("/player")
             player_status: str = ""
             for joueur in self.players:
-                player_status += f'<span style="color: {joueur.color}">{joueur.get_name()}</span> : {"mort" if joueur.dead else "vivant"}<br>'
+                player_status += f'<span style="color: {joueur.color}">{joueur.get_name()}</span> : ' \
+                                 f'{"mort" if joueur.dead else "vivant"}<br>'
             self.send_info(player, player_status)
             player.asks += 1
             return redirect("/player")
@@ -352,7 +357,8 @@ class WebGame(Game):
             voted_player = self.get_player(player_id) if player_id != "skip" else None
             if voted_player is None and player_id != "skip":
                 self.send_info(player,
-                               "Le joueur que vous souhaitez voter n'a pas été trouvé, merci de bien vouloir réessayer avec un identifiant correct.")
+                               "Le joueur que vous souhaitez voter n'a pas été trouvé, merci de bien vouloir "
+                               "réessayer avec un identifiant correct.")
                 return redirect("/meeting")
             if player.id in self.meeting_votes.keys():
                 self.send_info(player, "Vous avez déjà voté.")
@@ -378,7 +384,8 @@ class WebGame(Game):
             self.pause_reason = message if message else "Aide demandé par " + player.get_name()
             code = self.set_pause_game()
             self.send_info(player, {"title": "Demande envoyée",
-                                    "message": f"Votre demande d'aide a bien été envoyée. Votre code pour annuler l'urgence est {code}"})
+                                    "message": f"Votre demande d'aide a bien été envoyée. Votre code pour annuler "
+                                               f"l'urgence est {code}"})
             return redirect("/player")
 
         self.flt = flt = Thread(target=lambda: app.run(host="0.0.0.0", port=80, debug=False))
@@ -481,7 +488,8 @@ class WebGame(Game):
             print(player.get_name(), ":", new_message)
             player.popup = {"title": "Information", "message": new_message}
 
-    def send_info(self, player: WebPlayer, dictionnaire: dict or str = {"title": "Information", "message": ""}):
+    def send_info(self, player: WebPlayer, dictionnaire: dict or str = {"title": "Information", "message": "",
+                                                                        "sound": None}):
         if isinstance(dictionnaire, str):
             dictionnaire = {"title": "Information", "message": dictionnaire}
         print(player.nickname, ":", dictionnaire["message"])
