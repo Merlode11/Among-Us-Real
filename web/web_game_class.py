@@ -1,4 +1,3 @@
-import json
 import os
 from threading import Thread
 from tkinter import *
