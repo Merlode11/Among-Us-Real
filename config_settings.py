@@ -16,7 +16,6 @@ def config_settings():
         Sauvegarde la configuration dans le fichier JSON de configuration
         :param close: bool: True si la fenêtre doit être fermée après la sauvegarde
         """
-        # Add a regex validator for the IP address input
         ip = ip_entry.get()
         if not ip.count(".") == 3:
             messagebox.showerror("Erreur", "L'adresse IP n'est pas valide")
@@ -85,7 +84,7 @@ def config_settings():
         ips = find_airmore_ip()
 
         if len(ips) == 0:
-            messagebox.showerror("Erreur", "Aucune adresse IP n'a été trouvée", parent=founded_ip_window)
+            messagebox.showinfo("Fin", "Aucune adresse IP n'a été trouvée", parent=founded_ip_window)
             founded_ip_window.destroy()
         elif len(ips) == 1:
             ip_entry.delete(0, END)
