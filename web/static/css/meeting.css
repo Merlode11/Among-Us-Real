@@ -68,7 +68,7 @@
 
 .inputGroup input:disabled ~ label {
     color: #b8c2cc;
-    cursor: not-allowed;
+    cursor: not-allowed !important;
 }
 
 .inputGroup input:disabled ~ label:before {

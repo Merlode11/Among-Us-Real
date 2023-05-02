@@ -3,7 +3,7 @@ import time
 from playsound import playsound
 
 
-def clear_frame(frame: Widget):
+def clear_frame(frame: Widget) -> None:
     """
     Clear all entries in a frame
     :param frame: Frame: Frame to clear

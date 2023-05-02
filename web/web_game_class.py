@@ -90,6 +90,7 @@ class WebGame(Game):
                 is_max_asks=joueur.asks >= self.config["max_dead_check"],
                 sound=sound
             )
+
         @app.route("/loading", methods=["GET", "POST"])
         def loading():
             if request.method == "POST" and not session.get("player_id"):
@@ -102,12 +103,12 @@ class WebGame(Game):
                 self.players.append(joueur)
                 session["player_id"]: int = joueur.id
 
-                # # TODO: Remove the generation of fake players used for testing
-                # self.players.extend([
-                #     WebPlayer("92.168.0.22", "Joueur 1", "#FF0000", self.used_passwords, self.used_id),
-                #     WebPlayer("92.168.0.22", "Joueur 2", "#FF0000", self.used_passwords, self.used_id),
-                #     WebPlayer("92.168.0.22", "Joueur 3", "#FF0000", self.used_passwords, self.used_id),
-                # ])
+                # TODO: Remove the generation of fake players used for testing
+                self.players.extend([
+                    WebPlayer("92.168.0.22", "Joueur 1", "#FF0000", self.used_passwords, self.used_id),
+                    WebPlayer("92.168.0.22", "Joueur 2", "#FF0000", self.used_passwords, self.used_id),
+                    WebPlayer("92.168.0.22", "Joueur 3", "#FF0000", self.used_passwords, self.used_id),
+                ])
 
                 self.import_players()
             elif request.method == "GET":
@@ -359,6 +360,10 @@ class WebGame(Game):
                 self.send_info(player,
                                "Le joueur que vous souhaitez voter n'a pas été trouvé, merci de bien vouloir "
                                "réessayer avec un identifiant correct.")
+                return redirect("/meeting")
+            if voted_player.dead:
+                self.send_info(player, "Le joueur que vous souhaitez voter est mort, vous ne pouvez donc pas voter "
+                                       "pour lui.")
                 return redirect("/meeting")
             if player.id in self.meeting_votes.keys():
                 self.send_info(player, "Vous avez déjà voté.")

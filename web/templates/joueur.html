@@ -79,7 +79,7 @@
             <p>{{ task.steps }}</p>
             {% if task.active %}
             <h3>Message d'activation</h3>
-            <p>{{ task.activate_message }}</p>
+            <p>{{ task.message }}</p>
             {% endif %}
         </div>
     </div>
@@ -87,7 +87,7 @@
 
 <!-- Modal Taches -->
 
-{% if task.type == "basic" or player.role == "impostor" %}
+{% if task.type != "basic" and player.role != "impostor" %}
 <div id="validate-{{id}}" class="modal">
     <div class="modal-content">
         <div class="contact-form">
