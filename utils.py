@@ -489,7 +489,7 @@ class TagsEntry(Frame):
         """
         Retire une étiquette de la liste
         """
-        self.tags.self(self.tags.index(tag))
+        self.tags.pop(self.tags.index(tag))
         self._update_tags()
 
     def _update_tags(self):
