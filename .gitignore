@@ -16,3 +16,9 @@ misc/*
 **/._.DS_Store
 .DS_Store?
 .DS_Store??
+
+# Ignore all the __pycache__ files
+__pycache__/
+**/__pycache__
+**/__pycache__/
+**/__pycache__/*

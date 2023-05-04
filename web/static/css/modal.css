@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@1,500&display=swap');
+
 .modal {
     display: none;
     position: fixed;
@@ -21,7 +23,14 @@
     text-align: center;
 }
 
-.modal-content h2 {
+.modal-content h1, h2, h3, h4, h5, h6 {
     font-size: 30px;
     color: #022b3a;
+    font-family: 'Karla', sans-serif;
+}
+
+.modal-content p {
+    font-size: 20px;
+    color: #022b3a;
+    font-family: 'Karla', sans-serif;
 }

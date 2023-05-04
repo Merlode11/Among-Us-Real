@@ -104,11 +104,14 @@ class WebGame(Game):
                 session["player_id"]: int = joueur.id
 
                 # TODO: Remove the generation of fake players used for testing
-                self.players.extend([
-                    WebPlayer("92.168.0.22", "Joueur 1", "#FF0000", self.used_passwords, self.used_id),
-                    WebPlayer("92.168.0.22", "Joueur 2", "#FF0000", self.used_passwords, self.used_id),
-                    WebPlayer("92.168.0.22", "Joueur 3", "#FF0000", self.used_passwords, self.used_id),
-                ])
+                print(len(self.players))
+                print(self.players)
+                if len(self.players) <= 3:
+                    self.players.extend([
+                        WebPlayer("92.168.0.22", "Joueur 1", "#FF0000", self.used_passwords, self.used_id),
+                        WebPlayer("92.168.0.22", "Joueur 2", "#FF0000", self.used_passwords, self.used_id),
+                        WebPlayer("92.168.0.22", "Joueur 3", "#FF0000", self.used_passwords, self.used_id),
+                    ])
 
                 self.import_players()
             elif request.method == "GET":
@@ -179,7 +182,7 @@ class WebGame(Game):
             for joueur in self.players:
                 if joueur.last_message and joueur.last_message + self.config["min_before_inactiv_warn"] * 60 < int(
                         datetime.datetime.now().timestamp()):
-                    if player.last_warning and player.last_warning + self.config["min_before_inactiv_kick"] * 60 < int(
+                    if player.last_warning and player.last_warning + self.config["min_before_inactiv_warn"] * 60 < int(
                             datetime.datetime.now().timestamp()):
                         if player.warnings >= self.config["max_warns"]:
                             self.send_info_all(
@@ -361,16 +364,15 @@ class WebGame(Game):
                                "Le joueur que vous souhaitez voter n'a pas été trouvé, merci de bien vouloir "
                                "réessayer avec un identifiant correct.")
                 return redirect("/meeting")
-            if voted_player.dead:
+            elif voted_player.dead:
                 self.send_info(player, "Le joueur que vous souhaitez voter est mort, vous ne pouvez donc pas voter "
                                        "pour lui.")
                 return redirect("/meeting")
-            if player.id in self.meeting_votes.keys():
+            elif player.id in self.meeting_votes.keys():
                 self.send_info(player, "Vous avez déjà voté.")
                 return redirect("/meeting")
             player.voted = True
             self.meeting_votes[player.id] = player_id if voted_player is not None else "skip"
-            print(self.meeting_votes)
             self.send_info(player, {
                 "title": "Vote enregistré",
                 "message": "Vous avez bien voté pour " + (
@@ -408,7 +410,7 @@ class WebGame(Game):
             clear_frame(self.import_window)
             popup = self.import_window
         else:
-            self.players = [None] * 100
+            # self.players = [None] * 100
             self.import_window = popup = Tk()
             popup.title("Importation des joueurs")
             popup.geometry("300x200")

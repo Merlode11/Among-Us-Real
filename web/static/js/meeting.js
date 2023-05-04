@@ -21,10 +21,15 @@ let interval = window.setInterval( function() {
                 window.location.href = "/end"
             }
             else if (data.meeting && data.meeting !== lastData.meeting) {
-                if (data.meeting === "vote" && !data.has_vote) {
+                if (data.meeting === "vote" && !data.has_vote && !data.dead) {
                     radios.forEach(radio => {
-                        radio.checked = false;
-                        radio.disabled = false;
+                        if (radio.getAttribute("data-player-dead") !== "True") {
+                            radio.checked = false;
+                            radio.disabled = false;
+                        } else {
+                            radio.checked = false;
+                            radio.disabled = true;
+                        }
                     });
                     voteButton.disabled = false;
                 } else if (data.meeting === "discussion") {
