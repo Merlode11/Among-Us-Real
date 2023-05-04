@@ -18,17 +18,37 @@
     {% endif %}
     {%for joueur in players%}
     <div class="inputGroup">
-        <input id="{{joueur.id}}" name="vote" value="{{joueur.id}}" type="radio" {% if (state !="vote" or has_voted) and player.dead%}
-               disabled {% endif %}/>
+        <input id="{{joueur.id}}"
+               name="vote" value="{{joueur.id}}"
+               type="radio"
+               data-player-dead="{{joueur.dead}}"
+               required
+               {% if state !="vote" or has_voted or player.dead%}
+                disabled
+               {% elif joueur.dead %}
+                disabled
+               {% endif %}
+        />
         <label for="{{joueur.id}}">{{joueur.nickname}}</label>
     </div>
     {%endfor%}
     <div class="inputGroup">
-        <input id="skip" name="vote" value="skip" type="radio" {% if (state !="vote" or has_voted) and player.dead %} disabled {% endif
-               %}/>
+        <input id="skip"
+               name="vote"
+               value="skip"
+               type="radio"
+               required
+               {% if state !="vote" or has_voted or player.dead %}
+                disabled
+               {% endif %}/>
         <label for="skip">Passer le vote</label>
     </div>
-    <button type="submit" id="submit-button" {% if (state !="vote" or has_voted) and player.dead %} disabled {% endif %}><span>Voter</span>
+    <button type="submit"
+            id="submit-button"
+            {% if state !="vote" or has_voted or player.dead  %}
+             disabled
+            {% endif %}>
+        <span>Voter</span>
     </button>
 </form>
 

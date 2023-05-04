@@ -579,7 +579,8 @@ class Game:
 
                         voted_player_id = "0"
                         for player_id, vote_number in votes.items():
-                            if vote_number > votes.get(voted_player_id, 0):
+                            if vote_number > votes.get(voted_player_id, 0)\
+                                    and [v for v in votes.values()].count(vote_number) == 1:
                                 voted_player_id = player_id
 
                         killed_window = Tk()

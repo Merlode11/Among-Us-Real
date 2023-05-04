@@ -149,7 +149,7 @@ class SMSGame(Game):
             for player in self.players:
                 if player.last_message and player.last_message + self.config["min_before_inactiv_warn"] * 60 < int(
                         datetime.datetime.now().timestamp()):
-                    if player.last_warning and player.last_warning + self.config["min_before_inactiv_kick"] * 60 < int(
+                    if player.last_warning and player.last_warning + self.config["min_before_inactiv_warn"] * 60 < int(
                             datetime.datetime.now().timestamp()):
                         if player.warnings >= self.config["max_warns"]:
                             self.send_info_all(
