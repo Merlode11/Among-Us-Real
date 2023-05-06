@@ -1,88 +1,91 @@
 body {
-    background-color: #30b4d1
+    background-color: #000000
 }
 
 .L1 {
-    color: #000000;
+    color: #3b7f0a;
     opacity: 0;
     animation: pass 2s ease-in-out infinite;
     animation-delay: 0.2s;
     letter-spacing: 0.5em;
-    text-shadow: 2px 2px 2px #67dd12;
+    text-shadow: 1px 1px 1px #67dd12;
 }
 
 .L2 {
-    color: #000000;
+    color: #3b7f0a;
     opacity: 0;
     animation: pass 2s ease-in-out infinite;
     animation-delay: 0.4s;
     letter-spacing: 0.5em;
-    text-shadow: 2px 2px 2px #67dd12;
+    text-shadow: 1px 1px 1px #67dd12;
 }
 
 .L3 {
-    color: #000000;
+    color: #3b7f0a;
     opacity: 0;
     animation: pass 2s ease-in-out infinite;
     animation-delay: 0.6s;
     letter-spacing: 0.5em;
-    text-shadow: 2px 2px 2px #67dd12;
+    text-shadow: 1px 1px 1px #67dd12;
 }
 
 .L4 {
-    color: #000000;
+    color: #3b7f0a;
     opacity: 0;
     animation: pass 2s ease-in-out infinite;
     animation-delay: 0.8s;
     letter-spacing: 0.5em;
-    text-shadow: 2px 2px 2px #67dd12;
+    text-shadow: 1px 1px 1px #67dd12;
 }
 
 .L5 {
-    color: #000000;
+    color: #3b7f0a;
     opacity: 0;
     animation: pass 2s ease-in-out infinite;
     animation-delay: 1s;
     letter-spacing: 0.5em;
-    text-shadow: 2px 2px 2px #67dd12;
+    text-shadow: 1px 1px 1px #67dd12;
 }
 
 .L6 {
-    color: #000000;
+    color: #3b7f0a;
     opacity: 0;
     animation: pass 2s ease-in-out infinite;
     animation-delay: 1.2s;
     letter-spacing: 0.5em;
-    text-shadow: 2px 2px 2px #67dd12;
+    text-shadow: 1px 1px 1px #67dd12;
 }
 
 .L7 {
-    color: #000000;
+    color: #3b7f0a;
     opacity: 0;
     animation: pass 2s ease-in-out infinite;
     animation-delay: 1.4s;
     letter-spacing: 0.5em;
-    text-shadow: 2px 2px 2px #67dd12;
+    text-shadow: 1px 1px 1px #67dd12;
 }
 
 .L8 {
-    color: #000000;
+    color: #3b7f0a;
     opacity: 0;
     animation: pass 2s ease-in-out infinite;
     animation-delay: 1.6s;
     letter-spacing: 0.5em;
-    text-shadow: 2px 2px 2px #67dd12;
+    text-shadow: 1px 1px 1px #67dd12;
 }
 
 .L9 {
-    color: #000000;
+    color: #3b7f0a;
     opacity: 0;
     animation: pass 2s ease-in-out infinite;
     animation-delay: 2s;
     letter-spacing: 0.5em;
-    text-shadow: 2px 2px 2px #67dd12;
+    text-shadow: 1px 1px 1px #67dd12;
 }
 
+.txt_erreur{
+    color: #367409;
+}
 
 @keyframes pass {
     0% {
