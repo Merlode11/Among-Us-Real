@@ -10,7 +10,7 @@ class Player:
         self.asks: int = 0
         self.last_message: int = int(datetime.now().timestamp())
         self.warnings: int = 0
-        self.last_warning: int = 0
+        self.last_warning: int = int(datetime.now().timestamp())
         self.id: str = "0"
 
         self.password: str = "".join([str(random.randint(0, 9)) for _ in range(8)])
@@ -59,8 +59,8 @@ class Player:
 
 
 class SMSPlayer(Player):
-    def __init__(self, name: str, lastname: str, phone: str, used_passwords: list):
-        super().__init__(used_passwords)
+    def __init__(self, name: str, lastname: str, phone: str, used_passwords: list, used_id: list):
+        super().__init__(used_passwords, used_id)
         self.name: str = name
         self.lastname: str = lastname
         self.phone: str = phone

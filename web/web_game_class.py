@@ -510,7 +510,7 @@ class WebGame(Game):
         """
         message = f"Bonjour {player.get_name()},<br/>"
         message += "Vous êtes un " + self.config["names"][player.role].upper()
-        if player.role == "impostor":
+        if player.role == "impostor" and len(self.impostors) > 1:
             impostors = " ".join([(joueur.get_name()) for joueur in self.impostors])
             message += " avec " + impostors + "<br/><br/>"
         else:

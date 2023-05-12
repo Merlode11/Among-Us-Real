@@ -487,7 +487,7 @@ class Game:
         sendButton = Button(messageFrame, text="Envoyer", command=send_message_player)
         sendButton.pack(fill=X, expand=YES, side=BOTTOM)
 
-        messageEntry.bind("<Return>", send_message_player)
+        messageEntry.bind("<Return>", lambda _: send_message_player())
 
         sender.mainloop()
 
