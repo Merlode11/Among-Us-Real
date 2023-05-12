@@ -1,6 +1,6 @@
 {
     "impostors": 1,
-    "engineers": 1,
+    "engineers": 0,
     "scientists": 1,
     "tasks": 3,
     "max_task_given": 2,
@@ -17,8 +17,8 @@
     "show_dead_roles": false,
     "discussion_time": 120,
     "vote_time": 30,
-    "task_list": "demo",
-    "manager_type": "web",
+    "task_list": "Plop",
+    "manager_type": "sms",
     "min_before_inactiv_warn": 5,
     "max_warns": 3
 }

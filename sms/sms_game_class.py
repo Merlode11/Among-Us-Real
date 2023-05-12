@@ -17,13 +17,10 @@ class SMSGame(Game):
         self.receive = True
         self.send_messages = []
         Timer(1, self.start_recieve_sms).start()
+
         super().__init__(game_master)
 
-        messagebox.showinfo("Bienvenue", "Bienvenue dans le jeu " + self.config["names"]["title"] + "\n" +
-                            "Une nouvelle partie va commencer.\n" +
-                            "Êtes-vous prêt à jouer ?")
-
-        self.start_game()
+        print("Chargement des joueurs")
 
     def import_players(self):
         used_passwords: list = []
@@ -32,12 +29,13 @@ class SMSGame(Game):
             data = json.load(f)
             self.players = [SMSPlayer(player["name"], player["lastname"], player["phone"], used_passwords, used_id)
                             for player in data if player.get("play", True)]
-        for player in self.players:
-            player_id = random.randint(0, 999)
-            while player_id in used_id:
-                player_id = random.randint(0, 999)
-            used_id.append(player_id)
-            player.id = f"{player_id:03}"
+        print("Joueurs importés")
+
+        messagebox.showinfo("Bienvenue", "Bienvenue dans le jeu " + self.config["names"]["title"] + "\n" +
+                            "Une nouvelle partie va commencer.\n" +
+                            "Êtes-vous prêt à jouer ?")
+
+        self.start_game()
 
     def send_info_all(self, message: str):
         print("Envoie de l'information")
@@ -65,7 +63,7 @@ class SMSGame(Game):
         """
         message = f"Bonjour {player.name} {player.lastname},\n"
         message += "Vous êtes un " + self.config["names"][player.role].upper()
-        if player.role == "impostor":
+        if player.role == "impostor" and len(self.impostors) > 1:
             impostors = " ".join([(joueur.name + " " + joueur.lastname) for joueur in self.impostors])
             message += " avec " + impostors + "\n\n"
         else:
@@ -95,22 +93,27 @@ class SMSGame(Game):
             if message.startswith(tuple([cmd.name] + cmd.aliases)):
                 return cmd.run(player, message, self)
         for task in player.tasks:
+            print(task.type)
             if task.type == "validate_basic":
+                print(task.keywords)
                 for word in task.keywords:
                     if word in message:
                         self.task_done(player, task)
                         return True
             elif task.type == "activate_basic":
+                print(task.activ_keywords)
                 for word in task.activ_keywords:
                     if word in message:
                         send_sms(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
                         task.active = True
                         return True
             elif task.type == "activ_valid":
+                print(task.keywords, task.activ_keywords)
                 for word in task.keywords:
                     if word in message:
                         if task.active:
                             self.task_done(player, task)
+                            send_sms(player.phone, "Vous avez bien validé la tâche !")
                             return True
                         else:
                             send_sms(player.phone, "La tâche n'est pas encore activée")
@@ -149,22 +152,39 @@ class SMSGame(Game):
             for player in self.players:
                 if player.last_message and player.last_message + self.config["min_before_inactiv_warn"] * 60 < int(
                         datetime.datetime.now().timestamp()):
+                    print(player.get_name())
+                    print(player.last_message, int(datetime.datetime.now().timestamp()))
+                    print(player.last_message + self.config["min_before_inactiv_warn"] * 60 < int(datetime.datetime.now().timestamp()))
+                    print(player.name, ":", "n'a pas donné de ses nouvelles depuis", self.config["min_before_inactiv_warn"] * 60, "secondes")
+
                     if player.last_warning and player.last_warning + self.config["min_before_inactiv_warn"] * 60 < int(
                             datetime.datetime.now().timestamp()):
+                        print(player.name, ":", "n'a pas donné de ses nouvelles depuis", self.config["min_before_inactiv_warn"] * 60, "secondes")
                         if player.warnings >= self.config["max_warns"]:
-                            self.send_info_all(
-                                f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur")
+                            print("Game pause")
+                            # self.send_info_all(
+                            #     f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur")
                             self.pause = True
                             if self.game_master:
                                 messagebox.showerror("Un joueur ne répond pas",
                                                      f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur. Un message a été envoyé à tout le monde.")
                         else:
-                            send_sms(player.phone,
-                                     f"Il y a un problème ? Nous n'avons pas reçu de message depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Si tout va bien, renvoie un message pour que nous soyons sûr que tout va bien.")
+                            print("Warning")
+                            # send_sms(player.phone,
+                            #          f"Il y a un problème ? Nous n'avons pas reçu de message depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Si tout va bien, renvoie un message pour que nous soyons sûr que tout va bien.")
                             if self.game_master:
                                 messagebox.showwarning("Sans nouvelles d'un joueur",
                                                        f"{player.name} {player.lastname} n'a plus envoyé de messages depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Un message d'avertissement lui a été envoyé. Une procédure d'urgence aura lieu automatiquement si on n'a pas de nouvelles dans {self.config['max_warns'] - player.warnings * self.config['min_before_inactiv_warn']} minutes")
                         player.warnings += 1
+                        player.last_warning = int(datetime.datetime.now().timestamp())
+                    elif not player.last_warning:
+                        print("Warning")
+                        player.warnings += 1
+                        # send_sms(player.phone,
+                        #          f"Il y a un problème ? Nous n'avons pas reçu de message depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Si tout va bien, renvoie un message pour que nous soyons sûr que tout va bien.")
+                        if self.game_master:
+                            messagebox.showwarning("Sans nouvelles d'un joueur",
+                                                   f"{player.name} {player.lastname} n'a plus envoyé de messages depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Un message d'avertissement lui a été envoyé. Une procédure d'urgence aura lieu automatiquement si on n'a pas de nouvelles dans {self.config['max_warns'] - player.warnings * self.config['min_before_inactiv_warn']} minutes")
                         player.last_warning = int(datetime.datetime.now().timestamp())
                 if self.receive:
                     Timer(5, recieve).start()

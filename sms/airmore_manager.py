@@ -17,14 +17,22 @@ service = MessagingService(session)
 
 
 last_messages = {}
+sent_messages: int = 0
 
 
 def send_sms(phone_number: str, message: str):
     """
     Envoye un SMS au numéro de téléphone spécifié
     """
+    global sent_messages
     try:
+        if sent_messages >= 15:
+            print("Too much messages sent, not sending this one")
+            return
         service.send_message(phone_number, message)
+        sent_messages += 1
+        sleep(2)
+        sent_messages -= 1
     except Exception as e:
         print(e)
         sleep(2)

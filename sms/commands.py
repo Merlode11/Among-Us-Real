@@ -55,7 +55,7 @@ class Command:
             if game.config.get("names") and game.config["names"].get(self.permission.lower()):
                 perm = game.config["names"][self.permission.lower()]
 
-            send_sms(player.phone, "Vous ne pouvez pas utiliser cette commande car vous n'êtes pas" + perm + " !")
+            send_sms(player.phone, "Vous ne pouvez pas utiliser cette commande car vous n'êtes pas " + perm + " !")
             return True
         elif game.pause and not is_necessary:
             send_sms(player.phone, "La partie est actuellement en pause. Vous ne pouvez pas faire de commandes")
@@ -212,9 +212,12 @@ class MortCommand(Command):
         if game.game_master:
             response = messagebox.askokcancel("Mort détecté",
                                               f"{player.name} {player.lastname} découvert un corps ! Son message est :\n {message}")
+            print(response)
             if response == "ok":
+                print("Meeting")
                 game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             elif response == "cancel":
+                print("Refused")
                 send_sms(player.phone, "Votre demande a été refusée par l'organisateur.ice")
         else:
             try:
@@ -259,7 +262,8 @@ class DoneCommand(Command):
             else:
                 game.done_task(player, task)
                 game.send_info(player, f"Votre tâche {task.name} a été confirmée comme faite !")
-        except (Exception,):
+        except Exception as e:
+            print(e)
             send_sms(player.phone, "Veuillez entrer un numéro de tâche valide !")
 
 
