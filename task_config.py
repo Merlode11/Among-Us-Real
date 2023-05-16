@@ -251,12 +251,10 @@ def task_config():
                 message.grid(row=2, column=1)
             elif type_choice.get() == "Avec Activation et Validation":
                 keywords_label = Label(tags_frame, text="Mots-clés de validation: ")
-                keywords = TagsEntry(tags_frame)
                 keywords_label.grid(row=1, column=0)
                 keywords.grid(row=1, column=1)
 
                 activation_label = Label(tags_frame, text="Mots-clé d'activation: ")
-                activation = TagsEntry(tags_frame)
                 activation_label.grid(row=2, column=0)
                 activation.grid(row=2, column=1)
 
@@ -340,6 +338,7 @@ def task_config():
                 task["activ_keywords"] = obj["activation"].get_tags()
                 task["message"] = re.sub(r"\n+$", "", obj["message"].get("1.0", END))
             elif type_choice.get() == "Avec Activation et Validation":
+                print(obj["keywords"].get_tags())
                 if obj["keywords"] and obj["keywords"].get_tags() == []:
                     messagebox.showerror("Erreur", "Il faut au moins un mot-clé de validation", parent=add_window)
                     return
