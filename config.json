@@ -18,7 +18,7 @@
     "discussion_time": 120,
     "vote_time": 30,
     "task_list": "Plop",
-    "manager_type": "sms",
+    "manager_type": "web",
     "min_before_inactiv_warn": 5,
     "max_warns": 3
 }

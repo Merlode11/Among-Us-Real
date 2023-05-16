@@ -14,10 +14,7 @@ from playsound import playsound
 
 class Game:
     def __init__(self, game_master: bool = None):
-        # Get the active path:
-        print(__file__)
         self.path = os.path.dirname(os.path.abspath(__file__))
-        print(self.path)
 
         with open(self.path + "/config.json", "r", encoding='utf-8') as f:
             self.config = json.load(f)
