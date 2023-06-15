@@ -22,7 +22,11 @@ class WhatsAppGame(Game):
         self.send_messages = []
         self.server = app = Flask(__name__)
         # Start the NodeJs process to manage the whatsapp connection and get the logs from the process in a thread
-        self.whatsapp_manager = Thread(target=lambda: os.system("node whatsapp/api/index.js"))
+        # Detect if there is a node_modules folder
+        if not os.path.isdir("whatsapp/api/node_modules"):
+            print("Installation des dépendances de WhatsApp")
+            os.system("cd whatsapp/api && npm install")
+        self.whatsapp_manager = Thread(target=lambda: os.system("cd whatsapp/api && node index.js"))
         self.whatsapp_manager.start()
 
         self.isReady = False
