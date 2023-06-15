@@ -38,6 +38,7 @@ class Game:
         self.pause: bool = False
         self.unpause_code: str = ""
         self.pause_reason: str = ""
+        self.pause_pop = None
 
         # Game window
         self.window = window = Tk()
@@ -494,7 +495,29 @@ class Game:
         """
         code_int = random.randint(0, 1000)
         self.unpause_code = code_str = f"{code_int}"
+        if self.game_master:
+            self.pause_pop = pop = Toplevel(self.window)
+            pop.title("Button de reprise")
+            pop.geometry("300x100")
+            pop.resizable(False, False)
+            pop.iconbitmap(self.path + "/assets/img/amongus.ico")
+            Label(pop, text="Code de reprise: " + code_str, font=("Arial", 20)).pack()
+
+            Button(pop, text="Rétablir la partie", command=self.unpause_game).pack()
+            self.pause = True
+
         return code_str
+
+    def unpause_game(self):
+        """
+        Rétablit la partie
+        :return:
+        """
+        self.pause = False
+        self.pause_reason = ""
+        self.unpause_code = ""
+        self.pause_pop.destroy()
+        self.send_info_all("La partie a été rétablie !")
 
     def start_meeting(self, message: str):
         """
@@ -524,7 +547,7 @@ class Game:
         def show_players():
             clear_frame(players_here_frame)
             for player in self.players:
-                print(player.nickname, ":", player.password)
+                print(player.get_name(), ":", player.password)
                 if player in here_users:
                     color = "green"
                 else:
@@ -576,7 +599,7 @@ class Game:
 
                         voted_player_id = "0"
                         for player_id, vote_number in votes.items():
-                            if vote_number > votes.get(voted_player_id, 0)\
+                            if vote_number > votes.get(voted_player_id, 0) \
                                     and [v for v in votes.values()].count(vote_number) == 1:
                                 voted_player_id = player_id
 

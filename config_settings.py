@@ -214,7 +214,7 @@ def config_settings():
     manager_type = StringVar()
     manager_type.set(config["manager_type"])
     manager_type_label = Label(settings_frame, text="Type de gestion des joueurs: ")
-    manager_type_entry = OptionMenu(settings_frame, manager_type, *["sms", "web"])
+    manager_type_entry = OptionMenu(settings_frame, manager_type, *["sms", "web", "whatsapp"])
     manager_type_label.grid(row=13, column=0)
     manager_type_entry.grid(row=13, column=1)
 
