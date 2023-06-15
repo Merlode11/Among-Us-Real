@@ -7,12 +7,9 @@ from game_class import Game
 import json
 import random
 from whatsapp.commands import commands
-from whatsapp.whatsapp_manager import sendMessage, isReady
-import datetime
-from threading import Timer
+from whatsapp.whatsapp_manager import sendMessage
 from flask import Flask, request
 from threading import Thread
-import pyqrcode
 import os
 
 

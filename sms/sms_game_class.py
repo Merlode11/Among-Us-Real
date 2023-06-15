@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tkinter import messagebox, ttk
+from tkinter import messagebox
 from sms.airmore_manager import send_sms, get_new_messages
-from classes import SMSPlayer, BasicTask
+from classes import SMSPlayer
 from game_class import Game
 import json
-import random
 from sms.commands import commands
 import datetime
 from threading import Timer
