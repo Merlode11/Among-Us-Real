@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import messagebox, ttk
 from sms.sms_game_class import SMSGame
 from web.web_game_class import WebGame
+from whatsapp.whatsapp_game_class import WhatsAppGame
 import os
 from config_settings import config_settings
 from player_config import player_config
@@ -140,6 +141,8 @@ def main():
             SMSGame(game_master)
         elif config["manager_type"] == "web":
             WebGame(game_master)
+        elif config["manager_type"] == "whatsapp":
+            WhatsAppGame(game_master)
         else:
             messagebox.showerror("Erreur", "Le gestionnaire de jeu n'est pas reconnu")
         main()

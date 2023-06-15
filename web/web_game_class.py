@@ -398,7 +398,7 @@ class WebGame(Game):
         self.flt = flt = Thread(target=lambda: app.run(host="0.0.0.0", port=80, debug=False))
         flt.daemon = True
         flt.start()
-        super().__init__()
+        super().__init__(game_master)
 
     def import_players(self):
         """
