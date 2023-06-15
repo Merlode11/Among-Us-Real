@@ -153,26 +153,22 @@ class WhatsAppGame(Game):
         for cmd in commands:
             if content.startswith(tuple([cmd.name] + cmd.aliases)):
                 return cmd.run(player, content, message, self)
-        if self.unpause_code in content:
+        if self.unpause_code in content and self.pause:
             self.unpause_game()
             return True
         for task in player.tasks:
-            print(task.type)
             if task.type == "validate_basic":
-                print(task.keywords)
                 for word in task.keywords:
                     if word in content:
                         self.task_done(player, task)
                         return True
             elif task.type == "activate_basic":
-                print(task.activ_keywords)
                 for word in task.activ_keywords:
                     if word in content:
                         sendMessage(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
                         task.active = True
                         return True
             elif task.type == "activ_valid":
-                print(task.keywords, task.activ_keywords)
                 for word in task.keywords:
                     if word in content:
                         if task.active:

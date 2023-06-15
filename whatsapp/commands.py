@@ -218,12 +218,10 @@ class MortCommand(Command):
         if game.game_master:
             response = messagebox.askokcancel("Mort détecté",
                                               f"{player.name} {player.lastname} découvert un corps ! Son message est :\n {content}")
-            print(response)
+
             if response == "ok":
-                print("Meeting")
                 game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             elif response == "cancel":
-                print("Refused")
                 sendMessage(player.phone, "Votre demande a été refusée par l'organisateur.ice", {"quotedMessageId": message.get("id")})
         else:
             try:
@@ -376,7 +374,6 @@ class KillCommand(Command):
         :param game: La partie
         """
         player_id = re.match(r"\d{3}", content.split(" ")[1])
-        print(player_id[0])
         to_kill_player = None
         for joueur in game.players:
             if joueur.id == player_id[0]:

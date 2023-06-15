@@ -1,6 +1,7 @@
 misc/Carte.odt
 players.json
 misc/*
+/misc/
 /.idea/
 /__pycache__/
 /venv/

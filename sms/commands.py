@@ -30,14 +30,14 @@ class Command:
         """
         string: str = "Voici la page d'aide pour la commande " + self.name + ":"
         string += "\n" + self.description
-        string += "\nAlias :" + ", ".join(self.aliases)
+        string += "\nAlias" + ", ".join(self.aliases)
         if self.permission:
             string += "\nUtilisable par :"
             if config is not None and config.get("names") and config["names"].get(self.permission.lower()):
                 string += config["names"][self.permission.lower()]
             else:
                 string += self.permission
-        string += "\nUtilisation:" + self.usage + " (" + self.exemple + ")"
+        string += "\nUtilisation: " + self.usage + " (exemple: " + self.exemple + ")"
         return string
 
     def run(self, player, message: str, game) -> bool:
@@ -260,7 +260,7 @@ class DoneCommand(Command):
             elif task.type == "activate_basic" and not task.active:
                 send_sms(player.phone, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(task_number) + " car elle n'est pas encore active")
             else:
-                game.done_task(player, task)
+                game.task_done(player, task)
                 game.send_info(player, f"Votre tâche {task.name} a été confirmée comme faite !")
         except Exception as e:
             print(e)
@@ -357,7 +357,6 @@ class KillCommand(Command):
         Tuer une personne 
         """
         player_id = re.match(r"\d{3}", message.split(" ")[1])
-        print(player_id[0])
         to_kill_player = None
         for joueur in game.players:
             if joueur.id == player_id[0]:
