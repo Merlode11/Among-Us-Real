@@ -43,11 +43,14 @@ class WhatsAppGame(Game):
 
         @app.post("/ready")
         def ready():
-            print("WhatsApp is ready")
-            messagebox.showinfo("Bienvenue", "Bienvenue dans le jeu " + self.config["names"]["title"] + "\n" +
-                                "Une nouvelle partie va commencer.\n" +
-                                "Êtes-vous prêt à jouer ?")
-            self.start_game()
+            if not self.pause: 
+                print("WhatsApp is ready")
+                messagebox.showinfo("Bienvenue", "Bienvenue dans le jeu " + self.config["names"]["title"] + "\n" +
+                                    "Une nouvelle partie va commencer.\n" +
+                                    "Êtes-vous prêt à jouer ?")
+                self.start_game()
+            else:
+                self.unpause_game()
             return "OK", 200
 
         @app.post("/message")
@@ -70,7 +73,10 @@ class WhatsAppGame(Game):
 
         @app.post("/disconnected")
         def disconnected():
-            print(request.json)
+            self.pause = True
+            self.pause_reason = "WhatsApp s'est déconnecté"
+            self.set_pause_code()
+            messagebox.showerror("Erreur", "WhatsApp s'est déconnecté.\nMerci de bien vouloir vérifier votre connexion.")
             return "OK", 200
 
         @app.post("/media_uploaded")

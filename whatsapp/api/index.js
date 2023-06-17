@@ -38,7 +38,6 @@ client.on('ready', () => {
 });
 
 client.on('message', async msg => {
-    console.log('MESSAGE RECEIVED', msg);
     sendEvent('message', msg);
 });
 
