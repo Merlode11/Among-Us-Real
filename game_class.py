@@ -597,11 +597,15 @@ class Game:
                             else:
                                 votes[choice] += 1
 
-                        voted_player_id = "0"
+                        highest_vote = 0
                         for player_id, vote_number in votes.items():
-                            if vote_number > votes.get(voted_player_id, 0) \
-                                    and [v for v in votes.values()].count(vote_number) == 1:
-                                voted_player_id = player_id
+                            if vote_number > highest_vote:
+                                highest_vote = vote_number
+                        voted_player_id = "0"
+                        if [vote_number for vote_number in votes.values()].count(highest_vote) == 1:
+                            for player_id, vote_number in votes.items():
+                                if vote_number == highest_vote:
+                                    voted_player_id = player_id
 
                         killed_window = Tk()
                         killed_window.title("Élimination")
