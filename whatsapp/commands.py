@@ -1,6 +1,9 @@
+import time
 from tkinter import messagebox
 import re  # Importation du module pour faire des tests d'expressions régulières
 from whatsapp.whatsapp_manager import sendMessage
+
+kills_cooldown = {}
 
 
 class Command:
@@ -269,7 +272,7 @@ class DoneCommand(Command):
                     task_number) + " car elle n'est pas encore active", {"quotedMessageId": message.get("id")})
             else:
                 game.task_done(player, task)
-                game.send_info(player, f"Votre tâche {task.name} a été confirmée comme faite !", {"quotedMessageId": message.get("id")})
+                sendMessage(player.phone, f"Votre tâche {task.name} a été confirmée comme faite !", {"quotedMessageId": message.get("id")})
         except Exception as e:
             print(e)
             sendMessage(player.phone, "Veuillez entrer un numéro de tâche valide !", {"quotedMessageId": message.get("id")})
@@ -374,6 +377,8 @@ class KillCommand(Command):
         :param game: La partie
         """
         player_id = re.match(r"\d{3}", content.split(" ")[1])
+        if kills_cooldown.get(player.id):
+            sendMessage(player.phone, "Vous ne pouvez pas tuer tout de suite", {"quotedMessageId": message.get("id")})
         to_kill_player = None
         for joueur in game.players:
             if joueur.id == player_id[0]:
@@ -386,6 +391,9 @@ class KillCommand(Command):
                 game.kill_player(to_kill_player)
                 sendMessage(player.phone,
                             f"Le joueur {to_kill_player.name} {to_kill_player.lastname} a bien été tué de votre part !", {"quotedMessageId": message.get("id")})
+                kills_cooldown[player.id] = True
+                time.sleep(60)
+                del kills_cooldown[player.id]
         else:
             sendMessage(player.phone,
                         "Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.", {"quotedMessageId": message.get("id")})
@@ -423,6 +431,7 @@ class VoteCommand(Command):
                 if content.split(" ")[1] == "0" or content.split(" ")[1] == "skip" or content.split(" ")[1] == "passer":
                     game.meeting_votes[player.id] = "0"
                     sendMessage(player.phone, "Vous avez voté pour passer !", {"quotedMessageId": message.get("id")})
+                    return
                 voted_player: list = parse_player(content, game)
                 if len(voted_player) > 1:
                     players_str = ""
