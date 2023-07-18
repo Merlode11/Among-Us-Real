@@ -17,6 +17,7 @@
     "show_dead_roles": false,
     "discussion_time": 120,
     "vote_time": 30,
+    "kill_cooldown": 60,
     "task_list": "Plop",
     "manager_type": "whatsapp",
     "min_before_inactiv_warn": 5,
