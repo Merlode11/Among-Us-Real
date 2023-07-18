@@ -1,3 +1,4 @@
+from flask import Flask, request
 import requests
 
 def sendRequest(action, data):
@@ -5,7 +6,7 @@ def sendRequest(action, data):
     if received.headers["Content-Type"] == "application/json":
         return received.json()
     else:
-        return received.text()
+        return received.text
 
 
 def sendMessage(phoneNumber, content, options={}):

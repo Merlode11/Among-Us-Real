@@ -614,15 +614,20 @@ class Game:
                         killed_window.state("zoomed")
                         killed_window.iconbitmap(self.path + "/assets/img/amongus.ico")
 
-                        killed_name = "Personne (skip)"
+                        killed_text = "Personne (skip)"
                         if voted_player_id != "0":
                             player = self.get_player(voted_player_id)
                             killed_window.after(5000, lambda: self.kill_player(player))
-                            killed_name = player.get_name()
+                            killed_text = player.get_name()
+                            if self.config["show_dead_roles"]: 
+                                killed_text += f" ({self.config["names"][player.role]})"
+                        
+                        killed_text += " a été éliminé"
 
                         Label(killed_window, text="Élimination", font=("Arial", 30)).pack(fill=BOTH, expand=True,
                                                                                           padx=10)
-                        Label(killed_window, text=f"{killed_name} a été éliminé !",
+
+                        Label(killed_window, text=killed_text,
                               font=("Arial", 20)).pack(fill=BOTH, expand=True, padx=10)
 
                         self.meeting_here_users = []

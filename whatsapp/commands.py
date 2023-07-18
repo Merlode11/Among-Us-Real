@@ -379,6 +379,7 @@ class KillCommand(Command):
         player_id = re.match(r"\d{3}", content.split(" ")[1])
         if kills_cooldown.get(player.id):
             sendMessage(player.phone, "Vous ne pouvez pas tuer tout de suite", {"quotedMessageId": message.get("id")})
+            return
         to_kill_player = None
         for joueur in game.players:
             if joueur.id == player_id[0]:
@@ -392,7 +393,7 @@ class KillCommand(Command):
                 sendMessage(player.phone,
                             f"Le joueur {to_kill_player.name} {to_kill_player.lastname} a bien été tué de votre part !", {"quotedMessageId": message.get("id")})
                 kills_cooldown[player.id] = True
-                time.sleep(60)
+                time.sleep(game.config["kill_cooldown"])
                 del kills_cooldown[player.id]
         else:
             sendMessage(player.phone,
