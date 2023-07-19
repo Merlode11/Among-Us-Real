@@ -1,6 +1,6 @@
 # Les commandes par message
 
-Ce logiciel propose des commandes utilisant les SMS afin de rendre le jeu plus simple à jouer.
+Ce logiciel propose des commandes pour les supports de jeu SMS, WhatsApp, Instagram, Discord et Telegram afin de rendre le jeu plus simple à jouer.
 
 ## Côté joueur
 
