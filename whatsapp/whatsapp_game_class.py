@@ -7,7 +7,7 @@ from game_class import Game
 import json
 import random
 from whatsapp.commands import commands
-from whatsapp.whatsapp_manager import sendMessage
+from whatsapp.whatsapp_manager import send_message, get_user
 from flask import Flask, request
 from threading import Thread
 import os
@@ -60,15 +60,36 @@ class WhatsAppGame(Game):
                 return "OK", 200
             joueur = next((player for player in self.players if
                            player.phone.replace("+", "") == data["from"].replace("@c.us", "")), None)
+            if self.import_window is not None:
+                if self.register_code in data["body"]:
+                    if joueur is not None:
+                        return self.send_info(joueur, "Vous êtes déjà enregistré dans la partie !")
+                    new_player = {
+                        "type": "sms"
+                        "name": data['_data']['notifyName'], 
+                        "phone": f"+{data["from"].replace("@c.us", ""))}"
+                    }
+                    self.players.append(SMSPlayer(new_player["name"], new_player["phone"], self.used_passwords, self.used_id))
+                    if self.config["save_register"]:
+                        
+                        players = []
+                        if os.path.exists("players.json"):
+                            with open("players.json", "r", encoding="utf-8") as file:
+                                players = json.load(file)
+                        players.append(new_player)
+                        with open("players.json", "w", encoding="utf-8") as file:
+                            json.dump(players, file, indent=4, ensure_ascii=False)
+                    self.send_info()
+                    self.import_players()
+                    return True
+            if len(data["from"]) > 16:
+                return "OK", 200
+            joueur = next((player for player in self.players if
+                           player.phone.replace("+", "") == data["from"].replace("@c.us", "")), None)
             if not self.check_command(joueur, data):
-                string = "Nouveau message de " + joueur.name + " " + joueur.lastname + " (" + joueur.phone + ") :\n"
+                string = "Nouveau message de " + joueur.get_name() + " (" + joueur.phone + ") :\n"
                 string += data["body"]
                 messagebox.showinfo(f"Message de {data['_data']['notifyName']}", string)
-            return "OK", 200
-
-        @app.post("/message_revoke_everyone")
-        def message_revoke_everyone():
-            print(request.json)
             return "OK", 200
 
         @app.post("/disconnected")
@@ -98,10 +119,83 @@ class WhatsAppGame(Game):
     def import_players(self):
         used_passwords: list = []
         used_id: list = []
-        with open("players.json", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            self.players = [SMSPlayer(player["name"], player["lastname"], player["phone"], used_passwords, used_id)
-                            for player in data if player.get("play", True)]
+        if self.config["register_type"] == "liste": 
+            with open("players.json", "r", encoding='utf-8') as f:
+                data = json.load(f)
+                self.players = [SMSPlayer(player["name"], player["phone"], used_passwords, used_id)
+                                for player in data if player.get("play", True) and player.get("type", "") == "sms"]
+        else:
+            already_started: bool = self.import_window is not None
+            if self.import_window:
+                clear_frame(self.import_window)
+                popup = self.import_window
+            else:
+                self.import_window = popup = Tk()
+                popup.title("Importation des joueurs")
+                popup.geometry("300x200")
+                popup.resizable(True, True)
+                popup.iconbitmap(self.path + "/assets/img/amongus.ico")
+                popup.state("zoomed")
+                self.register_code = "".join([str(random.randint(0, 9)) for _ in range(5)])
+    
+            def start_game() -> None:
+                """
+                Démarre la partie, une fois que les joueurs sont importés
+                :return: None
+                """
+                self.import_window = None
+                self.players = [player for player in self.players if player is not None]
+                popup.destroy()
+                self.register_code = None
+                self.start_game()
+                return None
+    
+            def closing():
+                """
+                Fonction de fermeture de la fenêtre
+                """
+                if messagebox.askokcancel("Quitter", "Êtes vous sûr de quitter ?"):
+                    popup.destroy()
+                    self.window.destroy()
+    
+            popup.protocol("WM_DELETE_WINDOW", closing)
+    
+            main_frame = Frame(popup)
+    
+            qrcode_frame = Frame(main_frame)
+            
+            whatsapp_user = get_user()
+    
+            url_label = Label(qrcode_frame, text=f"Envoyez {self.register_code} à {whatsapp_user["number"]} pour vous enregistrer", font=("Arial", 28))
+            url_label.pack()
+    
+            qrcode_frame.pack(fill=BOTH, expand=True)
+    
+            valid_players = [player for player in self.players if player is not None]
+    
+            start_button = Button(main_frame, text="Démarrer la partie", command=start_game)
+    
+            if len(valid_players) < 4:
+                start_button.config(state=DISABLED)
+    
+            start_button.pack()
+    
+            import_players_frame = VerticalScrolledFrame(main_frame)
+    
+            for player in valid_players:
+                player_frame = Frame(import_players_frame)
+    
+                player_label = Label(player_frame, text=player.get_name(), font=("Arial", 28))
+                player_label.pack()
+    
+                player_frame.pack(fill=BOTH, expand=True)
+    
+            import_players_frame.pack(fill=BOTH, expand=True)
+    
+            main_frame.pack(fill=BOTH, expand=True)
+    
+            if not already_started:
+                popup.mainloop()
         print("Joueurs importés")
 
     def send_info_all(self, message: str):
@@ -109,7 +203,6 @@ class WhatsAppGame(Game):
         for player in self.players:
             new_message = message.replace("{name}", player.name)
             # replace the variable in the message
-            new_message = new_message.replace("{lastname}", player.lastname)
             new_message = new_message.replace("{role}", self.config["names"][player.role])
             new_message = new_message.replace("{id}", player.id)
             new_message = new_message.replace("{phone}", player.phone)
@@ -117,21 +210,21 @@ class WhatsAppGame(Game):
             new_message = new_message.replace("{password}", player.password)
 
             print(player.name, ":", new_message)
-            sendMessage(player.phone, new_message)
+            send_message(player.phone, new_message)
 
     def send_info(self, player: SMSPlayer, message: str):
         print(player.name, ":", message)
-        sendMessage(player.phone, message)
+        send_message(player.phone, message)
 
     def send_role(self, player) -> None:
         """
         Envoie un sms au joueur indiquant son role et ses tâches
         :param player: SMSPlayer: Le joueur avec son numéro de téléphone
         """
-        message = f"Bonjour {player.name} {player.lastname},\n"
+        message = f"Bonjour {player.get_name()},\n"
         message += "Vous êtes un " + self.config["names"][player.role].upper()
         if player.role == "impostor" and len(self.impostors) > 1:
-            impostors = " ".join([(joueur.name + " " + joueur.lastname) for joueur in self.impostors])
+            impostors = " ".join([(joueur.get_name()) for joueur in self.impostors])
             message += " avec " + impostors + "\n\n"
         else:
             message += "\n\n"
@@ -171,7 +264,7 @@ class WhatsAppGame(Game):
             elif task.type == "activate_basic":
                 for word in task.activ_keywords:
                     if word in content:
-                        sendMessage(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
+                        send_message(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
                         task.active = True
                         return True
             elif task.type == "activ_valid":
@@ -179,14 +272,14 @@ class WhatsAppGame(Game):
                     if word in content:
                         if task.active:
                             self.task_done(player, task)
-                            sendMessage(player.phone, "Vous avez bien validé la tâche !")
+                            send_message(player.phone, "Vous avez bien validé la tâche !")
                             return True
                         else:
-                            sendMessage(player.phone, "La tâche n'est pas encore activée")
+                            send_message(player.phone, "La tâche n'est pas encore activée")
                             return True
                 for word in task.activ_keywords:
                     if word in content:
-                        sendMessage(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
+                        send_message(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
                         task.active = True
                         return True
 

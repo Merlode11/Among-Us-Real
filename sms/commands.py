@@ -182,9 +182,9 @@ class DeadsCommand(Command):
             states = "Voici les états de chaque joueur:\n"
             for joueur in game.players:
                 if joueur.dead:
-                    states += "- " + joueur.name + " " + joueur.lastname + " (mort)\n"
+                    states += "- " + joueur.get_name() + " (mort)\n"
                 else:
-                    states += "- " + joueur.name + " " + joueur.lastname + " (vivant)\n"
+                    states += "- " + joueur.get_name() + " (vivant)\n"
             player.asks += 1
             states += "\n Il vous reste " + str(game.config["max_dead_check"] - player.asks) + "/" + str(
                 game.config["max_dead_check"]) + " demandes."
@@ -212,7 +212,7 @@ class MortCommand(Command):
         """
         if game.game_master:
             response = messagebox.askokcancel("Mort détecté",
-                                              f"{player.name} {player.lastname} découvert un corps ! Son message est :\n {message}")
+                                              f"{player.get_name()} découvert un corps ! Son message est :\n {message}")
             print(response)
             if response == "ok":
                 print("Meeting")
@@ -327,15 +327,15 @@ class SOSCommand(Command):
         :param game: La partie
         """
         game.send_info_all(
-            f"{player.name} {player.lastname} a besoin d'aide en URGENCE ! Son message:\n{' '.join(message.split(' ')[1:])}")
+            f"{player.get_name()} a besoin d'aide en URGENCE ! Son message:\n{' '.join(message.split(' ')[1:])}")
         game.pause = True
         game.pause_reason = ' '.join(message.split(' ')[1:])
         code = game.set_pause_game()
         send_sms(player.phone,
                  f"Votre demande d'aide a bien été transmise aux autres joueurs. Le code pour rétablir la partie normalement est '{code}'")
         if game.game_master:
-            messagebox.showerror(f"{player.name} {player.lastname} a besoin d'aide",
-                                 f"{player.name} {player.lastname} a demandé de l'aide en URGENCE avec la commande SOS. Son message:\n{' '.join(message.split(' ')[1:])}\n\nUn message a été envoyé à tous les joueurs pour aller l'aider et la partie a été mise en pause")
+            messagebox.showerror(f"{player.get_name()} a besoin d'aide",
+                                 f"{player.get_name()} a demandé de l'aide en URGENCE avec la commande SOS. Son message:\n{' '.join(message.split(' ')[1:])}\n\nUn message a été envoyé à tous les joueurs pour aller l'aider et la partie a été mise en pause")
 
 
 class KillCommand(Command):
@@ -371,7 +371,7 @@ class KillCommand(Command):
                 return
             else:
                 game.kill_player(to_kill_player)
-                send_sms(player.phone, f"Le joueur {to_kill_player.name} {to_kill_player.lastname} a bien été tué de votre part !")
+                send_sms(player.phone, f"Le joueur {to_kill_player.get_name()} a bien été tué de votre part !")
         else:
             send_sms(player.phone,
                      "Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.")
@@ -409,7 +409,7 @@ class VoteCommand(Command):
                 if len(voted_player) > 1:
                     players_str = ""
                     for i, player in enumerate(voted_player):
-                        players_str += f"{i + 1} - {player.name} {player.lastname}\n"
+                        players_str += f"{i + 1} - {player.get_name()}\n"
                     send_sms(player.phone, f"Plusieurs joueurs ont été trouvés:\n{players_str}Veuillez réessayer en précisant le numéro du joueur:\nvote NUMERO")
                     return
                 elif voted_player is None or len(voted_player) == 0:
@@ -418,7 +418,7 @@ class VoteCommand(Command):
                 else:
                     voted_player = voted_player[0]
                     game.meeting_votes[player.id] = voted_player.id
-                    send_sms(player.phone, f"Vous avez voté pour {voted_player.name} {voted_player.lastname} !")
+                    send_sms(player.phone, f"Vous avez voté pour {voted_player.get_name()} !")
                     game.timer.show_players()
                     return
 
@@ -442,7 +442,7 @@ def parse_player(message: str, game) -> list:
         found_players = []
         for i in range(game.players):
             player = game.players[i]
-            if player.name.lower() == player_name or player.lastname.lower() == player_name:
+            if player.name.lower() == player_name:
                 player_with_id = (i + 1, player)
                 found_players.append(player_with_id)
 

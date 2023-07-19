@@ -16,19 +16,20 @@ class Game:
     def __init__(self, game_master: bool = None):
         self.path = os.path.dirname(os.path.abspath(__file__))
 
-        with open(self.path + "/config.json", "r", encoding='utf-8') as f:
-            self.config = json.load(f)
+        with open(self.path + "/config.json", "r", encoding='utf-8') as f:            self.config = json.load(f)
 
         self.given_tasks: int = 0
 
         self.crewmates: list = []
         self.impostors: list = []
         self.dead_players: list = []
+        self.kills_cooldown: dict[str: bool] = {}
         self.done_tasks: list = []
         self.meeting: str or None = None
         self.meeting_votes: dict = {}
         self.meeting_here_users: list = []
         self.end: bool = False
+        
 
         if game_master is None:
             self.game_master: bool = self.config["game_master"]
@@ -63,6 +64,10 @@ class Game:
             self.window.destroy()
             return
 
+        self.register_code = None
+        self.import_window: Tk or None = None
+        self.used_passwords: list[str] = []
+        self.used_id: list[int] = []
         self.players: list = []
         self.import_players()
 

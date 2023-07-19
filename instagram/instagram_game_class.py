@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from tkinter import messagebox, ttk
-from classes import SMSPlayer, BasicTask
+from classes import InstaPlayer
 from game_class import Game
 import json
 import random
 from whatsapp.commands import commands
-from whatsapp.whatsapp_manager import sendMessage
+from whatsapp.whatsapp_manager import send_message
 from flask import Flask, request
 from threading import Thread
 import os
@@ -23,7 +23,6 @@ class InstagramGame(Game):
                                     "Une nouvelle partie va commencer.\n" +
                                     "Êtes-vous prêt à jouer ?")
         self.start_game()
-        self.unpause_game()
 
         super().__init__()
 
@@ -32,8 +31,8 @@ class InstagramGame(Game):
         used_id: list = []
         with open("players.json", "r", encoding='utf-8') as f:
             data = json.load(f)
-            self.players = [SMSPlayer(player["name"], player["lastname"], player["phone"], used_passwords, used_id)
-                            for player in data if player.get("play", True)]
+            self.players = [InstaPlayer(player["name"], player["username"], used_passwords, used_id)
+                            for player in data if player.get("play", True) and player.get("type", "") == "instagram"]
         print("Joueurs importés")
 
     def send_info_all(self, message: str):
@@ -41,7 +40,6 @@ class InstagramGame(Game):
         for player in self.players:
             new_message = message.replace("{name}", player.name)
             # replace the variable in the message
-            new_message = new_message.replace("{lastname}", player.lastname)
             new_message = new_message.replace("{role}", self.config["names"][player.role])
             new_message = new_message.replace("{id}", player.id)
             new_message = new_message.replace("{phone}", player.phone)
@@ -49,21 +47,21 @@ class InstagramGame(Game):
             new_message = new_message.replace("{password}", player.password)
 
             print(player.name, ":", new_message)
-            sendMessage(player.phone, new_message)
+            send_message(player.phone, new_message)
 
     def send_info(self, player: SMSPlayer, message: str):
         print(player.name, ":", message)
-        sendMessage(player.phone, message)
+        send_message(player.phone, message)
 
     def send_role(self, player) -> None:
         """
         Envoie un sms au joueur indiquant son role et ses tâches
         :param player: SMSPlayer: Le joueur avec son numéro de téléphone
         """
-        message = f"Bonjour {player.name} {player.lastname},\n"
+        message = f"Bonjour {player.get_name()},\n"
         message += "Vous êtes un " + self.config["names"][player.role].upper()
         if player.role == "impostor" and len(self.impostors) > 1:
-            impostors = " ".join([(joueur.name + " " + joueur.lastname) for joueur in self.impostors])
+            impostors = " ".join([(joueur.get_name()) for joueur in self.impostors])
             message += " avec " + impostors + "\n\n"
         else:
             message += "\n\n"
@@ -103,7 +101,7 @@ class InstagramGame(Game):
             elif task.type == "activate_basic":
                 for word in task.activ_keywords:
                     if word in content:
-                        sendMessage(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
+                        send_message(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
                         task.active = True
                         return True
             elif task.type == "activ_valid":
@@ -111,14 +109,14 @@ class InstagramGame(Game):
                     if word in content:
                         if task.active:
                             self.task_done(player, task)
-                            sendMessage(player.phone, "Vous avez bien validé la tâche !")
+                            send_message(player.phone, "Vous avez bien validé la tâche !")
                             return True
                         else:
-                            sendMessage(player.phone, "La tâche n'est pas encore activée")
+                            send_message(player.phone, "La tâche n'est pas encore activée")
                             return True
                 for word in task.activ_keywords:
                     if word in content:
-                        sendMessage(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
+                        send_message(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
                         task.active = True
                         return True
 

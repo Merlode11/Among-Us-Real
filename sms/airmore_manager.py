@@ -63,10 +63,10 @@ def get_new_messages(game) -> list:
             if player.warnings >= 1: 
                 if game.pause and player.warnings >= game.config["max_warns"]:
                     game.pause = False
-                    game.send_info_all(f"{player.name} {player.lastname} a refait surface, plus besoin de "
+                    game.send_info_all(f"{player.get_name()} a refait surface, plus besoin de "
                                              f"s'inquiéter. La partie reprend !")
                     if game.config.game_master:
-                        messagebox.showinfo("La partie reprend", f"{player.name} {player.lastname} a refait surface. "
+                        messagebox.showinfo("La partie reprend", f"{player.get_name()} a refait surface. "
                                                                  f"La partie reprends")
                 player.warnings = 0
     return new_messages

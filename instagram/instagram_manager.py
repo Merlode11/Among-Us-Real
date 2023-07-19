@@ -9,7 +9,7 @@ def sendRequest(action, data):
         return received.text
 
 
-def sendMessage(phoneNumber, content, options={}):
+def send_message(phoneNumber, content, options={}):
     if len(phoneNumber) < 11:
         phoneNumber = "33" + phoneNumber if not phoneNumber.startswith("0") else "33" + phoneNumber[1:]
     if not phoneNumber.endswith("@c.us"):
@@ -29,7 +29,7 @@ def sendMessageRaw(chatId, content, options={}):
         "content": content,
         "options": options,
     }
-    sendRequest("sendMessage", data)
+    sendRequest("send_message", data)
 
 
 def sendSeen(chatId):
@@ -55,4 +55,4 @@ def isReady():
 
 if __name__ == '__main__':
     print("Is Ready: " + str(isReady()))
-    sendMessage("33767269602", "Hello World")
+    send_message("33767269602", "Hello World")

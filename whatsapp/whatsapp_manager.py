@@ -1,6 +1,6 @@
 import requests
 
-def sendRequest(action, data):
+def sendRequest(action, data) -> dict or str:
     received = requests.post("http://localhost:3045/" + action, json=data)
     if received.headers["Content-Type"] == "application/json":
         return received.json()
@@ -8,7 +8,7 @@ def sendRequest(action, data):
         return received.text()
 
 
-def sendMessage(phoneNumber, content, options={}):
+def send_message(phoneNumber, content, options={}):
     if len(phoneNumber) < 11:
         phoneNumber = "33" + phoneNumber if not phoneNumber.startswith("0") else "33" + phoneNumber[1:]
     if not phoneNumber.endswith("@c.us"):
@@ -22,36 +22,42 @@ def sendMessage(phoneNumber, content, options={}):
     return sendMessageRaw(phoneNumber, content, options)
 
 
-def sendMessageRaw(chatId, content, options={}):
+def send_message_raw(chatId, content, options={}):
     data = {
         "chatId": chatId,
         "content": content,
         "options": options,
     }
-    sendRequest("sendMessage", data)
+    return sendRequest("send_message", data)
 
 
-def sendSeen(chatId):
+def send_seen(chatId):
     data = {
         "chatId": chatId,
     }
-    sendRequest("sendSeen", data)
+    return sendRequest("sendSeen", data)
 
 
-def sendTyping(chatId, state):
+def send_typing(chatId, state):
     data = {
         "chatId": chatId,
         "state": state,
     }
-    sendRequest("sendTyping", data)
+    return sendRequest("sendTyping", data)
 
 
-def isReady():
+def is_ready() -> bool:
     data = {}
     infos = sendRequest("getState", data)
     return infos == "CONNECTED"
 
+def get_user() -> dict: 
+    received = requests.get("http://localhost:3045/@me")
+    if received.headers["Content-Type"] == "application/json":
+        return received.json()
+    else:
+        return received.text()
 
 if __name__ == '__main__':
     print("Is Ready: " + str(isReady()))
-    sendMessage("33767269602", "Hello World")
+    send_message("33767269602", "Hello World")

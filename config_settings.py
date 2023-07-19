@@ -83,6 +83,7 @@ def config_settings():
             "max_warns": int(max_warns_entry.get_value()),
             "manager_type": manager_type_str,
             "register_type": register_type.get()
+            "save_register": save_register_entry.get_value()
             "ip": ip,
             "discord_token": 
             discord_token,
@@ -316,10 +317,16 @@ def config_settings():
 
     register_type = StringVar()
     register_type.set(config["register_type"])
-    register_type_label = Label(settings_frame, text="Type de enregistrement des joueurs: ")
+    register_type_label = Label(settings_frame, text="Type de définition des joueurs: ")
     register_type_entry = OptionMenu(settings_frame, register_type, *["liste", "direct"])
     register_type_label.grid(row=row_num, column=0)
     register_type_entry.grid(row=row_num, column=1)
+    row_num += 1
+    
+    save_register_label = Label(settings_frame, text="Si la définition est directe, enregistrer dans une liste pour plus tard: ")
+    save_register_entry = YesNoButton(settings_frame, value=config["save_register"])
+    save_register_label.grid(row=row_num, column=0)
+    save_register_entry.grid(row=row_num, column=1)
     row_num += 1
 
     tasks = [liste.replace(".json", "") for liste in os.listdir("taskList") if liste.endswith(".json")]

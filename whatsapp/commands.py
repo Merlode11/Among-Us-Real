@@ -1,9 +1,7 @@
 import time
 from tkinter import messagebox
 import re  # Importation du module pour faire des tests d'expressions régulières
-from whatsapp.whatsapp_manager import sendMessage
-
-kills_cooldown = {}
+from whatsapp.whatsapp_manager import send_message
 
 
 class Command:
@@ -59,15 +57,15 @@ class Command:
             if game.config.get("names") and game.config["names"].get(self.permission.lower()):
                 perm = game.config["names"][self.permission.lower()]
 
-            sendMessage(player.phone, "Vous ne pouvez pas utiliser cette commande car vous n'êtes pas " + perm + " !", {"quotedMessageId": message.get("id")})
+            send_message(player.phone, "Vous ne pouvez pas utiliser cette commande car vous n'êtes pas " + perm + " !", {"quotedMessageId": message.get("id")})
             return True
         elif game.pause and not is_necessary:
-            sendMessage(player.phone, "La partie est actuellement en pause. Vous ne pouvez pas faire de commandes", {"quotedMessageId": message.get("id")})
+            send_message(player.phone, "La partie est actuellement en pause. Vous ne pouvez pas faire de commandes", {"quotedMessageId": message.get("id")})
             return True
         elif game.end and not is_necessary:
-            sendMessage(player.phone, "La partie est actuellement terminée. Vous ne pouvez plus faire de commandes", {"quotedMessageId": message.get("id")})
+            send_message(player.phone, "La partie est actuellement terminée. Vous ne pouvez plus faire de commandes", {"quotedMessageId": message.get("id")})
         elif game.meeting and self.name not in ["help", "sos", "vote"]:
-            sendMessage(player.phone, "Une réunion est en cours. Vous ne pouvez pas faire de commandes", {"quotedMessageId": message.get("id")})
+            send_message(player.phone, "Une réunion est en cours. Vous ne pouvez pas faire de commandes", {"quotedMessageId": message.get("id")})
             return True
         else:
             self.execute(player, content, message, game)
@@ -118,9 +116,9 @@ class TaskCommand(Command):
                 string += "\n"
             if task.done:
                 "Tâche terminée !\n"
-            sendMessage(player.phone, string, {"quotedMessageId": message.get("id")})
+            send_message(player.phone, string, {"quotedMessageId": message.get("id")})
         except (Exception,):
-            sendMessage(player.phone, "Veuillez entrer un numéro de tâche valide !", {"quotedMessageId": message.get("id")})
+            send_message(player.phone, "Veuillez entrer un numéro de tâche valide !", {"quotedMessageId": message.get("id")})
 
 
 commands.append(TaskCommand())
@@ -159,7 +157,7 @@ class InfoCommand(Command):
         string += f"Il reste {len(game.done_tasks)}/{game.given_tasks} tâche pour les {game.config['names']['crewmate']}."
 
         string += f"\nVotre identifiant est {player.id}."
-        sendMessage(player.phone, string, {"quotedMessageId": message.get("id")})
+        send_message(player.phone, string, {"quotedMessageId": message.get("id")})
 
 
 commands.append(InfoCommand())
@@ -184,18 +182,18 @@ class DeadsCommand(Command):
         :param game: La partie
         """
         if player.asks >= game.config["max_dead_check"]:
-            sendMessage(player.phone, "Vous avez utilisé toutes vos demandes !", {"quotedMessageId": message.get("id")})
+            send_message(player.phone, "Vous avez utilisé toutes vos demandes !", {"quotedMessageId": message.get("id")})
         else:
             states = "Voici les états de chaque joueur:\n"
             for joueur in game.players:
                 if joueur.dead:
-                    states += "- " + joueur.name + " " + joueur.lastname + " (mort)\n"
+                    states += "- " + joueur.get_name() + " (mort)\n"
                 else:
-                    states += "- " + joueur.name + " " + joueur.lastname + " (vivant)\n"
+                    states += "- " + joueur.get_name() + " (vivant)\n"
             player.asks += 1
             states += "\n Il vous reste " + str(game.config["max_dead_check"] - player.asks) + "/" + str(
                 game.config["max_dead_check"]) + " demandes."
-            sendMessage(player.phone, states, {"quotedMessageId": message.get("id")})
+            send_message(player.phone, states, {"quotedMessageId": message.get("id")})
 
 
 commands.append(DeadsCommand())
@@ -220,21 +218,21 @@ class MortCommand(Command):
         """
         if game.game_master:
             response = messagebox.askokcancel("Mort détecté",
-                                              f"{player.name} {player.lastname} découvert un corps ! Son message est :\n {content}")
+                                              f"{player.get_name()} découvert un corps ! Son message est :\n {content}")
 
             if response == "ok":
                 game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             elif response == "cancel":
-                sendMessage(player.phone, "Votre demande a été refusée par l'organisateur.ice", {"quotedMessageId": message.get("id")})
+                send_message(player.phone, "Votre demande a été refusée par l'organisateur.ice", {"quotedMessageId": message.get("id")})
         else:
             try:
                 dead = parse_player(content, game)
                 if not dead.dead:
-                    sendMessage(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort", {"quotedMessageId": message.get("id")})
+                    send_message(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort", {"quotedMessageId": message.get("id")})
                 else:
                     game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             except (Exception,):
-                sendMessage(player.phone, "Veuillez entrer un joueur valide !", {"quotedMessageId": message.get("id")})
+                send_message(player.phone, "Veuillez entrer un joueur valide !", {"quotedMessageId": message.get("id")})
 
 
 commands.append(MortCommand())
@@ -257,25 +255,25 @@ class DoneCommand(Command):
         :param game: La partie
         """
         if player.role == "impostor":
-            return sendMessage(player.phone, "Vous ne pouvez pas valider des tâches, vous êtes " + game.config["names"][
+            return send_message(player.phone, "Vous ne pouvez pas valider des tâches, vous êtes " + game.config["names"][
                 "impostor"] + ".", {"quotedMessageId": message.get("id")})
         try:
             task_number = int(content.split(" ")[1])
             task = player.tasks[task_number - 1]
             if task.done:
-                sendMessage(player.phone, "Vous avez déjà déclaré avoir fait la tâche " + str(task_number), {"quotedMessageId": message.get("id")})
+                send_message(player.phone, "Vous avez déjà déclaré avoir fait la tâche " + str(task_number), {"quotedMessageId": message.get("id")})
             elif "valid" in task.type:
-                sendMessage(player.phone,
+                send_message(player.phone,
                             "Vous ne pouvez pas déclarer avoir fait la tâche " + str(task_number) + " par une commande", {"quotedMessageId": message.get("id")})
             elif task.type == "activate_basic" and not task.active:
-                sendMessage(player.phone, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(
+                send_message(player.phone, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(
                     task_number) + " car elle n'est pas encore active", {"quotedMessageId": message.get("id")})
             else:
                 game.task_done(player, task)
-                sendMessage(player.phone, f"Votre tâche {task.name} a été confirmée comme faite !", {"quotedMessageId": message.get("id")})
+                send_message(player.phone, f"Votre tâche {task.name} a été confirmée comme faite !", {"quotedMessageId": message.get("id")})
         except Exception as e:
             print(e)
-            sendMessage(player.phone, "Veuillez entrer un numéro de tâche valide !", {"quotedMessageId": message.get("id")})
+            send_message(player.phone, "Veuillez entrer un numéro de tâche valide !", {"quotedMessageId": message.get("id")})
 
 
 commands.append(DoneCommand())
@@ -302,7 +300,7 @@ class HelpCommand(Command):
             string = "Voici toutes les commandes disponibles:\n"
             for command in commands:
                 string += command.usage + ": " + command.description + "\n"
-            sendMessage(player.phone, string, {"quotedMessageId": message.get("id")})
+            send_message(player.phone, string, {"quotedMessageId": message.get("id")})
         else:
             command_str = content.split(" ")[1]
             command = None
@@ -311,7 +309,7 @@ class HelpCommand(Command):
                     command = cmd
                     break
             string = command.get_help(game.config)
-            sendMessage(player.phone, string, {"quotedMessageId": message.get("id")})
+            send_message(player.phone, string, {"quotedMessageId": message.get("id")})
 
 
 commands.append(HelpCommand())
@@ -339,15 +337,15 @@ class SOSCommand(Command):
         :param game: La partie
         """
         game.send_info_all(
-            f"{player.name} {player.lastname} a besoin d'aide en URGENCE ! Son message:\n{' '.join(content.split(' ')[1:])}")
+            f"{player.get_name()} a besoin d'aide en URGENCE ! Son message:\n{' '.join(content.split(' ')[1:])}")
         game.pause = True
         game.pause_reason = ' '.join(content.split(' ')[1:])
         code = game.set_pause_game()
-        sendMessage(player.phone,
+        send_message(player.phone,
                     f"Votre demande d'aide a bien été transmise aux autres joueurs. Le code pour rétablir la partie normalement est '{code}'", {"quotedMessageId": message.get("id")})
         if game.game_master:
-            messagebox.showerror(f"{player.name} {player.lastname} a besoin d'aide",
-                                 f"{player.name} {player.lastname} a demandé de l'aide en URGENCE avec la commande SOS. Son message:\n{' '.join(content.split(' ')[1:])}\n\nUn message a été envoyé à tous les joueurs pour aller l'aider et la partie a été mise en pause")
+            messagebox.showerror(f"{player.get_name()} a besoin d'aide",
+                                 f"{player.get_name()} a demandé de l'aide en URGENCE avec la commande SOS. Son message:\n{' '.join(content.split(' ')[1:])}\n\nUn message a été envoyé à tous les joueurs pour aller l'aider et la partie a été mise en pause")
 
 
 commands.append(SOSCommand())
@@ -377,8 +375,8 @@ class KillCommand(Command):
         :param game: La partie
         """
         player_id = re.match(r"\d{3}", content.split(" ")[1])
-        if kills_cooldown.get(player.id):
-            sendMessage(player.phone, "Vous ne pouvez pas tuer tout de suite", {"quotedMessageId": message.get("id")})
+        if game.kills_cooldown.get(player.id):
+            send_message(player.phone, "Vous ne pouvez pas tuer tout de suite", {"quotedMessageId": message.get("id")})
             return
         to_kill_player = None
         for joueur in game.players:
@@ -386,17 +384,17 @@ class KillCommand(Command):
                 to_kill_player = joueur
         if to_kill_player:
             if to_kill_player.id == player.id:
-                sendMessage(player.phone, "Vous ne pouvez pas vous tuer vous-même", {"quotedMessageId": message.get("id")})
+                send_message(player.phone, "Vous ne pouvez pas vous tuer vous-même", {"quotedMessageId": message.get("id")})
                 return
             else:
                 game.kill_player(to_kill_player)
-                sendMessage(player.phone,
-                            f"Le joueur {to_kill_player.name} {to_kill_player.lastname} a bien été tué de votre part !", {"quotedMessageId": message.get("id")})
-                kills_cooldown[player.id] = True
+                send_message(player.phone,
+                            f"Le joueur {to_kill_player.get_name()} a bien été tué de votre part !", {"quotedMessageId": message.get("id")})
+                game.kills_cooldown[player.id] = True
                 time.sleep(game.config["kill_cooldown"])
-                del kills_cooldown[player.id]
+                del game.kills_cooldown[player.id]
         else:
-            sendMessage(player.phone,
+            send_message(player.phone,
                         "Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.", {"quotedMessageId": message.get("id")})
 
 
@@ -422,32 +420,32 @@ class VoteCommand(Command):
         :param game: La partie
         """
         if game.meeting != "vote":
-            sendMessage(player.phone, "Il n'y a pas de période de vote en cours !", {"quotedMessageId": message.get("id")})
+            send_message(player.phone, "Il n'y a pas de période de vote en cours !", {"quotedMessageId": message.get("id")})
             return
         else:
             if player.id in game.meeting_votes.keys():
-                sendMessage(player.phone, "Vous avez déjà voté !", {"quotedMessageId": message.get("id")})
+                send_message(player.phone, "Vous avez déjà voté !", {"quotedMessageId": message.get("id")})
                 return
             else:
                 if content.split(" ")[1] == "0" or content.split(" ")[1] == "skip" or content.split(" ")[1] == "passer":
                     game.meeting_votes[player.id] = "0"
-                    sendMessage(player.phone, "Vous avez voté pour passer !", {"quotedMessageId": message.get("id")})
+                    send_message(player.phone, "Vous avez voté pour passer !", {"quotedMessageId": message.get("id")})
                     return
                 voted_player: list = parse_player(content, game)
                 if len(voted_player) > 1:
                     players_str = ""
                     for i, player in enumerate(voted_player):
-                        players_str += f"{i + 1} - {player.name} {player.lastname}\n"
-                    sendMessage(player.phone,
+                        players_str += f"{i + 1} - {player.get_name()}\n"
+                    send_message(player.phone,
                                 f"Plusieurs joueurs ont été trouvés:\n{players_str}Veuillez réessayer en précisant le numéro du joueur:\nvote NUMERO", {"quotedMessageId": message.get("id")})
                     return
                 elif voted_player is None or len(voted_player) == 0:
-                    sendMessage(player.phone, "Aucun joueur n'a été trouvé avec ce nom !", {"quotedMessageId": message.get("id")})
+                    send_message(player.phone, "Aucun joueur n'a été trouvé avec ce nom !", {"quotedMessageId": message.get("id")})
                     return
                 else:
                     voted_player = voted_player[0]
                     game.meeting_votes[player.id] = voted_player.id
-                    sendMessage(player.phone, f"Vous avez voté contre {voted_player.name} {voted_player.lastname} !", {"quotedMessageId": message.get("id")})
+                    send_message(player.phone, f"Vous avez voté contre {voted_player.get_name()} !", {"quotedMessageId": message.get("id")})
                     game.timer.show_players()
                     return
 
@@ -471,7 +469,7 @@ def parse_player(content: str, game) -> list:
         found_players = []
         for i in range(game.players):
             player = game.players[i]
-            if player.name.lower() == player_name or player.lastname.lower() == player_name:
+            if player.name.lower() == player_name:
                 player_with_id = (i + 1, player)
                 found_players.append(player_with_id)
 

@@ -32,7 +32,9 @@ __pycache__/
 **/__pycache__/
 **/__pycache__/*
 */__pycache__/
+
 /whatsapp/api/.wwebjs_auth/
 /whatsapp/api/.idea/
 /whatsapp/.wwebjs_auth/
 /whatsapp/.wwebjs_cache/
+*/.idea/

@@ -35,7 +35,6 @@ class WebGame(Game):
         self.receive: bool = False
         self.game_master: bool = game_master
         self.config: dict or None = None
-        self.import_window: Tk or None = None
         self.players: list[WebPlayer] = []
         self.used_passwords: list[str] = []
         self.used_id: list[int] = []
@@ -186,13 +185,13 @@ class WebGame(Game):
                             datetime.datetime.now().timestamp()):
                         if player.warnings >= self.config["max_warns"]:
                             self.send_info_all(
-                                f"{player.name} {player.lastname} n'a pas donné de ses nouvelles depuis "
+                                f"{player.get_name()} n'a pas donné de ses nouvelles depuis "
                                 f"{self.config['min_before_inactiv_warn'] * player.warnings} minutes. "
                                 f"Le jeu est donc en pause le temps qu'on retrouve le joueur")
                             self.pause = True
                             if self.game_master:
                                 messagebox.showerror("Un joueur ne répond pas",
-                                                     f"{player.name} {player.lastname} n'a pas donné de ses nouvelles d"
+                                                     f"{player.get_name()} n'a pas donné de ses nouvelles d"
                                                      f"epuis {self.config['min_before_inactiv_warn'] * player.warnings}"
                                                      f" minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur."
                                                      f" Un message a été envoyé à tout le monde.")
@@ -210,11 +209,15 @@ class WebGame(Game):
             killer = self.get_player(session.get("player_id"))
             if killer is None:
                 return {"error": "Joueur assassin introuvable", "error_code": "executor_not_found"}
+            if self.kills_cooldown.get(killer.id): 
+                self.send_info(killer, {"title": "Erreur", "message":
+                    "Vous ne pouvez pas tuer quelqu'un tout de suite"})
+                return redirect("/player")
             killed = self.get_player(request.form["killed_id"])
             if killed is None:
                 self.send_info(killer, {"title": "Erreur", "message":
-                    "Le joueur que vous souhaitez assassiner n'a pas été trouvé, merci de bien vouloir réessayer."})
-                return redirect("/player")
+                                    "Le joueur que vous souhaitez assassiner n'a pas été trouvé, merci de bien vouloir réessayer."})
+                                return redirect("/player")
             if killer.role != "impostor":
                 self.send_info(killer, {"title": "Erreur", "message":
                     "Vous n'êtes pas un imposteur, vous ne pouvez donc pas assassiner de joueur."})
@@ -239,6 +242,7 @@ class WebGame(Game):
                 "message": "Vous avez bien assassiné le joueur " + killed.get_name() + ".",
                 "sound": "kill.mp3"
             })
+            
             return redirect("/player")
 
         @app.post("/api/done_task")
@@ -410,7 +414,6 @@ class WebGame(Game):
             clear_frame(self.import_window)
             popup = self.import_window
         else:
-            # self.players = [None] * 100
             self.import_window = popup = Tk()
             popup.title("Importation des joueurs")
             popup.geometry("300x200")
@@ -485,7 +488,6 @@ class WebGame(Game):
         for player in self.players:
             # replace the variable in the message
             new_message = message.replace("{name}", player.nickname)
-            new_message = new_message.replace("{lastname}", player.get_name())
             new_message = new_message.replace("{role}", self.config["names"][player.role])
             new_message = new_message.replace("{id}", player.id)
             new_message = new_message.replace("{phone}", player.ip)
