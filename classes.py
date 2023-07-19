@@ -60,10 +60,9 @@ class Player:
 
 
 class SMSPlayer(Player):
-    def __init__(self, name: str, lastname: str, phone: str, used_passwords: list, used_id: list):
+    def __init__(self, name: str, phone: str, used_passwords: list, used_id: list):
         super().__init__(used_passwords, used_id)
         self.name: str = name
-        self.lastname: str = lastname
         self.phone: str = phone
 
     def get_str(self, game) -> str:
@@ -74,23 +73,23 @@ class SMSPlayer(Player):
         """
         if game.game_master:
             if self.dead:
-                return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): \
+                return f"☠ {self.name} ({game.config['names'][self.role]}): \
                 {show_phone_number(self.phone)} "
-            return f"{self.name} {self.lastname} ({game.config['names'][self.role]}): {show_phone_number(self.phone)}"
+            return f"{self.name} ({game.config['names'][self.role]}): {show_phone_number(self.phone)}"
         else:
             if self.dead and not game.config["show_dead_roles"]:
-                return f"☠ {self.name} {self.lastname}: {show_phone_number(self.phone)}"
+                return f"☠ {self.name}: {show_phone_number(self.phone)}"
             elif self.dead:
-                return f"☠ {self.name} {self.lastname} ({game.config['names'][self.role]}): \
+                return f"☠ {self.name} ({game.config['names'][self.role]}): \
                 {show_phone_number(self.phone)}"
-        return f"{self.name} {self.lastname}: {show_phone_number(self.phone)}"
+        return f"{self.name}: {show_phone_number(self.phone)}"
 
     def get_name(self) -> str:
         """
         Renvoie l'affichage du nom du joueur pour les autres joueurs
         :return: str: Le nom du joueur
         """
-        return f"{self.name} {self.lastname}"
+        return self.name
 
 
 class WebPlayer(Player):
@@ -126,7 +125,7 @@ class WebPlayer(Player):
 
 
 class InstaPlayer(Player):
-    def __init__(self, name: str, phone: str, used_passwords: list, used_id: list):
+    def __init__(self, name: str, username: str, used_passwords: list, used_id: list):
         super().__init__(used_passwords, used_id)
         self.name: str = name
         self.username: str = username
@@ -144,7 +143,7 @@ class InstaPlayer(Player):
             return f"{self.name} ({game.config['names'][self.role]}): {self.username}"
         else:
             if self.dead and not game.config["show_dead_roles"]:
-                return f"☠ {self.name} {self.lastname}: {self.username}"
+                return f"☠ {self.name}: {self.username}"
             elif self.dead:
                 return f"☠ {self.name} ({game.config['names'][self.role]}): \
                 {self.username}"

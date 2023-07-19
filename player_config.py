@@ -81,7 +81,6 @@ def player_config():
 
         obj: dict = {
             "name": None,
-            "lastname": None,
             "phone": None,
             "username": None,
             "id": None
@@ -91,17 +90,32 @@ def player_config():
             """
             Enregistrer le joueur modifié dans le fichier JSON correspondant
             """
+            if obj["name"].get() == "": 
+                messagebox.showerror("Erreur", "Merci de bien vouloir mettre un nom !", parent=add_window)
+                obj["name"].focus()
+                return
             new_player = {
                 "type": player_type.get()
                 "name": obj["name"].get(),
                 "play": play_button.get_value()
             }
             if player_type.get() == "sms": 
-                new_player["lastname"] = obj["lastname"].get()
+                if obj["phone"].get() == "":
+                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un numéro de téléphone !", parent=add_window)
+                    obj["phone"].focus()
+                    return
                 new_player["phone"] = obj["phone"].get()
             elif player_type.get() == "instagram": 
+                if obj["username"].get() == "": 
+                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un nom d'utilisateur !", parent=add_window)
+                    obj["username"].focus()
+                    return
                 new_player["username"] = obj["username"].get()
             else:
+                if obj["id"].get() == "": 
+                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un identifiant !", parent=add_window)
+                    obj["id"].focus()
+                    return
                 new_player["id"] = obj["id"].get()
             players = []
             if os.path.exists("players.json"):
@@ -138,21 +152,13 @@ def player_config():
         def show_names(stock): 
             clear_frame(names_frame)
             row_num = 0
+            name_label = Label(names_frame, text="Nom: ")
+            stock["name"] = name_entry = Entry(names_frame)
+            name_entry.insert(0, player.get("name", ""))
+            name_label.grid(row=row_num, column=0)
+            name_entry.grid(row=row_num, column=1)
+            row_num += 1
             if player_type.get() == "sms":
-                name_label = Label(names_frame, text="Prénom: ")
-                stock["name"] = name_entry = Entry(names_frame)
-                name_entry.insert(0, player.get("name", ""))
-                name_label.grid(row=row_num, column=0)
-                name_entry.grid(row=row_num, column=1)
-                row_num += 1
-        
-                lastname_label = Label(names_frame, text="Nom de famille: ")
-                stock["lastname"] = lastname_entry = Entry(names_frame)
-                lastname_entry.insert(player.get("lastname", ""))
-                lastname_label.grid(row=row_num, column=0)
-                lastname_entry.grid(row=row_num, column=1)
-                row_num += 1
-        
                 phone_label = Label(names_frame, text="Numéro de téléphone: ")
                 stock["phone"] = phone_entry = Entry(names_frame)
                 phone_entry.insert(0, player.get("phone", ""))
@@ -160,26 +166,12 @@ def player_config():
                 phone_entry.grid(row=row_num, column=1)
                 row_num += 1
             elif player_type.get() == "instagram":
-                name_label = Label(names_frame, text="Nom: ")
-                stock["name"] = name_entry = Entry(names_frame)
-                name_entry.insert(0, player.get("name", ""))
-                name_label.grid(row=row_num, column=0)
-                name_entry.grid(row=row_num, column=1)
-                row_num += 1
-        
                 username_label = Label(names_frame, text="Nom d'utilisateur: ")
                 stock["username"] = username_entry = Entry(names_frame)
                 username_entry.insert(0, player.get("username", ""))
                 username_label.grid(row=row_num, column=0)
                 username_entry.grid(row=row_num, column=1)
             elif player_type.get() == "discord":
-                name_label = Label(names_frame, text="Nom: ")
-                stock["name"] = name_entry = Entry(names_frame)
-                name_entry.insert(0, player.get("name", ""))
-                name_label.grid(row=row_num, column=0)
-                name_entry.grid(row=row_num, column=1)
-                row_num += 1
-        
                 id_label = Label(names_frame, text="Identifiant d'utilisateur: ")
                 stock["id"] = username_entry = Entry(names_frame)
                 id_entry.insert(0, player.get("id", ""))
@@ -187,13 +179,6 @@ def player_config():
                 id_entry.grid(row=row_num, column=1)
             
             elif player_type.get() == "telegram":
-                name_label = Label(names_frame, text="Nom: ")
-                stock["name"] = name_entry = Entry(names_frame)
-                name_entry.insert(0, player.get("name", ""))
-                name_label.grid(row=row_num, column=0)
-                name_entry.grid(row=row_num, column=1)
-                row_num += 1
-        
                 id_label = Label(names_frame, text="Identifiant d'utilisateur: ")
                 stock["id"] = username_entry = Entry(names_frame)
                 id_entry.insert(0, player.get("id", ""))
@@ -229,7 +214,7 @@ def player_config():
         Supprime un joueur déjà créé
         """
         if messagebox.askokcancel("Supprimer",
-                                  f"Voulez-vous vraiment supprimer le joueur {player['name']} {player['lastname']} ?",
+                                  f"Voulez-vous vraiment supprimer le joueur {get_str(player)} ?",
                                   parent=window):
             players = []
             if os.path.exists("players.json"):
@@ -263,7 +248,6 @@ def player_config():
 
         obj: dict = {
             "name": None,
-            "lastname": None,
             "phone": None,
             "username": None,
             "id": None
@@ -283,16 +267,10 @@ def player_config():
                 "play": play_button.get_value()
             }
             if player_type.get() == "sms": 
-                if obj["lastname"].get() == "":
-                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un prénom !", parent=add_window)
-                    obj["lastname"].focus()
-                    return
-                
                 if obj["phone"].get() == "":
                     messagebox.showerror("Erreur", "Merci de bien vouloir mettre un numéro de téléphone !", parent=add_window)
                     obj["phone"].focus()
                     return
-                new_player["lastname"] = obj["lastname"].get()
                 new_player["phone"] = obj["phone"].get()
             elif player_type.get() == "instagram": 
                 if obj["username"].get() == "": 
@@ -304,7 +282,7 @@ def player_config():
                 if obj["id"].get() == "": 
                     messagebox.showerror("Erreur", "Merci de bien vouloir mettre un identifiant !", parent=add_window)
                     obj["id"].focus()
-                    returnprint()
+                    return
                 new_player["id"] = obj["id"].get()
             players = []
             if os.path.exists("players.json"):
@@ -342,54 +320,29 @@ def player_config():
         def show_names(stock): 
             clear_frame(names_frame)
             row_num = 0
-            if player_type.get() == "sms":
-                name_label = Label(names_frame, text="Prénom: ")
-                stock["name"] = name_entry = Entry(names_frame)
-                name_label.grid(row=row_num, column=0)
-                name_entry.grid(row=row_num, column=1)
-                row_num += 1
-        
-                lastname_label = Label(names_frame, text="Nom de famille: ")
-                stock["lastname"] = lastname_entry = Entry(names_frame)
-                lastname_label.grid(row=row_num, column=0)
-                lastname_entry.grid(row=row_num, column=1)
-                row_num += 1
-        
+            name_label = Label(names_frame, text="Nom: ")
+            stock["name"] = name_entry = Entry(names_frame)
+            name_label.grid(row=row_num, column=0)
+            name_entry.grid(row=row_num, column=1)
+            row_num += 1
+            if player_type.get() == "sms": 
                 phone_label = Label(names_frame, text="Numéro de téléphone: ")
                 stock["phone"] = phone_entry = Entry(names_frame)
                 phone_label.grid(row=row_num, column=0)
                 phone_entry.grid(row=row_num, column=1)
                 row_num += 1
             elif player_type.get() == "instagram":
-                name_label = Label(names_frame, text="Nom: ")
-                stock["name"] = name_entry = Entry(names_frame)
-                name_label.grid(row=row_num, column=0)
-                name_entry.grid(row=row_num, column=1)
-                row_num += 1
-        
                 username_label = Label(names_frame, text="Nom d'utilisateur: ")
                 stock["username"] = username_entry = Entry(names_frame)
                 username_label.grid(row=row_num, column=0)
                 username_entry.grid(row=row_num, column=1)
             elif player_type.get() == "discord":
-                name_label = Label(names_frame, text="Nom: ")
-                stock["name"] = name_entry = Entry(names_frame)
-                name_label.grid(row=row_num, column=0)
-                name_entry.grid(row=row_num, column=1)
-                row_num += 1
-        
                 id_label = Label(names_frame, text="Identifiant d'utilisateur: ")
                 stock["id"] = username_entry = Entry(names_frame)
                 id_label.grid(row=row_num, column=0)
                 id_entry.grid(row=row_num, column=1)
             
             elif player_type.get() == "telegram":
-                name_label = Label(names_frame, text="Nom: ")
-                stock["name"] = name_entry = Entry(names_frame)
-                name_label.grid(row=row_num, column=0)
-                name_entry.grid(row=row_num, column=1)
-                row_num += 1
-        
                 id_label = Label(names_frame, text="Identifiant d'utilisateur: ")
                 stock["id"] = username_entry = Entry(names_frame)
                 id_label.grid(row=row_num, column=0)
@@ -432,7 +385,7 @@ def get_str(player):
     if player.get("type") == "instagram": 
         return f"{player.get("name", "Inconnu")}: {player.get("username", "inconnu")}"
     elif player.get("type") == "sms":
-        return f"{player.get('name')} {player.get('lastname')}: {player.get("phone", "+00000000000")}"
+        return f"{player.get('name')}: {player.get("phone", "+00000000000")}"
     elif player.get("type") == "discord":
         return f"{player.get("name", "Inconnu")}: {player.get("id", "00000000000000000")}"
     elif player.get("type") == "telegram":

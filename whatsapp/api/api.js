@@ -12,6 +12,14 @@ const {WAWebJS, MessageSendOptions, MessageMedia} = require('whatsapp-web.js');
 module.exports = (client) => {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
+    
+    /**
+     * @me
+     * @returns {WAWebJS.Client}
+     */
+     app.get("/@me", (req, res) => {
+         res.send(client)
+     })
 
     /**
      * acceptInvite
@@ -438,7 +446,6 @@ module.exports = (client) => {
            console.log(chats);
        })
        client.getNumberId(phoneNumber).then((contactId) => {
-           console.log(contactId);
            client.getContactById(contactId._serialized).then((chat) => {
                chat.getChat().then((chat) => {
                    res.send(chat);
