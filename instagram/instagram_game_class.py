@@ -17,12 +17,7 @@ class InstagramGame(Game):
     def __init__(self, game_master: bool = None):
         self.receive = True
         self.send_messages = []
-        self.server = app = Flask(__name__)
-        
-        messagebox.showinfo("Bienvenue", "Bienvenue dans le jeu " + self.config["names"]["title"] + "\n" +
-                                    "Une nouvelle partie va commencer.\n" +
-                                    "Êtes-vous prêt à jouer ?")
-        self.start_game()
+        Timer(1, self.start_recieve_sms).start()
 
         super().__init__()
 
@@ -207,6 +202,29 @@ class InstagramGame(Game):
             if len(new) > 0:
                 for msg in new:
                     joueur = next((joueur for joueur in self.players if joueur.username == msg["username"]), None)
+                    if self.import_window is not None:
+                        if self.register_code in msg["text"]:
+                            if joueur is not None:
+                                return self.send_info(joueur, "Vous êtes déjà enregistré dans la partie !")
+                            new_player = {
+                                "type": "instagram"
+                                "name": msg["full_name"], 
+                                "username": msg["username"]
+                            }
+                            player = InstaPlayer(new_player["name"], new_player["username"], self.used_passwords, self.used_id)
+                            self.players.append(player)
+                            if self.config["save_register"]:
+                                
+                                players = []
+                                if os.path.exists("players.json"):
+                                    with open("players.json", "r", encoding="utf-8") as file:
+                                        players = json.load(file)
+                                players.append(new_player)
+                                with open("players.json", "w", encoding="utf-8") as file:
+                                    json.dump(players, file, indent=4, ensure_ascii=False)
+                            self.send_info(player, "Vous êtes bien entré dans la partie !")
+                            self.import_players()
+                            continue
                     if self.check_command(joueur, msg.content):
                         continue
                     string = "Nouveau message de " + joueur.get_name() + " (" + joueur.username + ") :\n"
