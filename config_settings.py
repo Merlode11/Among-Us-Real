@@ -40,7 +40,7 @@ def config_settings():
                 messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Discord pour une utilisation de ce mode de jeu")
                 discord_token_entry.focus()
                 return
-            elif not re.match(r"TODO: FIND DISCORD REGEX", discord_token): 
+            elif not re.match(r"[A-Za-z\d]{24,28}\.[\w-]{6}\.[\w-]{27,38}", discord_token): 
                 messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Discord valide pour ce mode de jeu")
                 discord_token_entry.focus()
                 return

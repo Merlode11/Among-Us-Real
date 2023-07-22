@@ -18,7 +18,7 @@ module.exports = (client) => {
      * @returns {WAWebJS.Client}
      */
      app.get("/@me", (req, res) => {
-         res.send(client)
+         res.send(client.info)
      })
 
     /**
