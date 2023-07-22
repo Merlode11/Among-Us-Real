@@ -209,9 +209,9 @@ class InstagramGame(Game):
                     joueur = next((joueur for joueur in self.players if joueur.username == msg["username"]), None)
                     if self.check_command(joueur, msg.content):
                         continue
-                    string = "Nouveau message de " + joueur.get_name() + " (" + joueur.phone + ") :\n"
+                    string = "Nouveau message de " + joueur.get_name() + " (" + joueur.username + ") :\n"
                     string += msg.content
-                    messagebox.showinfo(f"Message de {msg.phone}", string)
+                    messagebox.showinfo(f"Message de {msg.username}", string)
                 if self.receive:
                     Timer(5, recieve).start()
 
