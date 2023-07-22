@@ -308,7 +308,9 @@ def set_task(task_dict: dict) -> BasicTask or ActivateBasicTask or ValidateBasic
 
 # Show a phone number with "+33768330645" and "0768330645"
 def show_phone_number(number: str) -> str:
-    if number.startswith("+"):
+    if number.endswith("c.us"): 
+        return f"+{number[:2]} {number[2]} {number[3:5]} {number[5:7]} {number[7:9]} {number[9:11]}"
+    elif number.startswith("+"):
         return f"{number[:3]} {number[3]} {number[4:6]} {number[6:8]} {number[8:10]} {number[10:]}"
     elif number.startswith("00"): 
         return f"{number[:2]} {number[2:4]} {number[4]} {number[5:7]} {number[7:9]} {number[9:11]} {number[11:]}"

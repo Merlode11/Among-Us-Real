@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from tkinter import messagebox, ttk
-from classes import SMSPlayer, BasicTask
+from classes import SMSPlayer, BasicTask, show_phone_number
 from game_class import Game
 import json
 import random
@@ -26,7 +26,7 @@ class WhatsAppGame(Game):
         self.whatsapp_manager = Thread(target=lambda: os.system("cd whatsapp/api && node index.js"))
         self.whatsapp_manager.start()
 
-        self.isReady = False
+        self.is_ready = False
 
         @app.post("/qr")
         def qr():
@@ -43,12 +43,15 @@ class WhatsAppGame(Game):
 
         @app.post("/ready")
         def ready():
+            print("WhatsApp is ready")
             if not self.pause: 
-                print("WhatsApp is ready")
-                messagebox.showinfo("Bienvenue", "Bienvenue dans le jeu " + self.config["names"]["title"] + "\n" +
-                                    "Une nouvelle partie va commencer.\n" +
-                                    "Êtes-vous prêt à jouer ?")
-                self.start_game()
+                if self.import_window is not None:
+                    self.is_ready = True
+                else: 
+                    messagebox.showinfo("Bienvenue", "Bienvenue dans le jeu " + self.config["names"]["title"] + "\n" +
+                                        "Une nouvelle partie va commencer.\n" +
+                                        "Êtes-vous prêt à jouer ?")
+                    self.start_game()
             else:
                 self.unpause_game()
             return "OK", 200
@@ -166,7 +169,7 @@ class WhatsAppGame(Game):
             
             whatsapp_user = get_user()
     
-            url_label = Label(qrcode_frame, text=f"Envoyez {self.register_code} à {whatsapp_user["number"]} pour vous enregistrer", font=("Arial", 28))
+            url_label = Label(qrcode_frame, text=f"Envoyez {self.register_code} à {show_phone_number(whatsapp_user["wid"])} pour vous enregistrer", font=("Arial", 28))
             url_label.pack()
     
             qrcode_frame.pack(fill=BOTH, expand=True)
