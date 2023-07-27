@@ -67,6 +67,6 @@ def get_new_messages(game) -> list:
                                              f"s'inquiéter. La partie reprend !")
                     if game.config.game_master:
                         messagebox.showinfo("La partie reprend", f"{player.get_name()} a refait surface. "
-                                                                 f"La partie reprends")
+                                                                 f"La partie reprends", parent=game.window)
                 player.warnings = 0
     return new_messages

@@ -51,8 +51,8 @@ class Game:
 
         # Check if the task list exists
         if not os.path.exists(self.path + r"/taskList/" + self.config["task_list"] + ".json"):
-            messagebox.showerror("Erreur", "La liste de tâches sélectionnée n'existe pas !")
-            self.window.destroy()
+            messagebox.showerror("Erreur", "La liste de tâches sélectionnée n'existe pas !", parent=window)
+            window.destroy()
             return
         self.tasks: list = []
         with open(self.path + r"/taskList/" + self.config["task_list"] + ".json", "r", encoding='utf-8') as f:
@@ -60,8 +60,8 @@ class Game:
             self.tasks = [set_task(task) for task in data]
         if len(self.tasks) < self.config["tasks"]:
             messagebox.showerror("Erreur", "Le nombre de tâches à donner est supérieur au nombre de tâches "
-                                           "disponibles !")
-            self.window.destroy()
+                                           "disponibles !", parent=window)
+            window.destroy()
             return
 
         self.register_code = None
@@ -87,16 +87,14 @@ class Game:
         """
         window = self.window
 
-        if len(self.tasks) < self.config["tasks"]:
-            messagebox.showerror("Erreur",
-                                 "Le nombre de tâches à donner est supérieur au nombre de tâches disponibles !",
-                                 parent=window)
-            self.window.destroy()
-            return
-
         if self.config["impostors"] + self.config["engineers"] + self.config["scientists"] > len(self.players):
-            messagebox.showerror("Erreur", "Le nombre de joueurs est insuffisant pour la configuration choisie")
-            self.window.destroy()
+            messagebox.showerror("Erreur", "Le nombre de joueurs est insuffisant pour la configuration choisie", parent=window)
+            window.destroy()
+            return
+        
+        if self.config["tasks"] * len(self.players) > len(self.tasks) * self.config["max_task_given"]:
+            messagebox.showerror("Erreur", "Le nombre de tâches pouvant être donné est inférieur au nombre de tâches requises !", parent=window)
+            window.destroy()
             return
 
         self.__label_title = label_title = Label(self.window, text=self.config["names"]["title"], font=("Arial", 30))
@@ -112,7 +110,7 @@ class Game:
             """
             Fonction de fermeture de la fenêtre
             """
-            if messagebox.askokcancel("Quitter", "Êtes vous sûr de quitter ?"):
+            if messagebox.askokcancel("Quitter", "Êtes vous sûr de quitter ?", parent=window):
                 self.send_info_all("La partie s'est interommpue brutalement.")
                 self.end_game()
 
@@ -706,7 +704,7 @@ class Game:
                                                                                          "Voulez-vous recommencer ?")
             self.end_game()
         elif self.game_master:
-            messagebox.showinfo("Succès", f"{str(player)} a confirmé avoir réalisé la tâche {task.name} !")
+            messagebox.showinfo("Succès", f"{str(player)} a confirmé avoir réalisé la tâche {task.name} !", parent=self.window)
 
 
 if __name__ == '__main__':
