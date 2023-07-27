@@ -59,7 +59,7 @@ class InstagramGame(Game):
                 """
                 Fonction de fermeture de la fenêtre
                 """
-                if messagebox.askokcancel("Quitter", "Êtes vous sûr de quitter ?"):
+                if messagebox.askokcancel("Quitter", "Êtes vous sûr de quitter ?", parent=self.window):
                     popup.destroy()
                     self.window.destroy()
     
@@ -229,7 +229,7 @@ class InstagramGame(Game):
                         continue
                     string = "Nouveau message de " + joueur.get_name() + " (" + joueur.username + ") :\n"
                     string += msg.content
-                    messagebox.showinfo(f"Message de {msg.username}", string)
+                    messagebox.showinfo(f"Message de {msg.username}", string, parent=self.window)
                 if self.receive:
                     Timer(5, recieve).start()
 

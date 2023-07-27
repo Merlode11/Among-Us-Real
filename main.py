@@ -147,7 +147,7 @@ def main():
         elif config["manager_type"] == "instagram":
             InstagramGame(game_master)
         else:
-            messagebox.showerror("Erreur", "Le gestionnaire de jeu n'est pas reconnu")
+            messagebox.showerror("Erreur", "Le gestionnaire de jeu n'est pas reconnu", parent=window)
         main()
 
     window.mainloop()
