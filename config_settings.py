@@ -23,39 +23,39 @@ def config_settings():
         telegram_token = telegram_token_entry.get()
         if manager_type_str == "sms": 
             if not ip.count(".") == 3:
-                messagebox.showerror("Erreur", "L'adresse IP n'est pas valide")
+                messagebox.showerror("Erreur", "L'adresse IP n'est pas valide", parent=window)
                 ip_entry.focus()
                 return
             for i in ip.split("."):
                 if not i.isdigit():
-                    messagebox.showerror("Erreur", "L'adresse IP n'est pas valide")
+                    messagebox.showerror("Erreur", "L'adresse IP n'est pas valide", parent=window)
                     ip_entry.focus()
                     return
                 if not 0 <= int(i) <= 255:
-                    messagebox.showerror("Erreur", "L'adresse IP n'est pas valide")
+                    messagebox.showerror("Erreur", "L'adresse IP n'est pas valide", parent=window)
                     ip_entry.focus()
                     return
         elif manager_type_str == "discord":
             if discord_token == "": 
-                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Discord pour une utilisation de ce mode de jeu")
+                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Discord pour une utilisation de ce mode de jeu", parent=window)
                 discord_token_entry.focus()
                 return
             elif not re.match(r"[A-Za-z\d]{24,28}\.[\w-]{6}\.[\w-]{27,38}", discord_token): 
-                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Discord valide pour ce mode de jeu")
+                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Discord valide pour ce mode de jeu", parent=window)
                 discord_token_entry.focus()
                 return
         elif manager_type_str == "telegram":
             if telegram_token == "":
-                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Telegram pour ce mode de jeu")
+                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Telegram pour ce mode de jeu", parent=window)
                 telegram_token_entry.focus()
                 return
         elif manager_type_str == "instagram":
             if insta_username_entry.get() == "":
-                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un nom d'utilisateur Instagram pour ce mode de jeu")
+                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un nom d'utilisateur Instagram pour ce mode de jeu", parent=window)
                 insta_username_entry.focus()
                 return
             if insta_password_entry.get() == "": 
-                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un mot de passe Instagram correspondant pour ce mode de jeu")
+                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un mot de passe Instagram correspondant pour ce mode de jeu", parent=window)
                 insta_password_entry.focus()
                 return
 
