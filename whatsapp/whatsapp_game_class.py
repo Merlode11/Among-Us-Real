@@ -72,7 +72,8 @@ class WhatsAppGame(Game):
                         "name": data['_data']['notifyName'], 
                         "phone": f"+{data["from"].replace("@c.us", ""))}"
                     }
-                    self.players.append(SMSPlayer(new_player["name"], new_player["phone"], self.used_passwords, self.used_id))
+                    player = SMSPlayer(new_player["name"], new_player["phone"], self.used_passwords, self.used_id)
+                    self.players.append(player)
                     if self.config["save_register"]:
                         
                         players = []
@@ -82,7 +83,7 @@ class WhatsAppGame(Game):
                         players.append(new_player)
                         with open("players.json", "w", encoding="utf-8") as file:
                             json.dump(players, file, indent=4, ensure_ascii=False)
-                    self.send_info()
+                    self.send_info(player, "Vous êtes bien entré dans la partie !")
                     self.import_players()
                     return True
             if len(data["from"]) > 16:
