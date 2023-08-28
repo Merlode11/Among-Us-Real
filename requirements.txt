@@ -1,7 +1,7 @@
 future~=0.18.3
 pyairmore~=0.2.1a1
 playsound==1.2.2
-Flask~=2.3.2
+Flask~=2.3.3
 pyqrcode~=1.2.1
 pypng~=0.20220715.0
 requests~=2.31.0
