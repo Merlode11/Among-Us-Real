@@ -4,7 +4,8 @@ from tkinter import *
 from tkinter import messagebox
 
 import pyqrcode
-from flask import Flask, render_template, session, redirect, request, Markup
+from flask import Flask, render_template, session, redirect, request
+from markupsafe import Markup
 
 from classes import WebPlayer
 from game_class import Game
@@ -58,7 +59,7 @@ class WebGame(Game):
                 return "/"
 
         @app.errorhandler(404)
-        def page_not_found(error):
+        def page_not_found(_):
             return f'This page does not exist <a href="{where_redirect(session)}">Go home</a>', 404
 
         @app.route("/")
@@ -209,15 +210,16 @@ class WebGame(Game):
             killer = self.get_player(session.get("player_id"))
             if killer is None:
                 return {"error": "Joueur assassin introuvable", "error_code": "executor_not_found"}
-            if self.kills_cooldown.get(killer.id): 
+            if self.kills_cooldown.get(killer.id):
                 self.send_info(killer, {"title": "Erreur", "message":
                     "Vous ne pouvez pas tuer quelqu'un tout de suite"})
                 return redirect("/player")
             killed = self.get_player(request.form["killed_id"])
             if killed is None:
                 self.send_info(killer, {"title": "Erreur", "message":
-                                    "Le joueur que vous souhaitez assassiner n'a pas été trouvé, merci de bien vouloir réessayer."})
-                                return redirect("/player")
+                    "Le joueur que vous souhaitez assassiner n'a pas été trouvé, merci de bien vouloir réessayer."})
+                return redirect("/player")
+
             if killer.role != "impostor":
                 self.send_info(killer, {"title": "Erreur", "message":
                     "Vous n'êtes pas un imposteur, vous ne pouvez donc pas assassiner de joueur."})
@@ -242,7 +244,7 @@ class WebGame(Game):
                 "message": "Vous avez bien assassiné le joueur " + killed.get_name() + ".",
                 "sound": "kill.mp3"
             })
-            
+
             return redirect("/player")
 
         @app.post("/api/done_task")
@@ -497,9 +499,10 @@ class WebGame(Game):
             print(player.get_name(), ":", new_message)
             player.popup = {"title": "Information", "message": new_message}
 
-    def send_info(self, player: WebPlayer, dictionnaire: dict or str = {"title": "Information", "message": "",
-                                                                        "sound": None}):
-        if isinstance(dictionnaire, str):
+    def send_info(self, player: WebPlayer, dictionnaire: dict or str = None):
+        if dictionnaire is None:
+            dictionnaire = {"title": "Information", "message": "", "sound": None}
+        elif isinstance(dictionnaire, str):
             dictionnaire = {"title": "Information", "message": dictionnaire}
         print(player.nickname, ":", dictionnaire["message"])
         dictionnaire["message"] = dictionnaire["message"].replace("\n", "<br/>")

@@ -4,6 +4,7 @@ import re  # Importation du module pour faire des tests d'expressions régulièr
 
 kills_cooldown = {}
 
+
 class Command:
     """
     Initialisation de la classe commande
@@ -106,12 +107,12 @@ class TaskCommand(Command):
             string = f"{task.name}\n"
             string += f"Lieu: {task.location}\n"
             string += f"Description: {task.description}\n"
-            
-            if "activ" in task.type: 
+
+            if "activ" in task.type:
                 string += "Activée: "
                 string += "Oui" if task.active else "Non"
                 string += "\n"
-            if task.done: 
+            if task.done:
                 "Tâche terminée !\n"
             send_sms(player.phone, string)
         except (Exception,):
@@ -222,7 +223,7 @@ class MortCommand(Command):
                 send_sms(player.phone, "Votre demande a été refusée par l'organisateur.ice")
         else:
             try:
-                dead = parse_player(message, game)
+                dead = parse_player(message, game)[0]
                 if not dead.dead:
                     send_sms(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
                 else:
@@ -250,16 +251,19 @@ class DoneCommand(Command):
         :param game: La partie
         """
         if player.role == "impostor":
-            return send_sms(player.phone, "Vous ne pouvez pas valider des tâches, vous êtes " + game.config["names"]["impostor"] + ".")
+            return send_sms(player.phone, "Vous ne pouvez pas valider des tâches, vous êtes " + game.config["names"][
+                "impostor"] + ".")
         try:
             task_number = int(message.split(" ")[1])
             task = player.tasks[task_number - 1]
             if task.done:
                 send_sms(player.phone, "Vous avez déjà déclaré avoir fait la tâche " + str(task_number))
             elif "valid" in task.type:
-                send_sms(player.phone, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(task_number) + " par une commande")
+                send_sms(player.phone,
+                         "Vous ne pouvez pas déclarer avoir fait la tâche " + str(task_number) + " par une commande")
             elif task.type == "activate_basic" and not task.active:
-                send_sms(player.phone, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(task_number) + " car elle n'est pas encore active")
+                send_sms(player.phone, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(
+                    task_number) + " car elle n'est pas encore active")
             else:
                 game.task_done(player, task)
                 game.send_info(player, f"Votre tâche {task.name} a été confirmée comme faite !")
@@ -410,15 +414,16 @@ class VoteCommand(Command):
                     players_str = ""
                     for i, player in enumerate(voted_player):
                         players_str += f"{i + 1} - {player.get_name()}\n"
-                    send_sms(player.phone, f"Plusieurs joueurs ont été trouvés:\n{players_str}Veuillez réessayer en précisant le numéro du joueur:\nvote NUMERO")
+                    send_sms(player.phone,
+                             f"Plusieurs joueurs ont été trouvés:\n{players_str}Veuillez réessayer en précisant le numéro du joueur:\nvote NUMERO")
                     return
                 elif voted_player is None or len(voted_player) == 0:
                     send_sms(player.phone, "Aucun joueur n'a été trouvé avec ce nom !")
                     return
                 else:
-                    voted_player = voted_player[0]
-                    game.meeting_votes[player.id] = voted_player.id
-                    send_sms(player.phone, f"Vous avez voté pour {voted_player.get_name()} !")
+                    voted_player_obj = voted_player[0]
+                    game.meeting_votes[player.id] = voted_player_obj.id
+                    send_sms(player.phone, f"Vous avez voté pour {voted_player_obj.get_name()} !")
                     game.timer.show_players()
                     return
 

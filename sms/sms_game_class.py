@@ -133,7 +133,7 @@ class SMSGame(Game):
             try:
                 new = get_new_messages(self)
             except Exception as e:
-                # print(e)
+                print(e)
                 new = []
             if len(new) > 0:
                 for msg in new:

@@ -146,7 +146,8 @@ module.exports = (client) => {
      * @returns {Promise<string>}
      */
     app.post("/getCountryCode", (req, res) => {
-        client.getCountryCode().then((code) => {
+        const number = req.body;
+        client.getCountryCode(number).then((code) => {
             res.send(code);
         }).catch((err) =>
             res.send(err)

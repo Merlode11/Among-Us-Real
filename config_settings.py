@@ -21,7 +21,7 @@ def config_settings():
         ip = ip_entry.get()
         discord_token = discord_token_entry.get()
         telegram_token = telegram_token_entry.get()
-        if manager_type_str == "sms": 
+        if manager_type_str == "sms":
             if not ip.count(".") == 3:
                 messagebox.showerror("Erreur", "L'adresse IP n'est pas valide", parent=window)
                 ip_entry.focus()
@@ -36,26 +36,36 @@ def config_settings():
                     ip_entry.focus()
                     return
         elif manager_type_str == "discord":
-            if discord_token == "": 
-                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Discord pour une utilisation de ce mode de jeu", parent=window)
+            if discord_token == "":
+                messagebox.showerror("Erreur",
+                                     "Merci de bien vouloir entrer un token de bot Discord pour une utilisation de ce mode de jeu",
+                                     parent=window)
                 discord_token_entry.focus()
                 return
-            elif not re.match(r"[A-Za-z\d]{24,28}\.[\w-]{6}\.[\w-]{27,38}", discord_token): 
-                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Discord valide pour ce mode de jeu", parent=window)
+            elif not re.match(r"[A-Za-z\d]{24,28}\.[\w-]{6}\.[\w-]{27,38}", discord_token):
+                messagebox.showerror("Erreur",
+                                     "Merci de bien vouloir entrer un token de bot Discord valide pour ce mode de jeu",
+                                     parent=window)
                 discord_token_entry.focus()
                 return
         elif manager_type_str == "telegram":
             if telegram_token == "":
-                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un token de bot Telegram pour ce mode de jeu", parent=window)
+                messagebox.showerror("Erreur",
+                                     "Merci de bien vouloir entrer un token de bot Telegram pour ce mode de jeu",
+                                     parent=window)
                 telegram_token_entry.focus()
                 return
         elif manager_type_str == "instagram":
             if insta_username_entry.get() == "":
-                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un nom d'utilisateur Instagram pour ce mode de jeu", parent=window)
+                messagebox.showerror("Erreur",
+                                     "Merci de bien vouloir entrer un nom d'utilisateur Instagram pour ce mode de jeu",
+                                     parent=window)
                 insta_username_entry.focus()
                 return
-            if insta_password_entry.get() == "": 
-                messagebox.showerror("Erreur", "Merci de bien vouloir entrer un mot de passe Instagram correspondant pour ce mode de jeu", parent=window)
+            if insta_password_entry.get() == "":
+                messagebox.showerror("Erreur",
+                                     "Merci de bien vouloir entrer un mot de passe Instagram correspondant pour ce mode de jeu",
+                                     parent=window)
                 insta_password_entry.focus()
                 return
 
@@ -82,14 +92,13 @@ def config_settings():
             "min_before_inactiv_warn": int(min_warn_entry.get_value()),
             "max_warns": int(max_warns_entry.get_value()),
             "manager_type": manager_type_str,
-            "register_type": register_type.get()
-            "save_register": save_register_entry.get_value()
+            "register_type": register_type.get(),
+            "save_register": save_register_entry.get_value(),
             "ip": ip,
-            "discord_token": 
-            discord_token,
-            "telegram_token": telegram_token
-            "insta_username": insta_username_entry.get()
-            "insta_password": insta_password_entry.get()
+            "discord_token": discord_token,
+            "telegram_token": telegram_token,
+            "insta_username": insta_username_entry.get(),
+            "insta_password": insta_password_entry.get(),
         }
         with open("config.json", "w", encoding='utf8') as file:
             json.dump(new_config, file, indent=4, ensure_ascii=False)
@@ -153,7 +162,7 @@ def config_settings():
         config = json.load(f)
 
     with open("players.json", "r", encoding='utf-8') as f:
-        players = [player for player in json.load(f) if player["play"]]
+        players = [player for player in json.load(f) if player.get("play")]
 
     def set_recommended_imposters():
         impostors_entry.set_value(int(0.4927 + 0.2481 * len(players)))
@@ -164,14 +173,15 @@ def config_settings():
     frame = VerticalScrolledFrame(window)
 
     settings_frame = Frame(frame, bg="#f5f5f5")
-    
+
     row_num = 0
 
     # Nombre d'imposteurs:
     impostors_label = Label(settings_frame, text="Nombre d'imposteurs: ")
-    impostors_entry = IntEntry(settings_frame, value=config["impostors"], min_value=1, max_value=10)
-    impostors_entry.set_value(config["impostors"])
-    impostors_recommanded_button = Button(settings_frame, text="Définir le nombre recommandé", command=set_recommended_imposters)
+    impostors_entry = IntEntry(settings_frame, value=config.get("impostors", 1), min_value=1, max_value=10)
+    impostors_entry.set_value(config.get("impostors", 1))
+    impostors_recommanded_button = Button(settings_frame, text="Définir le nombre recommandé",
+                                          command=set_recommended_imposters)
     impostors_label.grid(row=row_num, column=0)
     impostors_entry.grid(row=row_num, column=1)
     impostors_recommanded_button.grid(row=row_num, column=2)
@@ -179,161 +189,152 @@ def config_settings():
 
     engineers_label = Label(settings_frame, text="Nombre d'ingénieurs: ")
     engineers_entry = IntEntry(settings_frame)
-    engineers_entry.set_value(config["engineers"])
+    engineers_entry.set_value(config.get("engineers", 1))
     engineers_label.grid(row=row_num, column=0)
     engineers_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     scientists_label = Label(settings_frame, text="Nombre de scientifiques: ")
     scientists_entry = IntEntry(settings_frame)
-    scientists_entry.set_value(config["scientists"])
+    scientists_entry.set_value(config.get("scientists", 1))
     scientists_label.grid(row=row_num, column=0)
     scientists_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     tasks_label = Label(settings_frame, text="Nombre de tâches par personne: ")
     tasks_entry = IntEntry(settings_frame)
-    tasks_entry.set_value(config["tasks"])
+    tasks_entry.set_value(config.get("tasks", 1))
     tasks_label.grid(row=row_num, column=0)
     tasks_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     max_task_given_label = Label(settings_frame, text="Nombre de distribution maximum de la tâche: ")
     max_task_given_entry = IntEntry(settings_frame)
-    max_task_given_entry.set_value(config["max_task_given"])
+    max_task_given_entry.set_value(config.get("max_task_given", 1))
     max_task_given_label.grid(row=row_num, column=0)
     max_task_given_entry.grid(row=row_num, column=1)
     row_num += 1
 
     max_dead_check_label = Label(settings_frame, text="Nombre de consultations pour le scientifique: ")
     max_dead_check_entry = IntEntry(settings_frame)
-    max_dead_check_entry.set_value(config["max_dead_check"])
+    max_dead_check_entry.set_value(config.get("max_dead_check", 1))
     max_dead_check_label.grid(row=row_num, column=0)
     max_dead_check_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     game_master_label = Label(settings_frame, text="Avec un maître du jeu: ")
-    game_master_entry = YesNoButton(settings_frame, value=config["game_master"])
+    game_master_entry = YesNoButton(settings_frame, value=config.get("game_master", False))
     game_master_label.grid(row=row_num, column=0)
     game_master_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     show_role_deads_label = Label(settings_frame, text="Dévoiler les rôles après la mort: ")
-    show_role_deads_entry = YesNoButton(settings_frame, value=config["show_dead_roles"])
+    show_role_deads_entry = YesNoButton(settings_frame, value=config.get("show_dead_roles", False))
     show_role_deads_label.grid(row=row_num, column=0)
     show_role_deads_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     discussion_time_label = Label(settings_frame, text="Temps de discussions: ")
     discussion_time_entry = TimerEntry(settings_frame)
-    discussion_time_entry.set_total_seconds(config["discussion_time"])
+    discussion_time_entry.set_total_seconds(config.get("discussion_time", 0))
     discussion_time_label.grid(row=row_num, column=0)
     discussion_time_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     vote_time_label = Label(settings_frame, text="Temps de vote: ")
     vote_time_entry = TimerEntry(settings_frame)
-    vote_time_entry.set_total_seconds(config["vote_time"])
+    vote_time_entry.set_total_seconds(config.get("vote_time", 0))
     vote_time_label.grid(row=row_num, column=0)
     vote_time_entry.grid(row=row_num, column=1)
     row_num += 1
 
-    
     kill_cooldown_label = Label(settings_frame, text="Temps entre les assassinats: ")
     kill_cooldown_entry = TimerEntry(settings_frame)
-    kill_cooldown_entry.set_total_seconds(config["kill_cooldown"])
+    kill_cooldown_entry.set_total_seconds(config.get("kill_cooldown", 0))
     kill_cooldown_label.grid(row=row_num, column=0)
     row_num += 1
 
-
     min_warn_label = Label(settings_frame, text="Minutes avant l'avertissement d'inactivité")
     min_warn_entry = IntEntry(settings_frame)
-    min_warn_entry.set_value(config["min_before_inactiv_warn"])
+    min_warn_entry.set_value(config.get("min_before_inactiv_warn", 0))
     min_warn_label.grid(row=row_num, column=0)
     min_warn_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     max_warns_label = Label(settings_frame,
                             text="Nombre d'avertissements d'inactivité avant la mise en pause de la partie")
     max_warns_entry = IntEntry(settings_frame)
-    max_warns_entry.set_value(config["max_warns"])
+    max_warns_entry.set_value(config.get("max_warns", 0))
     max_warns_label.grid(row=row_num, column=0)
     max_warns_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     manager_type = StringVar()
-    manager_type.set(config["manager_type"])
+    manager_type.set(config.get("manager_type", "web"))
     manager_type_label = Label(settings_frame, text="Type de gestion des joueurs: ")
-    manager_type_entry = OptionMenu(settings_frame, manager_type, *["sms", "web", "whatsapp", "instagram", "discord", "telegram"])
+    manager_type_entry = OptionMenu(settings_frame, manager_type,
+                                    *["sms", "web", "whatsapp", "instagram", "discord", "telegram"])
     manager_type_label.grid(row=row_num, column=0)
     manager_type_entry.grid(row=row_num, column=1)
     row_num += 1
-    
+
     ip_label = Label(settings_frame, text="Adresse IP d'Airemore (vide si non utilisé): ")
     ip_entry = Entry(settings_frame)
-    ip_entry.insert(0, config["ip"])
+    ip_entry.insert(0, config.get("ip", ""))
     foud_ip_button = Button(settings_frame, text="Trouver l'adresse IP", command=found_ip)
     ip_label.grid(row=row_num, column=0)
     ip_entry.grid(row=row_num, column=1)
     foud_ip_button.grid(row=row_num, column=2)
     row_num += 1
-    
+
     discord_token_label = Label(settings_frame, text="Token du bot Discord: ")
     discord_token_entry = Entry(settings_frame)
-    discord_token_entry.insert(0, config["discord_token"])
+    discord_token_entry.insert(0, config.get("discord_token", ""))
     discord_token_label.grid(row=row_num, column=0)
     discord_token_entry.grid(row=row_num, column=1)
     row_num += 1
-    
+
     telegram_token_label = Label(settings_frame, text="Token du bot Telegram: ")
     telegram_token_entry = Entry(settings_frame)
-    telegram_token_entry.insert(0, config["telegram_token"])
+    telegram_token_entry.insert(0, config.get("telegram_token", ""))
     telegram_token_label.grid(row=row_num, column=0)
     telegram_token_entry.grid(row=row_num, column=1)
     row_num += 1
-    
+
     insta_username_label = Label(settings_frame, text="Nom d'utilisateur Instagram: ")
     insta_username_entry = Entry(settings_frame)
-    insta_username_entry.insert(0, config["insta_username"])
+    insta_username_entry.insert(0, config.get("insta_username", ""))
     insta_username_label.grid(row=row_num, column=0)
     insta_username_entry.grid(row=row_num, column=1)
     row_num += 1
-        
-    insta_password_label = Label(settings_frame, text="Token du bot Discord: ")
+
+    insta_password_label = Label(settings_frame, text="Mot de passe instagram: ")
     insta_password_entry = Entry(settings_frame)
-    insta_password_entry.insert(0, config["insta_password"])
+    insta_password_entry.insert(0, config.get("insta_password", ""))
     insta_password_label.grid(row=row_num, column=0)
     insta_password_entry.grid(row=row_num, column=1)
     row_num += 1
 
     register_type = StringVar()
-    register_type.set(config["register_type"])
+    register_type.set(config.get("register_type", "liste"))
     register_type_label = Label(settings_frame, text="Type de définition des joueurs: ")
     register_type_entry = OptionMenu(settings_frame, register_type, *["liste", "direct"])
     register_type_label.grid(row=row_num, column=0)
     register_type_entry.grid(row=row_num, column=1)
     row_num += 1
-    
-    save_register_label = Label(settings_frame, text="Si la définition est directe, enregistrer dans une liste pour plus tard: ")
-    save_register_entry = YesNoButton(settings_frame, value=config["save_register"])
+
+    save_register_label = Label(settings_frame,
+                                text="Si la définition est directe, enregistrer dans une liste pour plus tard: ")
+    save_register_entry = YesNoButton(settings_frame, value=config.get("save_register", False))
     save_register_label.grid(row=row_num, column=0)
     save_register_entry.grid(row=row_num, column=1)
     row_num += 1
 
     tasks = [liste.replace(".json", "") for liste in os.listdir("taskList") if liste.endswith(".json")]
-    if config["tasks"] not in tasks:
+    if config.get("tasks", "") not in tasks:
         config["tasks"] = tasks[0]
     tasks_list = StringVar()
-    tasks_list.set(config["tasks"])
+    tasks_list.set(config.get("tasks", ""))
     task_list_label = Label(settings_frame, text="Liste de tâches utilisée: ")
     task_list_entry = OptionMenu(settings_frame, tasks_list, *tasks)
     task_list_label.grid(row=row_num, column=0)
@@ -348,48 +349,43 @@ def config_settings():
     label_names.pack(fill=X)
 
     names_frame = Frame(frame, bg="#f5f5f5")
-    
+
     row_num = 0
 
     impostor_name_label = Label(names_frame, text="Imposteur: ")
     impostor_name_entry = Entry(names_frame)
-    impostor_name_entry.insert(0, config["names"]["impostor"])
+    impostor_name_entry.insert(0, config.get("names", {}).get("impostor", ""))
     impostor_name_label.grid(row=row_num, column=0)
     impostor_name_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     scientist_name_label = Label(names_frame, text="Scientifique: ")
     scientist_name_entry = Entry(names_frame)
-    scientist_name_entry.insert(0, config["names"]["scientist"])
+    scientist_name_entry.insert(0, config.get("names", {}).get("scientist", ""))
     scientist_name_label.grid(row=row_num, column=0)
     scientist_name_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     engineer_name_label = Label(names_frame, text="Ingénieur: ")
     engineer_name_entry = Entry(names_frame)
-    engineer_name_entry.insert(0, config["names"]["engineer"])
+    engineer_name_entry.insert(0, config.get("names", {}).get("engineer", ""))
     engineer_name_label.grid(row=row_num, column=0)
     engineer_name_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     crewmate_name_label = Label(names_frame, text="Membre de l'équipe: ")
     crewmate_name_entry = Entry(names_frame)
-    crewmate_name_entry.insert(0, config["names"]["crewmate"])
+    crewmate_name_entry.insert(0, config.get("names", {}).get("crewmate", ""))
     crewmate_name_label.grid(row=row_num, column=0)
     crewmate_name_entry.grid(row=row_num, column=1)
     row_num += 1
 
-
     title_name_label = Label(names_frame, text="Nom du jeu: ")
     title_name_entry = Entry(names_frame)
-    title_name_entry.insert(0, config["names"]["title"])
+    title_name_entry.insert(0, config.get("names", {}).get("title", ""))
     title_name_label.grid(row=row_num, column=0)
     title_name_entry.grid(row=row_num, column=1)
     row_num += 1
-
 
     names_frame.pack(fill=X)
 

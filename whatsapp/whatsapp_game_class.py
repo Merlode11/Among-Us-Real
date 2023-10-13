@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tkinter import messagebox, ttk
-from classes import SMSPlayer, BasicTask, show_phone_number
+from tkinter import messagebox
+from tkinter import *
+from classes import SMSPlayer, show_phone_number
 from game_class import Game
 import json
 import random
@@ -11,6 +12,7 @@ from whatsapp.whatsapp_manager import send_message, get_user
 from flask import Flask, request
 from threading import Thread
 import os
+from utils import clear_frame, VerticalScrolledFrame
 
 
 class WhatsAppGame(Game):
@@ -68,9 +70,10 @@ class WhatsAppGame(Game):
                     if joueur is not None:
                         return self.send_info(joueur, "Vous êtes déjà enregistré dans la partie !")
                     new_player = {
-                        "type": "sms"
+                        "type": "sms",
                         "name": data['_data']['notifyName'], 
-                        "phone": f"+{data["from"].replace("@c.us", ""))}"
+                        "phone": f"+{data['from'].replace('@c.us', '')}",
+                        "play": True,
                     }
                     player = SMSPlayer(new_player["name"], new_player["phone"], self.used_passwords, self.used_id)
                     self.players.append(player)
@@ -100,7 +103,7 @@ class WhatsAppGame(Game):
         def disconnected():
             self.pause = True
             self.pause_reason = "WhatsApp s'est déconnecté"
-            self.set_pause_code()
+            self.set_pause_game()
             messagebox.showerror("Erreur", "WhatsApp s'est déconnecté.\nMerci de bien vouloir vérifier votre connexion.")
             return "OK", 200
 
@@ -118,7 +121,7 @@ class WhatsAppGame(Game):
         flt.daemon = True
         flt.start()
 
-        super().__init__()
+        super().__init__(game_master)
 
     def import_players(self):
         used_passwords: list = []
@@ -170,7 +173,7 @@ class WhatsAppGame(Game):
             
             whatsapp_user = get_user()
     
-            url_label = Label(qrcode_frame, text=f"Envoyez {self.register_code} à {show_phone_number(whatsapp_user["wid"])} pour vous enregistrer", font=("Arial", 28))
+            url_label = Label(qrcode_frame, text=f"Envoyez {self.register_code} à {show_phone_number(whatsapp_user['wid'])} pour vous enregistrer", font=("Arial", 28))
             url_label.pack()
     
             qrcode_frame.pack(fill=BOTH, expand=True)

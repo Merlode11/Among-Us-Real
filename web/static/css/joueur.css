@@ -165,7 +165,7 @@ body {
     background: repeating-linear-gradient(
             45deg,
             #3c2209 0 20px,
-            #ff9c00 20px 40px
+            #ff9c00 20px 40px,
     );
     width: 10em;
     height: 10em;
