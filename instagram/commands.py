@@ -1,7 +1,6 @@
 import time
 from tkinter import messagebox
 import re  # Importation du module pour faire des tests d'expressions régulières
-from instagram.instagram_manager import send_message
 
 kills_cooldown = {}
 
@@ -48,7 +47,6 @@ class Command:
         Exécute la commande avec une vérification du rôle et de la partie
         :param player: Le joueur qui a effecuté la commande
         :param content: str: Le string envoyé par le message
-        :param message: dict: Le message envoyé
         :param game: La partie
         :return: bool: Renvoie la bonne utilisation de la commande
         """
@@ -59,18 +57,19 @@ class Command:
             if game.config.get("names") and game.config["names"].get(self.permission.lower()):
                 perm = game.config["names"][self.permission.lower()]
 
-            send_message(player.username, "Vous ne pouvez pas utiliser cette commande car vous n'êtes pas " + perm + " !")
+            game.send_info(player,
+                           "Vous ne pouvez pas utiliser cette commande car vous n'êtes pas " + perm + " !")
             return True
         elif game.pause and not is_necessary:
-            send_message(player.username, "La partie est actuellement en pause. Vous ne pouvez pas faire de commandes")
+            game.send_info(player, "La partie est actuellement en pause. Vous ne pouvez pas faire de commandes")
             return True
         elif game.end and not is_necessary:
-            send_message(player.username, "La partie est actuellement terminée. Vous ne pouvez plus faire de commandes")
+            game.send_info(player, "La partie est actuellement terminée. Vous ne pouvez plus faire de commandes")
         elif game.meeting and self.name not in ["help", "sos", "vote"]:
-            send_message(player.username, "Une réunion est en cours. Vous ne pouvez pas faire de commandes")
+            game.send_info(player, "Une réunion est en cours. Vous ne pouvez pas faire de commandes")
             return True
         else:
-            self.execute(player, content, message, game)
+            self.execute(player, content, game)
             return True
 
     def execute(self, player, content: str, game):
@@ -78,7 +77,6 @@ class Command:
         Exécute la commande
         :param player: Le joueur qui a effecuté la commande
         :param content: str: Le string envoyé par le message
-        :param message: dict: Le message envoyé
         :param game: La partie
         """
         pass
@@ -102,7 +100,6 @@ class TaskCommand(Command):
         Commande permettant d'avoir plus d'informations sur la tâche à effectuer
         :param player: Le joueur qui a exécuté la commande
         :param content: str: Le message envoyé par le joueur
-        :param message: dict: Le message Whatsapp reçu
         :param game: La partie
         """
         try:
@@ -118,9 +115,9 @@ class TaskCommand(Command):
                 string += "\n"
             if task.done:
                 "Tâche terminée !\n"
-            send_message(player.username, string)
+            game.send_info(player, string)
         except (Exception,):
-            send_message(player.username, "Veuillez entrer un numéro de tâche valide !")
+            game.send_info(player, "Veuillez entrer un numéro de tâche valide !")
 
 
 commands.append(TaskCommand())
@@ -139,7 +136,6 @@ class InfoCommand(Command):
         Commande permettant d'avoir plus d'informations sur la tâche à effectuer
         :param player: Le joueur qui a exécuté la commande
         :param content: str: Le message envoyé par le joueur
-        :param message: dict: Le message Whatsapp reçu
         :param game: La partie
         """
         remining = 0
@@ -159,7 +155,7 @@ class InfoCommand(Command):
         string += f"Il reste {len(game.done_tasks)}/{game.given_tasks} tâche pour les {game.config['names']['crewmate']}."
 
         string += f"\nVotre identifiant est {player.id}."
-        send_message(player.username, string)
+        game.send_info(player, string)
 
 
 commands.append(InfoCommand())
@@ -180,11 +176,10 @@ class DeadsCommand(Command):
         Commande qui renvoie l'état des personnes pour le rôle "Scientifique"
         :param player: Le joueur qui a exécuté la commande
         :param content: str: Le message envoyé par le joueur
-        :param message: dict: Le message Whatsapp reçu
         :param game: La partie
         """
         if player.asks >= game.config["max_dead_check"]:
-            send_message(player.username, "Vous avez utilisé toutes vos demandes !")
+            game.send_info(player, "Vous avez utilisé toutes vos demandes !")
         else:
             states = "Voici les états de chaque joueur:\n"
             for joueur in game.players:
@@ -195,7 +190,7 @@ class DeadsCommand(Command):
             player.asks += 1
             states += "\n Il vous reste " + str(game.config["max_dead_check"] - player.asks) + "/" + str(
                 game.config["max_dead_check"]) + " demandes."
-            send_message(player.username, states)
+            game.send_info(player, states)
 
 
 commands.append(DeadsCommand())
@@ -207,7 +202,8 @@ class MortCommand(Command):
     """
 
     def __init__(self):
-        super().__init__("mort", "Annonce à l'organisateur la découverte d'un corps", ["death", "cadavre", "corps"],
+        super().__init__("mort", "Annonce à l'organisateur la découverte d'un corps",
+                         ["death", "cadavre", "corps", "report"],
                          "mort PERSONNE", "mort 1")
 
     def execute(self, player, content: str, game) -> None:
@@ -215,26 +211,27 @@ class MortCommand(Command):
         Commande pour signaler une personne morte
         :param player: Le joueur qui a exécuté la commande
         :param content: str: Le message envoyé par le joueur
-        :param message: dict: Le message Whatsapp reçu
         :param game: La partie
         """
         if game.game_master:
             response = messagebox.askokcancel("Mort détecté",
-                                              f"{player.get_name()} découvert un corps ! Son message est :\n {content}", parent=game.window)
+                                              f"{player.get_name()} découvert un corps ! Son message est :\n {content}",
+                                              parent=game.window)
 
             if response == "ok":
                 game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             elif response == "cancel":
-                send_message(player.username, "Votre demande a été refusée par l'organisateur.ice")
+                game.send_info(player, "Votre demande a été refusée par l'organisateur.ice")
         else:
             try:
-                dead = parse_player(content, game)
+                dead = parse_player(content, game)[0]
                 if not dead.dead:
-                    send_message(player.username, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
+                    game.send_info(player,
+                                   "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
                 else:
                     game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             except (Exception,):
-                send_message(player.username, "Veuillez entrer un joueur valide !")
+                game.send_info(player, "Veuillez entrer un joueur valide !")
 
 
 commands.append(MortCommand())
@@ -253,29 +250,30 @@ class DoneCommand(Command):
         Commande pour déclarer qu'une tâche a été effectuée
         :param player: Le joueur qui a exécuté la commande
         :param content: str: Le message envoyé par le joueur
-        :param message: dict: Le message Whatsapp reçu
         :param game: La partie
         """
         if player.role == "impostor":
-            return send_message(player.username, "Vous ne pouvez pas valider des tâches, vous êtes " + game.config["names"][
-                "impostor"] + ".")
+            return game.send_info(player,
+                                  "Vous ne pouvez pas valider des tâches, vous êtes " + game.config["names"][
+                                      "impostor"] + ".")
         try:
             task_number = int(content.split(" ")[1])
             task = player.tasks[task_number - 1]
             if task.done:
-                send_message(player.username, "Vous avez déjà déclaré avoir fait la tâche " + str(task_number))
+                game.send_info(player, "Vous avez déjà déclaré avoir fait la tâche " + str(task_number))
             elif "valid" in task.type:
-                send_message(player.username,
-                            "Vous ne pouvez pas déclarer avoir fait la tâche " + str(task_number) + " par une commande")
+                game.send_info(player,
+                               "Vous ne pouvez pas déclarer avoir fait la tâche " + str(
+                                   task_number) + " par une commande")
             elif task.type == "activate_basic" and not task.active:
-                send_message(player.username, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(
+                game.send_info(player, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(
                     task_number) + " car elle n'est pas encore active")
             else:
                 game.task_done(player, task)
-                send_message(player.username, f"Votre tâche {task.name} a été confirmée comme faite !")
+                game.send_info(player, f"Votre tâche {task.name} a été confirmée comme faite !")
         except Exception as e:
             print(e)
-            send_message(player.username, "Veuillez entrer un numéro de tâche valide !")
+            game.send_info(player, "Veuillez entrer un numéro de tâche valide !")
 
 
 commands.append(DoneCommand())
@@ -295,14 +293,13 @@ class HelpCommand(Command):
         Commande qui renvoie toutes les commandes disponibles
         :param player: Le joueur qui a exécuté la commande
         :param content: str: Le message envoyé par le joueur
-        :param message: dict: Le message Whatsapp reçu
         :param game: La partie
         """
         if len(content.split(" ")) == 1:
             string = "Voici toutes les commandes disponibles:\n"
             for command in commands:
                 string += command.usage + ": " + command.description + "\n"
-            send_message(player.username, string)
+            game.send_info(player, string)
         else:
             command_str = content.split(" ")[1]
             command = None
@@ -311,7 +308,7 @@ class HelpCommand(Command):
                     command = cmd
                     break
             string = command.get_help(game.config)
-            send_message(player.username, string)
+            game.send_info(player, string)
 
 
 commands.append(HelpCommand())
@@ -335,7 +332,6 @@ class SOSCommand(Command):
         Commande qui demande de l'aide aux autres joueurs
         :param player: Le joueur qui a exécuté la commande
         :param content: str: Le message envoyé par le joueur
-        :param message: dict: Le message Whatsapp reçu
         :param game: La partie
         """
         game.send_info_all(
@@ -343,11 +339,12 @@ class SOSCommand(Command):
         game.pause = True
         game.pause_reason = ' '.join(content.split(' ')[1:])
         code = game.set_pause_game()
-        send_message(player.username,
-                    f"Votre demande d'aide a bien été transmise aux autres joueurs. Le code pour rétablir la partie normalement est '{code}'")
+        game.send_info(player,
+                       f"Votre demande d'aide a bien été transmise aux autres joueurs. Le code pour rétablir la partie normalement est '{code}'")
         if game.game_master:
             messagebox.showerror(f"{player.get_name()} a besoin d'aide",
-                                 f"{player.get_name()} a demandé de l'aide en URGENCE avec la commande SOS. Son message:\n{' '.join(content.split(' ')[1:])}\n\nUn message a été envoyé à tous les joueurs pour aller l'aider et la partie a été mise en pause", parent=game.window)
+                                 f"{player.get_name()} a demandé de l'aide en URGENCE avec la commande SOS. Son message:\n{' '.join(content.split(' ')[1:])}\n\nUn message a été envoyé à tous les joueurs pour aller l'aider et la partie a été mise en pause",
+                                 parent=game.window)
 
 
 commands.append(SOSCommand())
@@ -373,12 +370,11 @@ class KillCommand(Command):
         Tuer une personne
         :param player: Le joueur qui a exécuté la commande
         :param content: str: Le message envoyé par le joueur
-        :param message: dict: Le message Whatsapp reçu
         :param game: La partie
         """
         player_id = re.match(r"\d{3}", content.split(" ")[1])
         if kills_cooldown.get(player.id):
-            send_message(player.username, "Vous ne pouvez pas tuer tout de suite")
+            game.send_info(player, "Vous ne pouvez pas tuer tout de suite")
             return
         to_kill_player = None
         for joueur in game.players:
@@ -386,18 +382,18 @@ class KillCommand(Command):
                 to_kill_player = joueur
         if to_kill_player:
             if to_kill_player.id == player.id:
-                send_message(player.username, "Vous ne pouvez pas vous tuer vous-même")
+                game.send_info(player, "Vous ne pouvez pas vous tuer vous-même")
                 return
             else:
                 game.kill_player(to_kill_player)
-                send_message(player.username,
-                            f"Le joueur {to_kill_player.get_name()} a bien été tué de votre part !")
+                game.send_info(player,
+                               f"Le joueur {to_kill_player.get_name()} a bien été tué de votre part !")
                 kills_cooldown[player.id] = True
                 time.sleep(60)
                 del kills_cooldown[player.id]
         else:
-            send_message(player.username,
-                        "Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.")
+            game.send_info(player,
+                           "Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.")
 
 
 commands.append(KillCommand())
@@ -418,36 +414,35 @@ class VoteCommand(Command):
         Voter pour une personne
         :param player: Le joueur qui a exécuté la commande
         :param content: str: Le message envoyé par le joueur
-        :param message: dict: Le message Whatsapp reçu
         :param game: La partie
         """
         if game.meeting != "vote":
-            send_message(player.username, "Il n'y a pas de période de vote en cours !")
+            game.send_info(player, "Il n'y a pas de période de vote en cours !")
             return
         else:
             if player.id in game.meeting_votes.keys():
-                send_message(player.username, "Vous avez déjà voté !")
+                game.send_info(player, "Vous avez déjà voté !")
                 return
             else:
                 if content.split(" ")[1] == "0" or content.split(" ")[1] == "skip" or content.split(" ")[1] == "passer":
                     game.meeting_votes[player.id] = "0"
-                    send_message(player.username, "Vous avez voté pour passer !")
+                    game.send_info(player, "Vous avez voté pour passer !")
                     return
                 voted_player: list = parse_player(content, game)
                 if len(voted_player) > 1:
                     players_str = ""
                     for i, player in enumerate(voted_player):
                         players_str += f"{i + 1} - {player.get_name()}\n"
-                    send_message(player.username,
-                                f"Plusieurs joueurs ont été trouvés:\n{players_str}Veuillez réessayer en précisant le numéro du joueur:\nvote NUMERO")
+                    game.send_info(player,
+                                   f"Plusieurs joueurs ont été trouvés:\n{players_str}Veuillez réessayer en précisant le numéro du joueur:\nvote NUMERO")
                     return
                 elif voted_player is None or len(voted_player) == 0:
-                    send_message(player.username, "Aucun joueur n'a été trouvé avec ce nom !")
+                    game.send_info(player, "Aucun joueur n'a été trouvé avec ce nom !")
                     return
                 else:
-                    voted_player = voted_player[0]
-                    game.meeting_votes[player.id] = voted_player.id
-                    send_message(player.username, f"Vous avez voté contre {voted_player.get_name()} !")
+                    voted_player_obj = voted_player[0]
+                    game.meeting_votes[player.id] = voted_player_obj.id
+                    game.send_info(player, f"Vous avez voté contre {voted_player_obj.get_name()} !")
                     game.timer.show_players()
                     return
 

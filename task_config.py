@@ -119,7 +119,6 @@ def task_config():
                 message_label.grid(row=3, column=0)
                 message.grid(row=3, column=1)
 
-
         type_frame = Frame(edit_frame, bg="#f5f5f5")
         type_label = Label(type_frame, text="Type de tâche: ")
         type_choice = StringVar()
@@ -180,7 +179,7 @@ def task_config():
                 messagebox.showerror("Erreur", "Une tâche avec ce nom existe déjà", parent=edit_window)
                 return
             task["name"] = name
-            task["description"] =  re.sub(r"\n+$", "", description_text.get("1.0", END))
+            task["description"] = re.sub(r"\n+$", "", description_text.get("1.0", END))
             task["location"] = location_entry.get()
             task["steps"] = steps_entry.get_value()
             task["type"] = task_type_name[type_choice.get()]
@@ -197,8 +196,8 @@ def task_config():
 
             tasks_list[task_index] = task
 
-            with open(f"taskList/{config['task_list']}.json", "w", encoding="utf-8") as file:
-                json.dump(tasks_list, file, indent=4, ensure_ascii=False)
+            with open(f"taskList/{config['task_list']}.json", "w", encoding="utf-8") as f:
+                json.dump(tasks_list, f, indent=4, ensure_ascii=False)
 
             edit_window.destroy()
             return name
@@ -321,7 +320,8 @@ def task_config():
             if location == "":
                 messagebox.showerror("Erreur", "L'emplacement de la tâche ne peut pas être vide", parent=add_window)
                 return
-            task = {"name": name, "description": re.sub(r"\n+$", "", description_text.get("1.0", END)), "location": location,
+            task = {"name": name, "description": re.sub(r"\n+$", "", description_text.get("1.0", END)),
+                    "location": location,
                     "steps": steps_entry.get_value(), "type": task_type_name[type_choice.get()]}
             if type_choice.get() == "Avec Validation":
                 if obj["keywords"] and obj["keywords"].get_tags() == []:
@@ -354,8 +354,8 @@ def task_config():
 
             tasks_list.append(task)
 
-            with open(f"taskList/{config['task_list']}.json", "w", encoding="utf-8") as file:
-                json.dump(tasks_list, file, indent=4, ensure_ascii=False)
+            with open(f"taskList/{config['task_list']}.json", "w", encoding="utf-8") as f:
+                json.dump(tasks_list, f, indent=4, ensure_ascii=False)
 
             add_window.destroy()
             return name
@@ -370,18 +370,18 @@ def task_config():
         """
         Supprimer une tâche
         """
-        with open(f"taskList/{config['task_list']}.json", "r", encoding="utf-8") as file:
-            tasks_list: list = json.load(file)
+        with open(f"taskList/{config['task_list']}.json", "r", encoding="utf-8") as f:
+            tasks_list: list = json.load(f)
         tasks_list.remove(task)
-        with open(f"taskList/{config['task_list']}.json", "w", encoding="utf-8") as file:
-            json.dump(tasks_list, file, indent=4, ensure_ascii=False)
+        with open(f"taskList/{config['task_list']}.json", "w", encoding="utf-8") as f:
+            json.dump(tasks_list, f, indent=4, ensure_ascii=False)
         messagebox.showinfo("Succès", "La tâche a été supprimée avec succès", parent=window)
         refresh_tasks()
 
     def refresh_tasks():
         clear_frame(edit_task_frame)
-        with open(f"taskList/{config['task_list']}.json", "r", encoding="utf-8") as file:
-            tasks_list: list = json.load(file)
+        with open(f"taskList/{config['task_list']}.json", "r", encoding="utf-8") as f:
+            tasks_list: list = json.load(f)
         for i in range(len(tasks_list)):
             task = tasks_list[i]
             task_frame = Frame(edit_task_frame, bg="#f5f5f5")

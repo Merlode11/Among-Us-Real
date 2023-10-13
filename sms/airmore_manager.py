@@ -1,4 +1,4 @@
-from ipaddress import IPv4Address  
+from ipaddress import IPv4Address
 import json
 from pyairmore.request import AirmoreSession
 from pyairmore.services.messaging import MessagingService
@@ -14,7 +14,6 @@ ip = IPv4Address(config["ip"])
 session = AirmoreSession(ip)
 
 service = MessagingService(session)
-
 
 last_messages = {}
 sent_messages: int = 0
@@ -60,11 +59,11 @@ def get_new_messages(game) -> list:
             last_messages[message.phone] = message
             new_messages.append(message)
             player.last_message = message.datetime.timestamp()
-            if player.warnings >= 1: 
+            if player.warnings >= 1:
                 if game.pause and player.warnings >= game.config["max_warns"]:
                     game.pause = False
                     game.send_info_all(f"{player.get_name()} a refait surface, plus besoin de "
-                                             f"s'inquiéter. La partie reprend !")
+                                       f"s'inquiéter. La partie reprend !")
                     if game.config.game_master:
                         messagebox.showinfo("La partie reprend", f"{player.get_name()} a refait surface. "
                                                                  f"La partie reprends", parent=game.window)

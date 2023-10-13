@@ -1,0 +1,31 @@
+{
+    "impostors": 2,
+    "engineers": 3,
+    "scientists": 2,
+    "tasks": 3,
+    "max_task_given": 5,
+    "names": {
+        "impostor": "Imposteur",
+        "scientist": "Scientifique",
+        "engineer": "Ingénieurs",
+        "crewmate": "Membre de l'équipe",
+        "title": "Among Us Réel"
+    },
+    "max_dead_check": 3,
+    "game_master": true,
+    "show_dead_roles": true,
+    "discussion_time": 120,
+    "vote_time": 30,
+    "kill_cooldown": 60,
+    "task_list": "tasks-exemple",
+    "min_before_inactiv_warn": 5,
+    "max_warns": 3,
+    "manager_type": "web",
+    "register_type": "liste",
+    "save_register": true,
+    "ip": "",
+    "discord_token": "",
+    "telegram_token": "",
+    "insta_username": "",
+    "insta_password": ""
+}

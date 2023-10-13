@@ -29,19 +29,19 @@ def player_config():
         sms_frame = Frame(players_frame, bg="#f5f5f5")
         ttk.Separator(sms_frame, orient="horizontal").pack(fill="x")
         Label(sms_frame, text="SMS", font=("Arial", 25)).pack(fill=X)
-        
+
         ttk.Separator(players_frame, orient="horizontal").pack(fill="x")
         insta_frame = Frame(players_frame, bg="#f5f5f5")
         Label(insta_frame, text="Instagram", font=("Arial", 25)).pack(fill=X)
-        
+
         ttk.Separator(players_frame, orient="horizontal").pack(fill="x")
         discord_frame = Frame(players_frame, bg="#f5f5f5")
         Label(discord_frame, text="Discord", font=("Arial", 25)).pack(fill=X)
-        
+
         ttk.Separator(players_frame, orient="horizontal").pack(fill="x")
         telegram_frame = Frame(players_frame, bg="#f5f5f5")
         Label(telegram_frame, text="Telegram", font=("Arial", 25)).pack(fill=X)
-        
+
         for player in players:
             player_frame = None
             if player.get("type", "") == "sms":
@@ -52,7 +52,7 @@ def player_config():
                 player_frame = Frame(discord_frame, bg="#f5f5f5")
             elif player.get("type", "") == "telegram":
                 player_frame = Frame(telegram_frame, bg="#f5f5f5")
-            else: 
+            else:
                 player_frame = Frame(players_frame, bg="#f5f5f5")
             player_label = Label(player_frame, text=get_str(player))
             player_label.pack(side=LEFT)
@@ -61,7 +61,8 @@ def player_config():
             delete_button.pack(side=RIGHT)
             edit_button = Button(player_frame, text="Modifier", command=lambda joueur=player: edit_player(joueur))
             edit_button.pack(side=RIGHT)
-            play_button = Button(player_frame, text="Joue" if player.get("play", True) else "Ne joue pas", command=lambda joueur=player: edit_play(joueur))
+            play_button = Button(player_frame, text="Joue" if player.get("play", True) else "Ne joue pas",
+                                 command=lambda joueur=player: edit_play(joueur))
             play_button.pack(side=RIGHT)
             player_frame.pack(fill=X, anchor=N, expand=True)
         sms_frame.pack(fill=X)
@@ -85,35 +86,37 @@ def player_config():
             "username": None,
             "id": None
         }
-        
+
         def save_player():
             """
             Enregistrer le joueur modifié dans le fichier JSON correspondant
             """
-            if obj["name"].get() == "": 
-                messagebox.showerror("Erreur", "Merci de bien vouloir mettre un nom !", parent=add_window)
+            if obj["name"].get() == "":
+                messagebox.showerror("Erreur", "Merci de bien vouloir mettre un nom !", parent=edit_window)
                 obj["name"].focus()
                 return
             new_player = {
-                "type": player_type.get()
+                "type": player_type.get(),
                 "name": obj["name"].get(),
                 "play": play_button.get_value()
             }
-            if player_type.get() == "sms": 
+            if player_type.get() == "sms":
                 if obj["phone"].get() == "":
-                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un numéro de téléphone !", parent=add_window)
+                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un numéro de téléphone !",
+                                         parent=edit_window)
                     obj["phone"].focus()
                     return
                 new_player["phone"] = obj["phone"].get()
-            elif player_type.get() == "instagram": 
-                if obj["username"].get() == "": 
-                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un nom d'utilisateur !", parent=add_window)
+            elif player_type.get() == "instagram":
+                if obj["username"].get() == "":
+                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un nom d'utilisateur !",
+                                         parent=edit_window)
                     obj["username"].focus()
                     return
                 new_player["username"] = obj["username"].get()
             else:
-                if obj["id"].get() == "": 
-                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un identifiant !", parent=add_window)
+                if obj["id"].get() == "":
+                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un identifiant !", parent=edit_window)
                     obj["id"].focus()
                     return
                 new_player["id"] = obj["id"].get()
@@ -144,12 +147,15 @@ def player_config():
         edit_window.resizable(True, True)
         edit_window.configure(background='#f5f5f5')
         edit_window.iconbitmap("assets/img/amongus.ico")
-        
+
         type_frame = Frame(edit_window, bg="#f5f5f5")
-        
+
         names_frame = Frame(edit_window, bg="#f5f5f5")
-        
-        def show_names(stock): 
+
+        play_label = Label(names_frame, text="Le joueur joue ?")
+        play_button = YesNoButton(names_frame, value=player.get("play", True))
+
+        def show_names(stock):
             clear_frame(names_frame)
             row_num = 0
             name_label = Label(names_frame, text="Nom: ")
@@ -164,7 +170,6 @@ def player_config():
                 phone_entry.insert(0, player.get("phone", ""))
                 phone_label.grid(row=row_num, column=0)
                 phone_entry.grid(row=row_num, column=1)
-                row_num += 1
             elif player_type.get() == "instagram":
                 username_label = Label(names_frame, text="Nom d'utilisateur: ")
                 stock["username"] = username_entry = Entry(names_frame)
@@ -173,31 +178,33 @@ def player_config():
                 username_entry.grid(row=row_num, column=1)
             elif player_type.get() == "discord":
                 id_label = Label(names_frame, text="Identifiant d'utilisateur: ")
-                stock["id"] = username_entry = Entry(names_frame)
+                stock["id"] = id_entry = Entry(names_frame)
                 id_entry.insert(0, player.get("id", ""))
                 id_label.grid(row=row_num, column=0)
                 id_entry.grid(row=row_num, column=1)
-            
+
             elif player_type.get() == "telegram":
                 id_label = Label(names_frame, text="Identifiant d'utilisateur: ")
-                stock["id"] = username_entry = Entry(names_frame)
+                stock["id"] = id_entry = Entry(names_frame)
                 id_entry.insert(0, player.get("id", ""))
                 id_label.grid(row=row_num, column=0)
                 id_entry.grid(row=row_num, column=1)
-    
+            row_num += 1
+
             play_label = Label(names_frame, text="Le joueur joue ?")
             play_button = YesNoButton(names_frame, value=player.get("play", True))
-    
+
             play_label.grid(row=row_num, column=0)
             play_button.grid(row=row_num, column=1)
-        
+
         player_type = StringVar()
-        player_type.set(player["type"])
+        player_type.set(player.get("type", "sms"))
         player_type_label = Label(type_frame, text="Type de joueur: ")
-        player_type_entry = OptionMenu(type_frame, player_type, *["sms", "instagram", "discord", "telegram"], command=lambda x: show_names(obj))
+        player_type_entry = OptionMenu(type_frame, player_type, *["sms", "instagram", "discord", "telegram"],
+                                       command=lambda x: show_names(obj))
         player_type_label.grid(row=0, column=0)
         player_type_entry.grid(row=0, column=1)
-        
+
         type_frame.pack(fill=X)
 
         show_names(obj)
@@ -224,7 +231,7 @@ def player_config():
             with open("players.json", "w", encoding="utf-8") as file:
                 json.dump(players, file, indent=4, ensure_ascii=False)
             window.destroy()
-            return player_config[]
+            return player_config()
 
     def edit_play(player: dict):
         """
@@ -252,34 +259,36 @@ def player_config():
             "username": None,
             "id": None
         }
-        
+
         def save_player():
             """
             Enregistrer le joueur modifié dans le fichier JSON correspondant
             """
-            if obj["name"].get() == "": 
+            if obj["name"].get() == "":
                 messagebox.showerror("Erreur", "Merci de bien vouloir mettre un nom !", parent=add_window)
                 obj["name"].focus()
                 return
             new_player = {
-                "type": player_type.get()
+                "type": player_type.get(),
                 "name": obj["name"].get(),
                 "play": play_button.get_value()
             }
-            if player_type.get() == "sms": 
+            if player_type.get() == "sms":
                 if obj["phone"].get() == "":
-                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un numéro de téléphone !", parent=add_window)
+                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un numéro de téléphone !",
+                                         parent=add_window)
                     obj["phone"].focus()
                     return
                 new_player["phone"] = obj["phone"].get()
-            elif player_type.get() == "instagram": 
-                if obj["username"].get() == "": 
-                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un nom d'utilisateur !", parent=add_window)
+            elif player_type.get() == "instagram":
+                if obj["username"].get() == "":
+                    messagebox.showerror("Erreur", "Merci de bien vouloir mettre un nom d'utilisateur !",
+                                         parent=add_window)
                     obj["username"].focus()
                     return
                 new_player["username"] = obj["username"].get()
             else:
-                if obj["id"].get() == "": 
+                if obj["id"].get() == "":
                     messagebox.showerror("Erreur", "Merci de bien vouloir mettre un identifiant !", parent=add_window)
                     obj["id"].focus()
                     return
@@ -313,11 +322,14 @@ def player_config():
         add_window.configure(background='#f5f5f5')
         add_window.iconbitmap("assets/img/amongus.ico")
 
-        type_frame = Frame(edit_window, bg="#f5f5f5")
-        
-        names_frame = Frame(edit_window, bg="#f5f5f5")
-        
-        def show_names(stock): 
+        type_frame = Frame(add_window, bg="#f5f5f5")
+
+        names_frame = Frame(add_window, bg="#f5f5f5")
+
+        play_label = Label(names_frame, text="Le joueur joue ?")
+        play_button = YesNoButton(names_frame)
+
+        def show_names(stock):
             clear_frame(names_frame)
             row_num = 0
             name_label = Label(names_frame, text="Nom: ")
@@ -325,7 +337,7 @@ def player_config():
             name_label.grid(row=row_num, column=0)
             name_entry.grid(row=row_num, column=1)
             row_num += 1
-            if player_type.get() == "sms": 
+            if player_type.get() == "sms":
                 phone_label = Label(names_frame, text="Numéro de téléphone: ")
                 stock["phone"] = phone_entry = Entry(names_frame)
                 phone_label.grid(row=row_num, column=0)
@@ -338,36 +350,34 @@ def player_config():
                 username_entry.grid(row=row_num, column=1)
             elif player_type.get() == "discord":
                 id_label = Label(names_frame, text="Identifiant d'utilisateur: ")
-                stock["id"] = username_entry = Entry(names_frame)
+                stock["id"] = id_entry = Entry(names_frame)
                 id_label.grid(row=row_num, column=0)
                 id_entry.grid(row=row_num, column=1)
-            
+
             elif player_type.get() == "telegram":
                 id_label = Label(names_frame, text="Identifiant d'utilisateur: ")
-                stock["id"] = username_entry = Entry(names_frame)
+                stock["id"] = id_entry = Entry(names_frame)
                 id_label.grid(row=row_num, column=0)
                 id_entry.grid(row=row_num, column=1)
-    
+
             play_label = Label(names_frame, text="Le joueur joue ?")
-            play_button = YesNoButton(names_frame, value=player.get("play", True))
-    
+            play_button = YesNoButton(names_frame)
+
             play_label.grid(row=row_num, column=0)
             play_button.grid(row=row_num, column=1)
-        
+
         player_type = StringVar()
         player_type_label = Label(type_frame, text="Type de joueur: ")
-        player_type_entry = OptionMenu(type_frame, player_type, *["sms", "instagram", "discord", "telegram"], command=lambda x: show_names(obj))
+        player_type_entry = OptionMenu(type_frame, player_type, *["sms", "instagram", "discord", "telegram"],
+                                       command=lambda x: show_names(obj))
         player_type_label.grid(row=0, column=0)
         player_type_entry.grid(row=0, column=1)
-        
+
         type_frame.pack(fill=X)
 
         show_names(obj)
 
         names_frame.pack(fill=X)
-
-        play_label.grid(row=3, column=0)
-        play_button.grid(row=3, column=1)
 
         names_frame.pack(fill=X)
 
@@ -381,14 +391,17 @@ def player_config():
 
     window.mainloop()
 
+
 def get_str(player):
-    if player.get("type") == "instagram": 
-        return f"{player.get("name", "Inconnu")}: {player.get("username", "inconnu")}"
+    if player.get("type") == "instagram":
+        return f"{player.get('name', 'Inconnu')}: {player.get('username', 'inconnu')}"
     elif player.get("type") == "sms":
-        return f"{player.get('name')}: {player.get("phone", "+00000000000")}"
+        return f"{player.get('name')}: {player.get('phone', '+00000000000')}"
     elif player.get("type") == "discord":
-        return f"{player.get("name", "Inconnu")}: {player.get("id", "00000000000000000")}"
+        return f"{player.get('name', 'Inconnu')}: {player.get('id', '00000000000000000')}"
     elif player.get("type") == "telegram":
-        return f"{player.get("name", "Inconnu")}: {player.get("id", "0000000000")}"
+        return f"{player.get('name', 'Inconnu')}: {player.get('id', '0000000000')}"
+
+
 if __name__ == "__main__":
     player_config()

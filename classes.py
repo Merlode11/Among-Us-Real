@@ -304,6 +304,8 @@ def set_task(task_dict: dict) -> BasicTask or ActivateBasicTask or ValidateBasic
     elif task_dict.get("type") == "activ_valid":
         return ActivValidTask(task_dict.get("name", ""), task_dict.get("description", ""), task_dict.get("steps", 1), task_dict.get("location", ""),
                               task_dict.get("keywords", []), task_dict.get("activ_keywords", []), task_dict.get("message", ""))
+    else:
+        raise TypeError(f"La tâche '{task_dict.get('name', '')}' n'a pas de type correct: {task_dict.get('type')}")
 
 
 # Show a phone number with "+33768330645" and "0768330645"

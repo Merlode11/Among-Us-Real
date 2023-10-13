@@ -1,14 +1,17 @@
 import requests
 
+
 def sendRequest(action, data) -> dict or str:
     received = requests.post("http://localhost:3045/" + action, json=data)
     if received.headers["Content-Type"] == "application/json":
         return received.json()
     else:
-        return received.text()
+        return received.text
 
 
-def send_message(phoneNumber, content, options={}):
+def send_message(phoneNumber, content, options=None):
+    if options is None:
+        options = {}
     if len(phoneNumber) < 11:
         phoneNumber = "33" + phoneNumber if not phoneNumber.startswith("0") else "33" + phoneNumber[1:]
     if not phoneNumber.endswith("@c.us"):
@@ -19,7 +22,7 @@ def send_message(phoneNumber, content, options={}):
         if type(options["quotedMessageId"]) == dict:
             options["quotedMessageId"] = options["quotedMessageId"].get("_serialized")
 
-    return sendMessageRaw(phoneNumber, content, options)
+    return send_message_raw(phoneNumber, content, options)
 
 
 def send_message_raw(chatId, content, options={}):
@@ -51,13 +54,15 @@ def is_ready() -> bool:
     infos = sendRequest("getState", data)
     return infos == "CONNECTED"
 
-def get_user() -> dict: 
+
+def get_user() -> dict:
     received = requests.get("http://localhost:3045/@me")
     if received.headers["Content-Type"] == "application/json":
         return received.json()
     else:
-        return received.text()
+        return received.text
+
 
 if __name__ == '__main__':
-    print("Is Ready: " + str(isReady()))
+    print("Is Ready: " + str(is_ready()))
     send_message("33767269602", "Hello World")

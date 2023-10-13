@@ -17,6 +17,7 @@ misc/*
 /whatsapp/api/.wwebjs_cache
 **/.wwebjs_auth
 **/.wwebjs_cache
+config.json
 
 # Ignore the .DS_Store mac file
 .DS_Store

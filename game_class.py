@@ -16,7 +16,8 @@ class Game:
     def __init__(self, game_master: bool = None):
         self.path = os.path.dirname(os.path.abspath(__file__))
 
-        with open(self.path + "/config.json", "r", encoding='utf-8') as f:            self.config = json.load(f)
+        with open(self.path + "/config.json", "r", encoding='utf-8') as f:
+            self.config = json.load(f)
 
         self.given_tasks: int = 0
 
@@ -29,7 +30,7 @@ class Game:
         self.meeting_votes: dict = {}
         self.meeting_here_users: list = []
         self.end: bool = False
-        
+        self.receive: bool = True
 
         if game_master is None:
             self.game_master: bool = self.config["game_master"]
@@ -88,20 +89,23 @@ class Game:
         window = self.window
 
         if self.config["impostors"] + self.config["engineers"] + self.config["scientists"] > len(self.players):
-            messagebox.showerror("Erreur", "Le nombre de joueurs est insuffisant pour la configuration choisie", parent=window)
+            messagebox.showerror("Erreur", "Le nombre de joueurs est insuffisant pour la configuration choisie",
+                                 parent=window)
             window.destroy()
             return
-        
+
         if self.config["tasks"] * len(self.players) > len(self.tasks) * self.config["max_task_given"]:
-            messagebox.showerror("Erreur", "Le nombre de tâches pouvant être donné est inférieur au nombre de tâches requises !", parent=window)
+            messagebox.showerror("Erreur",
+                                 "Le nombre de tâches pouvant être donné est inférieur au nombre de tâches requises !",
+                                 parent=window)
             window.destroy()
             return
 
         self.__label_title = label_title = Label(self.window, text=self.config["names"]["title"], font=("Arial", 30))
         label_title.pack(fill=X)
 
-        for joueur in self.players:
-            print(joueur.get_name(), joueur.role, joueur.id, joueur.password)
+        # for joueur in self.players:
+        #     print(joueur.get_name(), joueur.role, joueur.id, joueur.password)
 
         self.define_roles()
         self.define_tasks()
@@ -370,12 +374,12 @@ class Game:
                                           "!\n")
             self.end = True
             self.show_players()
-            response = messagebox.askyesno("Game Over",
-                                           "Les " + self.config["names"]["impostor"].lower() + " ont gagné !\n"
-                                                                                               "Tous les " +
-                                           self.config["names"]["crewmate"].lower() + " ont été tués.\n"
-                                                                                      "Voulez-vous recommencer ?",
-                                           parent=self.window)
+            messagebox.askyesno("Game Over",
+                                "Les " + self.config["names"]["impostor"].lower() + " ont gagné !\n"
+                                                                                    "Tous les " +
+                                self.config["names"]["crewmate"].lower() + " ont été tués.\n"
+                                                                           "Voulez-vous recommencer ?",
+                                parent=self.window)
 
             self.end_game()
         elif len(self.impostors) == 0:
@@ -401,6 +405,7 @@ class Game:
         Termine la partie
         :return:
         """
+        self.receive = False
         self.window.destroy()
 
     def reborn_player(self, player: Player):
@@ -528,6 +533,7 @@ class Game:
         :param message: str: Raison de la réunion
         :return:
         """
+        playsound(r"assets/sounds/emergency_meeting.mp3")
         self.meeting = "coming"
         self.send_info_all(
             message + "\nMerci de vous rendre immédiatement au point de rendez-vous !\nRappel de votre code de "
@@ -550,7 +556,6 @@ class Game:
         def show_players():
             clear_frame(players_here_frame)
             for player in self.players:
-                print(player.get_name(), ":", player.password)
                 if player in here_users:
                     color = "green"
                 else:
@@ -622,9 +627,9 @@ class Game:
                             player = self.get_player(voted_player_id)
                             killed_window.after(5000, lambda: self.kill_player(player))
                             killed_text = player.get_name()
-                            if self.config["show_dead_roles"]: 
-                                killed_text += f" ({self.config["names"][player.role]})"
-                        
+                            if self.config["show_dead_roles"]:
+                                killed_text += f" ({self.config['names'][player.role]})"
+
                         killed_text += " a été éliminé"
 
                         Label(killed_window, text="Élimination", font=("Arial", 30)).pack(fill=BOTH, expand=True,
@@ -704,7 +709,8 @@ class Game:
                                                                                          "Voulez-vous recommencer ?")
             self.end_game()
         elif self.game_master:
-            messagebox.showinfo("Succès", f"{str(player)} a confirmé avoir réalisé la tâche {task.name} !", parent=self.window)
+            messagebox.showinfo("Succès", f"{str(player)} a confirmé avoir réalisé la tâche {task.name} !",
+                                parent=self.window)
 
 
 if __name__ == '__main__':

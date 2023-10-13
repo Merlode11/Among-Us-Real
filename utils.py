@@ -3,7 +3,7 @@ import time
 from playsound import playsound
 
 
-def clear_frame(frame: Widget) -> None:
+def clear_frame(frame: Widget or Misc) -> None:
     """
     Clear all entries in a frame
     :param frame: Frame: Frame to clear
@@ -17,7 +17,7 @@ def clear_frame(frame: Widget) -> None:
         widget.destroy()
 
 
-class VerticalScrolledFrame:
+class VerticalScrolledFrame(Misc):
     """
     Code issu du Gist GitHub
     https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8?permalink_comment_id=3811531#gistcomment-3811531
@@ -32,18 +32,18 @@ class VerticalScrolledFrame:
     """
 
     def __init__(self, master, **kwargs):
-        width = kwargs.pop('width', master.winfo_width())
-        height = kwargs.pop('height', master.winfo_height())
+        self.width = kwargs.pop('width', master.winfo_width())
+        self.height = kwargs.pop('height', master.winfo_height())
         bg = kwargs.pop('bg', kwargs.pop('background', None))
 
-        is_width_height_window = width == master.winfo_width() and height == master.winfo_height()
+        is_width_height_window = self.width == master.winfo_width() and self.height == master.winfo_height()
 
-        def _on_configure(event):
+        def _on_configure(_):
             # redimensionnement de la fenêtre
             if is_width_height_window:
-                width = master.winfo_width()  # event.width if event.width > event.x else event.x
-                height = master.winfo_height()  # event.height if event.height > event.y else event.y
-                self.canvas.config(width=width, height=height)
+                self.width = master.winfo_width()  # event.width if event.width > event.x else event.x
+                self.height = master.winfo_height()  # event.height if event.height > event.y else event.y
+                self.canvas.config(width=self.width, height=self.height)
 
         # detect window size changes
         master.bind("<Configure>", _on_configure)
@@ -52,7 +52,7 @@ class VerticalScrolledFrame:
 
         self.vsb = Scrollbar(self.outer, orient=VERTICAL)
         self.vsb.pack(fill=Y, side=RIGHT)
-        self.canvas = Canvas(self.outer, highlightthickness=0, width=width, height=height, bg=bg)
+        self.canvas = Canvas(self.outer, highlightthickness=0, width=self.width, height=self.height, bg=bg)
         self.canvas.pack(side=LEFT, fill=BOTH, expand=True)
         self.canvas.config(yscrollcommand=self.vsb.set)
         # Défilement de la souris ne semble pas fonctionner avec juste "bind"; vous avez besoin d'utiliser
@@ -77,19 +77,19 @@ class VerticalScrolledFrame:
             # Tous les autres attributs (_w, children, etc.) sont passés à self.inner
             return getattr(self.inner, item)
 
-    def _on_frame_configure(self, event=None):
+    def _on_frame_configure(self, _=None):
         x1, y1, x2, y2 = self.canvas.bbox("all")
         height = self.canvas.winfo_height()
         width = self.canvas.winfo_width()
         self.canvas.config(scrollregion=(0, 0, x2, max(y2, height)))
         self.canvas.itemconfigure("all", width=width)
 
-    def _bind_mouse(self, event=None):
+    def _bind_mouse(self, _=None):
         self.canvas.bind_all("<4>", self._on_mousewheel)
         self.canvas.bind_all("<5>", self._on_mousewheel)
         self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
 
-    def _unbind_mouse(self, event=None):
+    def _unbind_mouse(self, _=None):
         self.canvas.unbind_all("<4>")
         self.canvas.unbind_all("<5>")
         self.canvas.unbind_all("<MouseWheel>")
@@ -161,19 +161,19 @@ class HorizontalScrolledFrame:
             # Tous les autres attributs (_w, children, etc.) sont passés à self.inner
             return getattr(self.inner, item)
 
-    def _on_frame_configure(self, event=None):
+    def _on_frame_configure(self, _=None):
         x1, y1, x2, y2 = self.canvas.bbox("all")
         height = self.canvas.winfo_height()
         width = self.canvas.winfo_width()
         self.canvas.config(scrollregion=(0, 0, x2, max(y2, height)))
         self.canvas.itemconfigure("all", width=width)
 
-    def _bind_mouse(self, event=None):
+    def _bind_mouse(self, _=None):
         self.canvas.bind_all("<4>", self._on_mousewheel)
         self.canvas.bind_all("<5>", self._on_mousewheel)
         self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
 
-    def _unbind_mouse(self, event=None):
+    def _unbind_mouse(self, _=None):
         self.canvas.unbind_all("<4>")
         self.canvas.unbind_all("<5>")
         self.canvas.unbind_all("<MouseWheel>")
@@ -282,7 +282,7 @@ class IntEntry(Frame):
         if self.value > self.min_value:
             self.set_value(self.value - 1)
 
-    def _on_focus_out(self, event):
+    def _on_focus_out(self, _):
         """
         Gère la valeur de l'entrée une fois celui-ci quitté par l'utilisateur.
         """
@@ -382,7 +382,6 @@ class TimerEntry(Frame):
                 self.minutes = 0
                 self.string_var_minutes.set(str(self.minutes))
         elif event.widget == self.entry_seconds:
-            old_seconds = self.seconds
             if self.entry_seconds.get() == "":
                 self.string_var_seconds.set(str(self.seconds))
             elif self.entry_seconds.get() == "-":
@@ -478,7 +477,7 @@ class TagsEntry(Frame):
 
         self._update_tags()
 
-    def _add_tag(self, event=None) -> None:
+    def _add_tag(self, _=None) -> None:
         """
         Ajoute une nouvelle étiquette dans la liste
         """
@@ -501,7 +500,7 @@ class TagsEntry(Frame):
         """
         clear_frame(self.frame_tags.inner)
         for tag in self.tags:
-            button = Button(self.frame_tags.inner, text=tag + " ⨂", command=lambda tag=tag: self._remove_tag(tag))
+            button = Button(self.frame_tags.inner, text=tag + " ⨂", command=lambda tg=tag: self._remove_tag(tg))
             button.pack(side=LEFT)
 
     def _on_click(self, event):

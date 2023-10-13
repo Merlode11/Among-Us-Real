@@ -3,7 +3,6 @@ from time import perf_counter
 from sys import stderr
 import socket
 
-
 BASE_IP = "192.168.0.%i"
 PORT = 2333
 
@@ -28,6 +27,7 @@ class Threader:
 
     This class also provides a lock called: `<Threader>.print_lock`
     """
+
     def __init__(self, threads=30):
         self.thread_lock = Lock()
         self.functions_lock = Lock()
@@ -51,7 +51,7 @@ class Threader:
             thread = Thread(target=self.worker, daemon=True)
             # We need to pass in `thread` as a parameter so we
             # have to use `<threading.Thread>._args` like this:
-            thread._args = (thread, )
+            thread._args = (thread,)
             self.threads.append(thread)
             thread.start()
 
@@ -60,7 +60,7 @@ class Threader:
         for thread in self.threads:
             thread.join()
 
-    def worker(self, thread:Thread) -> None:
+    def worker(self, thread: Thread) -> None:
         # While we are running and there are functions to call:
         while self.running and (len(self.functions) > 0):
             # Get a function
@@ -81,7 +81,7 @@ start = perf_counter()
 socket.setdefaulttimeout(0.2)
 
 
-def connect(hostname, port, list_of_ips, threader:Threader):
+def connect(hostname, port, list_of_ips, threader: Threader):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         result = sock.connect_ex((hostname, port))
     with threader.print_lock:
@@ -94,7 +94,7 @@ def find_airmore_ip() -> list:
     threader = Threader(10)
     found_ips = []
     for i in range(255):
-        threader.append(connect, BASE_IP%i, PORT, found_ips)
+        threader.append(connect, BASE_IP % i, PORT, found_ips)
     threader.start()
     threader.join()
     return found_ips
