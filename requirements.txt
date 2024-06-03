@@ -3,5 +3,5 @@ playsound==1.2.2
 Flask~=3.0.3
 pyqrcode~=1.2.1
 pypng~=0.20220715.0
-requests~=2.32.2
+requests~=2.32.3
 instagrapi~=2.1.2
