@@ -5,6 +5,7 @@ from sms.sms_game_class import SMSGame
 from web.web_game_class import WebGame
 from whatsapp.whatsapp_game_class import WhatsAppGame
 from instagram.instagram_game_class import InstagramGame
+from discord_us.discord_game_class import DiscordGame
 import os
 from config_settings import config_settings
 from player_config import player_config
@@ -146,6 +147,8 @@ def main():
             WhatsAppGame(game_master)
         elif config["manager_type"] == "instagram":
             InstagramGame(game_master)
+        elif config["manager_type"] == "discord":
+            DiscordGame(game_master)
         else:
             messagebox.showerror("Erreur", "Le gestionnaire de jeu n'est pas reconnu", parent=window)
         main()

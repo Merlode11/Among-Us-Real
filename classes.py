@@ -157,6 +157,40 @@ class InstaPlayer(Player):
         return f"{self.name}"
 
 
+class DiscordPlayer(Player):
+    def __init__(self, display_name: str, username: str, discord_id: int, used_passwords: list, used_id: list):
+        super().__init__(used_passwords, used_id)
+        self.display_name: str = display_name
+        self.username: str = username
+        self.discord_id: int = discord_id
+
+    def get_str(self, game) -> str:
+        """
+        Renvoie un affichage du joueur afin de l'afficher dans la fenêtre de la partie
+        :param game: Game: La partie actuelle
+        :return: str: L'affichage de l'identité du joueur
+        """
+        if game.game_master:
+            if self.dead:
+                return f"☠ {self.display_name} ({game.config['names'][self.role]}): \
+                {self.username} "
+            return f"{self.display_name} ({game.config['names'][self.role]}): {self.username}"
+        else:
+            if self.dead and not game.config["show_dead_roles"]:
+                return f"☠ {self.display_name}: {self.username}"
+            elif self.dead:
+                return f"☠ {self.display_name} ({game.config['names'][self.role]}): \
+                {self.username}"
+        return f"{self.display_name}: {self.username}"
+
+    def get_name(self) -> str:
+        """
+        Renvoie l'affichage du nom du joueur pour les autres joueurs
+        :return: str: Le nom du joueur
+        """
+        return f"{self.display_name}"
+
+
 class BasicTask:
     type: str = "basic"
 

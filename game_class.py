@@ -709,7 +709,7 @@ class Game:
                                                                                          "Voulez-vous recommencer ?")
             self.end_game()
         elif self.game_master:
-            messagebox.showinfo("Succès", f"{str(player)} a confirmé avoir réalisé la tâche {task.name} !",
+            messagebox.showinfo("Succès", f"{player.get_name()} a confirmé avoir réalisé la tâche {task.name} !",
                                 parent=self.window)
 
 
