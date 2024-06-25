@@ -1,4 +1,4 @@
-# Déroulement d'une partie par SMS
+# Déroulement d'une partie par SMS/Whatsapp
 
 ## Initialisation 
 Pour commencer, avant de démarrer une partie, il faut enregistrer les joueurs qui vont participer au jeu.
@@ -29,10 +29,10 @@ La liste des tâches est envoyée en premier lieu dans le message de début de p
 La tâche basique est très simple: on se rend sur le lieu de la tâche, on la réalise, et pour la valider, il faut faire la commande `fait TÂCHE` pour enregistrer la tâche comme faite pour l'ordinateur.
 
 #### La validation
-Cette tâche avec validation demande de faire la tâche, et pour la valider, il faut mettre le mot donné en fin de tâche dans un SMS et l'envoyer. Si jamais ce mot est correct, la tâche sera validée.
+Cette tâche avec validation demande de faire la tache, et pour la valider, il faut mettre le mot donné en fin de tâche dans un SMS et l'envoyer. Si jamais ce mot est correct, la tâche sera validée.
 
 #### L'activation
-Une tâche avec activation demande d'envoyer un mot par SMS. Si ce mot est correct, alors on reçoit les informations enregistrées dans la tâche. C'est seulement après que l'on peut faire la tâche et la valider avec la commande `fait TÂCHE` par SMS.
+Une tâche avec activation demande d'envoyer un mot par SMS. Si ce mot est correct, alors on reçoit les informations enregistrées dans la tâche. C'est seulement après que l'on peut faire la tache et la valider avec la commande `fait TÂCHE` par SMS.
 
 #### La combinée
 Ce type de tâche est une combinaison des deux types précédents. La tâche demande d'être activée en envoyant un mot par SMS. Une fois les consignes reçues en retour, il faut envoyer un autre mot par SMS pour valider celle-ci.
