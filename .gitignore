@@ -41,4 +41,3 @@ __pycache__/
 /whatsapp/.wwebjs_auth/
 /whatsapp/.wwebjs_cache/
 */.idea/
-config.json
