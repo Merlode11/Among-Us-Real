@@ -5,3 +5,6 @@ pyqrcode~=1.2.1
 pypng~=0.20220715.0
 requests~=2.32.3
 instagrapi~=2.1.2
+pyairmore~=0.2.1a1
+MarkupSafe~=2.1.5
+discord~=2.3.2

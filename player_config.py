@@ -342,13 +342,17 @@ def player_config():
                 stock["phone"] = phone_entry = Entry(names_frame)
                 phone_label.grid(row=row_num, column=0)
                 phone_entry.grid(row=row_num, column=1)
-                row_num += 1
             elif player_type.get() == "instagram":
                 username_label = Label(names_frame, text="Nom d'utilisateur: ")
                 stock["username"] = username_entry = Entry(names_frame)
                 username_label.grid(row=row_num, column=0)
                 username_entry.grid(row=row_num, column=1)
             elif player_type.get() == "discord":
+                username_label = Label(names_frame, text="Nom d'utilisateur: ")
+                stock["username"] = username_entry = Entry(names_frame)
+                username_label.grid(row=row_num, column=0)
+                username_entry.grid(row=row_num, column=1)
+                row_num += 1
                 id_label = Label(names_frame, text="Identifiant d'utilisateur: ")
                 stock["id"] = id_entry = Entry(names_frame)
                 id_label.grid(row=row_num, column=0)
@@ -359,6 +363,7 @@ def player_config():
                 stock["id"] = id_entry = Entry(names_frame)
                 id_label.grid(row=row_num, column=0)
                 id_entry.grid(row=row_num, column=1)
+            row_num += 1
 
             play_label = Label(names_frame, text="Le joueur joue ?")
             play_button = YesNoButton(names_frame)
