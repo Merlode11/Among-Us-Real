@@ -312,6 +312,11 @@ class IntEntry(Frame):
         Définie une nouvelle valeur pour l'entrée
         """
         assert isinstance(value, int), "value doit-être un nombre entier (integer)"
+        # Make sure the new value doesn't exeed the range
+        if value > self.max_value:
+            value = self.max_value
+        elif value < self.min_value:
+            value = self.min_value
         self.value = value
         self.string_var.set(str(self.value))
         self.entry.delete(0, END)
