@@ -4,7 +4,7 @@ from sys import stderr
 import socket
 
 BASE_IP = "192.168.0.%i"
-PORT = 2333
+PORT = 8080
 
 
 class Threader:
@@ -77,7 +77,7 @@ class Threader:
 
 
 start = perf_counter()
-# I didn't need a timeout of 1 so I used 0.1
+# I didn't need a timeout of 1, so I used 0.1
 socket.setdefaulttimeout(0.2)
 
 
@@ -90,19 +90,19 @@ def connect(hostname, port, list_of_ips, threader: Threader):
             list_of_ips.append(hostname)
 
 
-def find_airmore_ip() -> list:
+def find_sms_ip(port: int = 8080) -> list:
     threader = Threader(10)
     found_ips = []
     for i in range(255):
-        threader.append(connect, BASE_IP % i, PORT, found_ips)
+        threader.append(connect, BASE_IP % i, port, found_ips)
     threader.start()
     threader.join()
     return found_ips
 
 
 if __name__ == "__main__":
-    ips = find_airmore_ip()
+    ips = find_sms_ip(PORT)
     print(f"[{perf_counter() - start:.5f}] Done searching")
     print(f"[{perf_counter() - start:.5f}] Found {len(ips)} IPs")
     print(f"[{perf_counter() - start:.5f}] IPs: {ips}")
-    input("Press enter to exit.\n?")
+    input("Press enter to exit.\n")

@@ -1,5 +1,4 @@
 from tkinter import messagebox
-from sms.airmore_manager import send_sms
 import re  # Importation du module pour faire des tests d'expressions régulières
 
 kills_cooldown = {}
@@ -57,15 +56,15 @@ class Command:
             if game.config.get("names") and game.config["names"].get(self.permission.lower()):
                 perm = game.config["names"][self.permission.lower()]
 
-            send_sms(player.phone, "Vous ne pouvez pas utiliser cette commande car vous n'êtes pas " + perm + " !")
+            game.send_info(player.phone, "Vous ne pouvez pas utiliser cette commande car vous n'êtes pas " + perm + " !")
             return True
         elif game.pause and not is_necessary:
-            send_sms(player.phone, "La partie est actuellement en pause. Vous ne pouvez pas faire de commandes")
+            game.send_info(player.phone, "La partie est actuellement en pause. Vous ne pouvez pas faire de commandes")
             return True
         elif game.end and not is_necessary:
-            send_sms(player.phone, "La partie est actuellement terminée. Vous ne pouvez plus faire de commandes")
+            game.send_info(player.phone, "La partie est actuellement terminée. Vous ne pouvez plus faire de commandes")
         elif game.meeting and self.name not in ["help", "sos", "vote"]:
-            send_sms(player.phone, "Une réunion est en cours. Vous ne pouvez pas faire de commandes")
+            game.send_info(player.phone, "Une réunion est en cours. Vous ne pouvez pas faire de commandes")
             return True
         else:
             self.execute(player, message, game)
@@ -114,9 +113,9 @@ class TaskCommand(Command):
                 string += "\n"
             if task.done:
                 "Tâche terminée !\n"
-            send_sms(player.phone, string)
+            game.send_info(player.phone, string)
         except (Exception,):
-            send_sms(player.phone, "Veuillez entrer un numéro de tâche valide !")
+            game.send_info(player.phone, "Veuillez entrer un numéro de tâche valide !")
 
 
 commands.append(TaskCommand())
@@ -154,7 +153,7 @@ class InfoCommand(Command):
         string += f"Il reste {len(game.done_tasks)}/{game.given_tasks} tâche pour les {game.config['names']['crewmate']}."
 
         string += f"\nVotre identifiant est {player.id}."
-        send_sms(player.phone, string)
+        game.send_info(player.phone, string)
 
 
 commands.append(InfoCommand())
@@ -178,7 +177,7 @@ class DeadsCommand(Command):
         :param game: La partie
         """
         if player.asks >= game.config["max_dead_check"]:
-            send_sms(player.phone, "Vous avez utilisé toutes vos demandes !")
+            game.send_info(player.phone, "Vous avez utilisé toutes vos demandes !")
         else:
             states = "Voici les états de chaque joueur:\n"
             for joueur in game.players:
@@ -189,7 +188,7 @@ class DeadsCommand(Command):
             player.asks += 1
             states += "\n Il vous reste " + str(game.config["max_dead_check"] - player.asks) + "/" + str(
                 game.config["max_dead_check"]) + " demandes."
-            send_sms(player.phone, states)
+            game.send_info(player.phone, states)
 
 
 commands.append(DeadsCommand())
@@ -220,16 +219,16 @@ class MortCommand(Command):
                 game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             elif response == "cancel":
                 print("Refused")
-                send_sms(player.phone, "Votre demande a été refusée par l'organisateur.ice")
+                game.send_info(player.phone, "Votre demande a été refusée par l'organisateur.ice")
         else:
             try:
                 dead = parse_player(message, game)[0]
                 if not dead.dead:
-                    send_sms(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
+                    game.send_info(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
                 else:
                     game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             except (Exception,):
-                send_sms(player.phone, "Veuillez entrer un joueur valide !")
+                game.send_info(player.phone, "Veuillez entrer un joueur valide !")
 
 
 commands.append(MortCommand())
@@ -251,25 +250,25 @@ class DoneCommand(Command):
         :param game: La partie
         """
         if player.role == "impostor":
-            return send_sms(player.phone, "Vous ne pouvez pas valider des tâches, vous êtes " + game.config["names"][
+            return game.send_info(player.phone, "Vous ne pouvez pas valider des tâches, vous êtes " + game.config["names"][
                 "impostor"] + ".")
         try:
             task_number = int(message.split(" ")[1])
             task = player.tasks[task_number - 1]
             if task.done:
-                send_sms(player.phone, "Vous avez déjà déclaré avoir fait la tâche " + str(task_number))
+                game.send_info(player.phone, "Vous avez déjà déclaré avoir fait la tâche " + str(task_number))
             elif "valid" in task.type:
-                send_sms(player.phone,
+                game.send_info(player.phone,
                          "Vous ne pouvez pas déclarer avoir fait la tâche " + str(task_number) + " par une commande")
             elif task.type == "activate_basic" and not task.active:
-                send_sms(player.phone, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(
+                game.send_info(player.phone, "Vous ne pouvez pas déclarer avoir fait la tâche " + str(
                     task_number) + " car elle n'est pas encore active")
             else:
                 game.task_done(player, task)
                 game.send_info(player, f"Votre tâche {task.name} a été confirmée comme faite !")
         except Exception as e:
             print(e)
-            send_sms(player.phone, "Veuillez entrer un numéro de tâche valide !")
+            game.send_info(player.phone, "Veuillez entrer un numéro de tâche valide !")
 
 
 commands.append(DoneCommand())
@@ -295,7 +294,7 @@ class HelpCommand(Command):
             string = "Voici toutes les commandes disponibles:\n"
             for command in commands:
                 string += command.usage + ": " + command.description + "\n"
-            send_sms(player.phone, string)
+            game.send_info(player.phone, string)
         else:
             command_str = message.split(" ")[1]
             command = None
@@ -304,7 +303,7 @@ class HelpCommand(Command):
                     command = cmd
                     break
             string = command.get_help(game.config)
-            send_sms(player.phone, string)
+            game.send_info(player.phone, string)
 
 
 commands.append(HelpCommand())
@@ -335,7 +334,7 @@ class SOSCommand(Command):
         game.pause = True
         game.pause_reason = ' '.join(message.split(' ')[1:])
         code = game.set_pause_game()
-        send_sms(player.phone,
+        game.send_info(player.phone,
                  f"Votre demande d'aide a bien été transmise aux autres joueurs. Le code pour rétablir la partie normalement est '{code}'")
         if game.game_master:
             messagebox.showerror(f"{player.get_name()} a besoin d'aide",
@@ -363,7 +362,7 @@ class KillCommand(Command):
         """
         player_id = re.match(r"\d{3}", message.split(" ")[1])
         if kills_cooldown.get(player.id):
-            send_sms(player.phone, "Vous ne pouvez pas tuer tout de suite")
+            game.send_info(player.phone, "Vous ne pouvez pas tuer tout de suite")
             return
         to_kill_player = None
         for joueur in game.players:
@@ -371,13 +370,13 @@ class KillCommand(Command):
                 to_kill_player = joueur
         if to_kill_player:
             if to_kill_player.id == player.id:
-                send_sms(player.phone, "Vous ne pouvez pas vous tuer vous-même")
+                game.send_info(player.phone, "Vous ne pouvez pas vous tuer vous-même")
                 return
             else:
                 game.kill_player(to_kill_player)
-                send_sms(player.phone, f"Le joueur {to_kill_player.get_name()} a bien été tué de votre part !")
+                game.send_info(player.phone, f"Le joueur {to_kill_player.get_name()} a bien été tué de votre part !")
         else:
-            send_sms(player.phone,
+            game.send_info(player.phone,
                      "Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.")
 
 
@@ -399,31 +398,31 @@ class VoteCommand(Command):
         Voter pour une personne
         """
         if game.meeting != "vote":
-            send_sms(player.phone, "Il n'y a pas de période de vote en cours !")
+            game.send_info(player.phone, "Il n'y a pas de période de vote en cours !")
             return
         else:
             if player.id in game.meeting_votes.keys():
-                send_sms(player.phone, "Vous avez déjà voté !")
+                game.send_info(player.phone, "Vous avez déjà voté !")
                 return
             else:
                 if message.split(" ")[1] == "0" or message.split(" ")[1] == "skip" or message.split(" ")[1] == "passer":
                     game.meeting_votes[player.id] = "0"
-                    send_sms(player.phone, "Vous avez voté pour passer !")
+                    game.send_info(player.phone, "Vous avez voté pour passer !")
                 voted_player: list = parse_player(message, game)
                 if len(voted_player) > 1:
                     players_str = ""
                     for i, player in enumerate(voted_player):
                         players_str += f"{i + 1} - {player.get_name()}\n"
-                    send_sms(player.phone,
+                    game.send_info(player.phone,
                              f"Plusieurs joueurs ont été trouvés:\n{players_str}Veuillez réessayer en précisant le numéro du joueur:\nvote NUMERO")
                     return
                 elif voted_player is None or len(voted_player) == 0:
-                    send_sms(player.phone, "Aucun joueur n'a été trouvé avec ce nom !")
+                    game.send_info(player.phone, "Aucun joueur n'a été trouvé avec ce nom !")
                     return
                 else:
                     voted_player_obj = voted_player[0]
                     game.meeting_votes[player.id] = voted_player_obj.id
-                    send_sms(player.phone, f"Vous avez voté pour {voted_player_obj.get_name()} !")
+                    game.send_info(player.phone, f"Vous avez voté pour {voted_player_obj.get_name()} !")
                     game.timer.show_players()
                     return
 

@@ -4,7 +4,7 @@ import re
 from tkinter import *
 from tkinter import messagebox, ttk
 from utils import YesNoButton, VerticalScrolledFrame, IntEntry, TimerEntry
-from check_devices import find_airmore_ip
+from check_devices import find_sms_ip
 
 
 def config_settings():
@@ -95,6 +95,7 @@ def config_settings():
             "register_type": register_type.get(),
             "save_register": save_register_entry.get_value(),
             "ip": ip,
+            "port": 2333,
             "discord_token": discord_token,
             "telegram_token": telegram_token,
             "insta_username": insta_username_entry.get(),
@@ -126,7 +127,8 @@ def config_settings():
 
         loading_label.update()
 
-        ips = find_airmore_ip()
+        port = port_entry.get_value()
+        ips = find_sms_ip(port)
 
         if len(ips) == 0:
             messagebox.showinfo("Fin", "Aucune adresse IP n'a été trouvée", parent=founded_ip_window)
@@ -278,13 +280,33 @@ def config_settings():
     manager_type_entry.grid(row=row_num, column=1)
     row_num += 1
 
-    ip_label = Label(settings_frame, text="Adresse IP d'Airemore (vide si non utilisé): ")
+    port_label = Label(settings_frame, text="Port d'SMS-gate (vide si non utilisé): ")
+    port_entry = IntEntry(settings_frame, value=config.get("port", 8080), min_value=1023, max_value=65535)
+    port_label.grid(row=row_num, column=0)
+    port_entry.grid(row=row_num, column=1)
+    row_num += 1
+
+    ip_label = Label(settings_frame, text="Adresse IP d'SMS-gate (vide si non utilisé): ")
     ip_entry = Entry(settings_frame)
     ip_entry.insert(0, config.get("ip", ""))
     foud_ip_button = Button(settings_frame, text="Trouver l'adresse IP", command=found_ip)
     ip_label.grid(row=row_num, column=0)
     ip_entry.grid(row=row_num, column=1)
     foud_ip_button.grid(row=row_num, column=2)
+    row_num += 1
+
+    sms_username_label = Label(settings_frame, text="Nom d'utilisateur SMS-gate: ")
+    sms_username_entry = Entry(settings_frame)
+    sms_username_entry.insert(0, config.get("sms_username", ""))
+    sms_username_label.grid(row=row_num, column=0)
+    sms_username_entry.grid(row=row_num, column=1)
+    row_num += 1
+
+    sms_password_label = Label(settings_frame, text="Mot de passe SMS-gate: ")
+    sms_password_entry = Entry(settings_frame)
+    sms_password_entry.insert(0, config.get("sms_password", ""))
+    sms_password_label.grid(row=row_num, column=0)
+    sms_password_entry.grid(row=row_num, column=1)
     row_num += 1
 
     discord_token_label = Label(settings_frame, text="Token du bot Discord: ")

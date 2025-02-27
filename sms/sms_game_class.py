@@ -1,23 +1,80 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import os
 from tkinter import messagebox
-from sms.airmore_manager import send_sms, get_new_messages
+
+from android_sms_gateway import domain, client
+from android_sms_gateway.enums import WebhookEvent
+from android_sms_gateway.http import RequestsHttpClient
+from flask import Flask, request
+
 from classes import SMSPlayer
 from game_class import Game
 import json
 from sms.commands import commands
 import datetime
-from threading import Timer
+from threading import Timer, Thread
+import socket
 
 
 class SMSGame(Game):
     def __init__(self, game_master: bool = None):
         self.receive = True
         self.send_messages = []
-        Timer(1, self.start_recieve_sms).start()
+        self.server = app = Flask(__name__)
+
+        @app.post("/message")
+        def message():
+            data = request.json.get("data", {}).get("payload", {})
+            joueur = next((player for player in self.players if
+                           player.phone == data["phoneNumber"]), None)
+            if self.import_window is not None:
+                if self.register_code in data["message"]:
+                    if joueur is not None:
+                        return self.send_info(joueur, "Vous êtes déjà enregistré dans la partie !")
+                    new_player = {
+                        "type": "sms",
+                        "name": data["message"].replace(self.register_code, ""),
+                        "phone": f"{data['phoneNumber']}",
+                        "play": True,
+                    }
+                    player = SMSPlayer(new_player["name"], new_player["phone"], self.used_passwords, self.used_id)
+                    self.players.append(player)
+                    if self.config["save_register"]:
+                        players = []
+                        if os.path.exists("players.json"):
+                            with open("players.json", "r", encoding="utf-8") as file:
+                                players = json.load(file)
+                        players.append(new_player)
+                        with open("players.json", "w", encoding="utf-8") as file:
+                            json.dump(players, file, indent=4, ensure_ascii=False)
+                    self.send_info(player, "Vous êtes bien entré dans la partie !")
+                    self.import_players()
+                    return True
+            if not self.check_command(joueur, data):
+                string = "Nouveau message de " + joueur.get_name() + " (" + joueur.phone + ") :\n"
+                string += data["message"]
+                messagebox.showinfo(f"Message de {joueur.get_name()}", string)
+            return "OK", 200
+
+        self.flt = flt = Thread(target=lambda: app.run(port=3046, debug=False))
+        flt.daemon = True
+        flt.start()
 
         super().__init__(game_master)
+
+        with RequestsHttpClient() as h, client.APIClient(
+                self.config["sms_username"],
+                self.config["sms_password"],
+                base_url=f"http://{self.config['ip']}:{self.config['port']}" + ("/3rdparty/v1" if "api.sms-gate.app" in self.config['ip'] else ""),
+                http=h,
+        ) as c:
+            self.client = c
+            # Get the actual local IP
+            ip = socket.gethostbyname(socket.gethostname())
+            self.webhook = c.create_webhook(
+                domain.Webhook("Webhook1", f"http://{ip}:3046/message",
+                               WebhookEvent.SMS_RECEIVED))
 
         print("Chargement des joueurs")
 
@@ -48,11 +105,15 @@ class SMSGame(Game):
             new_message = new_message.replace("{password}", player.password)
 
             print(player.name, ":", new_message)
-            send_sms(player.phone, new_message)
+            self.send_info(player, new_message)
 
     def send_info(self, player: SMSPlayer, message: str):
         print(player.name, ":", message)
-        send_sms(player.phone, message)
+        sms = domain.Message(
+            message,
+            [player.phone],
+        )
+        self.client.send(sms)
 
     def send_role(self, player) -> None:
         """
@@ -103,7 +164,7 @@ class SMSGame(Game):
             elif task.type == "activate_basic":
                 for word in task.activ_keywords:
                     if word in message:
-                        send_sms(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
+                        self.send_info(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
                         task.active = True
                         return True
             elif task.type == "activ_valid":
@@ -111,83 +172,27 @@ class SMSGame(Game):
                     if word in message:
                         if task.active:
                             self.task_done(player, task)
-                            send_sms(player.phone, "Vous avez bien validé la tâche !")
+                            self.send_info(player.phone, "Vous avez bien validé la tâche !")
                             return True
                         else:
-                            send_sms(player.phone, "La tâche n'est pas encore activée")
+                            self.send_info(player.phone, "La tâche n'est pas encore activée")
                             return True
                 for word in task.activ_keywords:
                     if word in message:
-                        send_sms(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
+                        self.send_info(player.phone, f"La tâche {task.name} vous envoie:\n{task.message}")
                         task.active = True
                         return True
 
         return False
 
-    def start_recieve_sms(self):
+    def end_game(self):
         """
-        Active la vérification périodique de la réception de SMS
+        Termine la partie
+        :return:
         """
-
-        def recieve():
-            try:
-                new = get_new_messages(self)
-            except Exception as e:
-                print(e)
-                new = []
-            if len(new) > 0:
-                for msg in new:
-                    if msg.content in self.send_messages:
-                        del self.send_messages[self.send_messages.index(msg.content)]
-                        continue
-                    joueur = next((joueur for joueur in self.players if joueur.phone == msg.phone), None)
-                    if self.check_command(joueur, msg.content):
-                        continue
-                    string = "Nouveau message de " + joueur.get_name() + " (" + joueur.phone + ") :\n"
-                    string += msg.content
-                    messagebox.showinfo(f"Message de {msg.phone}", string)
-
-            for player in self.players:
-                if player.last_message and player.last_message + self.config["min_before_inactiv_warn"] * 60 < int(
-                        datetime.datetime.now().timestamp()):
-                    print(player.get_name())
-                    print(player.last_message, int(datetime.datetime.now().timestamp()))
-                    print(player.last_message + self.config["min_before_inactiv_warn"] * 60 < int(datetime.datetime.now().timestamp()))
-                    print(player.name, ":", "n'a pas donné de ses nouvelles depuis", self.config["min_before_inactiv_warn"] * 60, "secondes")
-
-                    if player.last_warning and player.last_warning + self.config["min_before_inactiv_warn"] * 60 < int(
-                            datetime.datetime.now().timestamp()):
-                        print(player.name, ":", "n'a pas donné de ses nouvelles depuis", self.config["min_before_inactiv_warn"] * 60, "secondes")
-                        if player.warnings >= self.config["max_warns"]:
-                            print("Game pause")
-                            # self.send_info_all(
-                            #     f"{player.get_name()} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur")
-                            self.pause = True
-                            if self.game_master:
-                                messagebox.showerror("Un joueur ne répond pas",
-                                                     f"{player.get_name()} n'a pas donné de ses nouvelles depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Le jeu est donc en pause le temps qu'on retrouve le joueur. Un message a été envoyé à tout le monde.")
-                        else:
-                            print("Warning")
-                            # send_sms(player.phone,
-                            #          f"Il y a un problème ? Nous n'avons pas reçu de message depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Si tout va bien, renvoie un message pour que nous soyons sûr que tout va bien.")
-                            if self.game_master:
-                                messagebox.showwarning("Sans nouvelles d'un joueur",
-                                                       f"{player.get_name()} n'a plus envoyé de messages depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Un message d'avertissement lui a été envoyé. Une procédure d'urgence aura lieu automatiquement si on n'a pas de nouvelles dans {self.config['max_warns'] - player.warnings * self.config['min_before_inactiv_warn']} minutes")
-                        player.warnings += 1
-                        player.last_warning = int(datetime.datetime.now().timestamp())
-                    elif not player.last_warning:
-                        print("Warning")
-                        player.warnings += 1
-                        # send_sms(player.phone,
-                        #          f"Il y a un problème ? Nous n'avons pas reçu de message depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Si tout va bien, renvoie un message pour que nous soyons sûr que tout va bien.")
-                        if self.game_master:
-                            messagebox.showwarning("Sans nouvelles d'un joueur",
-                                                   f"{player.get_name()} n'a plus envoyé de messages depuis {self.config['min_before_inactiv_warn'] * player.warnings} minutes. Un message d'avertissement lui a été envoyé. Une procédure d'urgence aura lieu automatiquement si on n'a pas de nouvelles dans {self.config['max_warns'] - player.warnings * self.config['min_before_inactiv_warn']} minutes")
-                        player.last_warning = int(datetime.datetime.now().timestamp())
-                if self.receive:
-                    Timer(5, recieve).start()
-
-        Timer(2, recieve).start()
+        self.receive = False
+        self.client.delete_webhook(self.webhook.id)
+        self.window.destroy()
 
 
 if __name__ == '__main__':
