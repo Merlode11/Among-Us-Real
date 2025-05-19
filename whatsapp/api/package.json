@@ -15,7 +15,7 @@
   "author": "Merlode11",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.7.4",
+    "axios": "^1.8.2",
     "body-parser": "^1.20.2",
     "express": "^4.21.2",
     "puppeteer": "^22.12.0",
