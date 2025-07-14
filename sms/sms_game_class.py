@@ -61,13 +61,15 @@ class SMSGame(Game):
         flt.daemon = True
         flt.start()
 
-        super().__init__(game_master)
+        with open(os.path.dirname(os.path.abspath(__file__)).replace("\\sms", "") + "\\config.json", "r", encoding='utf-8') as f:
+            self.config = json.load(f)
 
         with RequestsHttpClient() as h, client.APIClient(
-                self.config["sms_username"],
-                self.config["sms_password"],
-                base_url=f"http://{self.config['ip']}:{self.config['port']}" + ("/3rdparty/v1" if "api.sms-gate.app" in self.config['ip'] else ""),
-                http=h,
+            self.config["sms_username"],
+            self.config["sms_password"],
+            base_url=f"http://{self.config['ip']}:{self.config['port']}" + (
+                "/3rdparty/v1" if "api.sms-gate.app" in self.config['ip'] else ""),
+            http=h,
         ) as c:
             self.client = c
             # Get the actual local IP
@@ -77,6 +79,8 @@ class SMSGame(Game):
                                WebhookEvent.SMS_RECEIVED))
 
         print("Chargement des joueurs")
+
+        super().__init__(game_master)
 
     def import_players(self):
         used_passwords: list = []

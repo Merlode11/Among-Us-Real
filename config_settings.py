@@ -283,7 +283,7 @@ def config_settings():
     row_num += 1
 
     port_label = Label(settings_frame, text="Port d'SMS-gate (vide si non utilisé): ")
-    port_entry = IntEntry(settings_frame, value=config.get("port", 8080), min_value=1023, max_value=65535)
+    port_entry = IntEntry(settings_frame, value=config.get("port", 8080), min_value=443, max_value=65535)
     port_label.grid(row=row_num, column=0)
     port_entry.grid(row=row_num, column=1)
     row_num += 1
