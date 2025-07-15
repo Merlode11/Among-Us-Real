@@ -1,0 +1,72 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Ajout des joueurs
+
+Pour ajouter des joueurs à une partie, plusieurs méthodes sont possibles :
+
+## 1. Ajout manuel dans le fichier `players.json`
+
+Vous pouvez éditer directement le fichier `players.json` à la racine du projet. Chaque joueur est représenté par un objet JSON. Le format attendu dépend du type de joueur :
+
+<Tabs>
+    <TabItem value="whatsapp" label="WhatsApp/SMS" default>
+        ```json
+        {
+            "type": "sms",
+            "name": "Alice",
+            "phone": "+33600000000",
+            "play": true
+        }
+        ```
+    </TabItem>
+    <TabItem value="instagram" label="Instagram">
+        ```json
+        {
+            "type": "instagram",
+            "name": "Bob",
+            "username": "bob_insta",
+            "play": false
+        }
+        ```
+    </TabItem>
+    <TabItem value="discord" label="Discord">
+        ```json
+        {
+            "type": "discord",
+            "name": "Charlie",
+            "id": "123456789012345678",
+            "play": true
+        }
+        ```
+    </TabItem>
+</Tabs>
+
+:::note
+Le champ `play` indique si le joueur participe à la partie en cours. Les champs spécifiques (`phone`, `username`, `id`) dépendent du type de joueur.
+:::
+
+## 2. Ajout via l'interface graphique
+
+Le logiciel propose une interface graphique pour gérer les joueurs : lancez le fichier `player_config.py` pour ouvrir la fenêtre de gestion. Vous pourrez :
+- Ajouter un joueur (tous types)
+- Modifier ou supprimer un joueur existant
+- Activer/désactiver la participation d'un joueur
+
+L'interface gère automatiquement la sauvegarde dans `players.json`.
+
+## 3. Ajout automatique lors de l'inscription
+
+Dans certains modes de jeu (Discord, Instagram, etc.), les joueurs peuvent s'inscrire eux-mêmes via une commande ou une interaction avec le bot. Leur profil sera alors ajouté automatiquement dans `players.json` avec les informations récupérées.
+
+:::note[**À savoir**]
+- Vérifiez que chaque joueur a un identifiant unique (`phone`, `username` ou `id` selon le type).
+- Le champ `play` permet de préparer une liste de joueurs et d'activer/désactiver leur participation sans les supprimer
+– Vous pouvez mélanger plusieurs types de joueurs dans le même fichier
+- Pour chaque partie, seuls les joueurs avec `play: true` seront pris en compte
+- L'interface graphique permet de visualiser et filtrer les joueurs par type
+:::
+
+:::tip
+Pour une première utilisation, privilégiez l'interface graphique pour éviter les erreurs de format.
+:::

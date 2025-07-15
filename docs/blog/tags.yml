@@ -1,19 +1,132 @@
-facebook:
-  label: Facebook
-  permalink: /facebook
-  description: Facebook tag description
-
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
-
-docusaurus:
-  label: Docusaurus
-  permalink: /docusaurus
-  description: Docusaurus tag description
-
-hola:
-  label: Hola
-  permalink: /hola
-  description: Hola tag description
+release:
+  label: Mise à jour
+  permalink: /release
+  description: Toutes les mises à jour de la plateforme.
+fonctionnalité:
+  label: Fonctionnalité
+  permalink: /fonctionnalite
+  description: Nouveautés et fonctionnalités majeures du jeu.
+sms:
+  label: SMS
+  permalink: /sms
+  description: Tout ce qui concerne le mode de jeu SMS et son évolution.
+configuration:
+  label: Configuration
+  permalink: /configuration
+  description: Personnalisation, réglages et options de partie.
+interface:
+  label: Interface
+  permalink: /interface
+  description: Interfaces graphiques, web ou autres.
+joueurs:
+  label: Joueurs
+  permalink: /joueurs
+  description: Gestion, inscription et expérience des joueurs.
+tâches:
+  label: Tâches
+  permalink: /taches
+  description: Système de tâches, validation et distribution.
+among-us:
+  label: Among Us
+  permalink: /among-us
+  description: Références et adaptations du jeu Among Us.
+irl:
+  label: IRL
+  permalink: /irl
+  description: Expérience de jeu grandeur nature.
+sos:
+  label: SOS
+  permalink: /sos
+  description: Mode d'urgence et gestion des alertes.
+réunion:
+  label: Réunion
+  permalink: /reunion
+  description: Système de réunion, discussion et vote.
+vote:
+  label: Vote
+  permalink: /vote
+  description: Fonctionnalités liées au vote en partie.
+son:
+  label: Son
+  permalink: /son
+  description: Ambiance sonore et signaux audio.
+gameplay:
+  label: Gameplay
+  permalink: /gameplay
+  description: Mécaniques et expérience de jeu.
+expérience:
+  label: Expérience
+  permalink: /experience
+  description: Retour d'expérience utilisateur et immersion.
+web:
+  label: Web
+  permalink: /web
+  description: Mode de jeu Web et interface navigateur.
+commandes:
+  label: Commandes
+  permalink: /commandes
+  description: Commandes disponibles pour les joueurs et organisateurs.
+architecture:
+  label: Architecture
+  permalink: /architecture
+  description: Structure logicielle et organisation du code.
+organisation:
+  label: Organisation
+  permalink: /organisation
+  description: Réorganisation, modularité et structure du projet.
+nouveauté:
+  label: Nouveauté
+  permalink: /nouveaute
+  description: Nouveautés et ajouts récents.
+whatsapp:
+  label: WhatsApp
+  permalink: /whatsapp
+  description: Mode de jeu WhatsApp et intégration bot.
+bot:
+  label: Bot
+  permalink: /bot
+  description: Intégration et gestion des bots (Discord, WhatsApp, Instagram).
+messagerie:
+  label: Messagerie
+  permalink: /messagerie
+  description: Intégration de messageries externes.
+mode-jeu:
+  label: Mode de jeu
+  permalink: /mode-jeu
+  description: Tous les modes de jeu disponibles.
+intégration:
+  label: Intégration
+  permalink: /integration
+  description: Intégration de services et d'API externes.
+instagram:
+  label: Instagram
+  permalink: /instagram
+  description: Mode de jeu Instagram et intégration bot.
+enregistrement:
+  label: Enregistrement
+  permalink: /enregistrement
+  description: Système d'inscription et d'enregistrement des joueurs.
+social:
+  label: Social
+  permalink: /social
+  description: Fonctionnalités sociales et réseaux sociaux.
+discord:
+  label: Discord
+  permalink: /discord
+  description: Mode de jeu Discord et intégration bot.
+android:
+  label: Android
+  permalink: /android
+  description: Intégration Android et passerelle SMS.
+gateway:
+  label: Gateway
+  permalink: /gateway
+  description: Passerelle SMS et gestion des messages.
+documentation:
+  label: Documentation
+  permalink: /documentation
+  description: Articles et guides sur la documentation du projet.
+blog:
+  label: Blog
+  permalink: /blog
+  description: Actualités, annonces et articles du blog.

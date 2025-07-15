@@ -86,33 +86,16 @@ function ModesSection() {
   );
 }
 
-function OpenSourceSection() {
-  return (
-    <section className={styles.openSourceSection}>
-      <div className="container">
-        <Heading as="h2">Un projet open source</Heading>
-        <p>
-          Among Us Real est entièrement open source. Vous pouvez consulter le code, proposer des améliorations, signaler des bugs ou participer à la documentation.
-        </p>
-        <p>
-          <Link to="https://github.com/AmongUsReal">Voir le dépôt GitHub</Link>
-        </p>
-      </div>
-    </section>
-  );
-}
-
 export default function Home(): ReactNode {
   return (
     <Layout
       title="Among Us Real – Accueil"
       description="Adaptation open source du jeu Among Us pour jouer partout, avec n'importe quel moyen de communication !">
       <HomepageHeader />
-      <main>
+      <main style={{padding: '20px 0'}}>
         <ProjectIntro />
-        <ModesSection />
         <HomepageFeatures />
-        <OpenSourceSection />
+        <ModesSection />
       </main>
     </Layout>
   );
