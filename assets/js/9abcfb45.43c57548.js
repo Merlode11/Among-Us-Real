@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkamong_us_real_docs=self.webpackChunkamong_us_real_docs||[]).push([[4301],{715:e=>{e.exports=JSON.parse('{"metadata":{"permalink":"/Among-US-real/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
