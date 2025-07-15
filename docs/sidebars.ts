@@ -17,16 +17,6 @@ const sidebars: SidebarsConfig = {
         'accueil',
         {
             type: 'category',
-            label: 'Gestionnaire du jeu',
-            items: [
-                'gestionnaire/configuration',
-                'gestionnaire/taches',
-                'gestionnaire/roles',
-                'gestionnaire/parametres',
-            ],
-        },
-        {
-            type: 'category',
             label: 'Joueur',
             items: [
                 'joueur/partie',
@@ -54,6 +44,28 @@ const sidebars: SidebarsConfig = {
                 'joueur/discord-partie',
                 'joueur/whatsapp-partie',
                 'joueur/instagram-partie',
+            ],
+        },
+        {
+            type: 'category',
+            label: 'Gestionnaire du jeu',
+            items: [
+                'gestionnaire/installation',
+                {
+                    type: 'category',
+                    label: "Configuration d'une partie",
+                    link: { type: 'doc', id: 'gestionnaire/configuration/index' },
+                    items: [
+                        'gestionnaire/configuration/ajout-joueurs',
+                        'gestionnaire/configuration/parametres',
+                        'gestionnaire/configuration/taches',
+                    ],
+                },
+                'gestionnaire/discord',
+                'gestionnaire/sms',
+                'gestionnaire/whatsapp',
+                'gestionnaire/web',
+                'gestionnaire/instagram',
             ],
         },
     ],

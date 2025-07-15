@@ -474,6 +474,102 @@ class VoteCommand(Command):
 commands.append(VoteCommand())
 
 
+class RulesCommand(Command):
+    def __init__(self):
+        super(RulesCommand, self).__init__(
+            "rules",
+            "Afficher les règles de votre rôle",
+            ["regles", "myrules", "mesregles", "règles", "régle", "rule", "règle", "regle"],
+            "rules",
+            "rules"
+        )
+
+    def execute(self, player, content: str, message, game):
+        """
+        Renvoie les règles adapté au rôle du joueur
+        :param player: Le joueur qui a exécuté la commande
+        :param content: str: Le message envoyé par le joueur
+        :param message: dict: Le message Whatsapp reçu
+        :param game: La partie
+        """
+        string = "*Voici les règles de " + game.config["names"][player.role] + ":*"
+        must_string = "Vous devez:\n"
+        allow_string = "Vous avez le droit:\n"
+        forbid_string = "Vous n'avez pas le droit:\n"
+        if player.role == "crewmate" or player.role == "engineer" or player.role == "scientist":
+            string += "Vous êtes des simples élèves de terminale. Vous vous retrouvez en sortie scolaire à La Chapelle en Valgaudémar car Buchewald c'est trop cher. Votre but est d'effectuer le maximum de tâches pour préparer votre prochain avenir et obtenir votre bac !"
+            must_string += """- Faire des tâches pour gagner la partie
+- Arrêter tout de suite la tâche que vous étiez en train de faire, envoyer un message au maître du jeu et aller vers le point de rendez-vous directement en cas de réunion demandée, même en étant mort
+- Signaler les tâches que vous avez faites au maître du jeu
+- Appeler le maître du jeu _puis les secours_ en cas de problème
+- Envoyer un message au mettre du jeu au moins une fois toutes les 5-10 minutes pour s'assurer que tout va bien _les tâches/éliminations font partie de ces messages_
+- Remettre la tâche que vous deviez faire comme elle était avant"""
+            allow_string += """
+- De signaler un corps tué
+- De demander une réunion d'urgence **retour au point de rendez-vous obligatoire**
+- De parler si jamais la personne est à côté de vous et qu'elle n'est pas morte"""
+            forbid_string += """- De courir
+- De tuer les autres
+- De saboter une tâche que d'autres Élèves viennent de faire (_cacher un élément, dégrader le matériel_)
+- De dire que vous avez fait une tâches alors que vous ne l'avez pas faite
+- De crier pour parler à quelqu'un  qui est loin
+- D'envoyer un message à quelqu'un d'autre que le maître du jeu sauf en cas d'urgence"""
+        if player.role == "engineer":
+            allow_string += "\n*- De courir comme les cancres car vous débordez d'énergie*"
+        elif player.role == "scientist":
+            allow_string += "\n*- De demander 4 fois dans toute la partie ceux qui sont vivants ou morts car vous avez les passes droits ;)*"
+
+        if player.role == "impostor":
+            string += "Vous êtes des \"imposteurs\" votre but est de saboter le bac de vos petits camarades. Éliminez lâchement les élèves en les touchant _pas sexuellement, Louis je te vois..._ et en disant le mot tant adoré \"défaite\""
+            must_string += """- Arrêter tout de suite la tâche que vous étiez en train de faire, envoyer un message au maître du jeu et aller vers le point de rendez-vous directement en cas de réunion demandée
+- Signaler au maître du jeu toute élimination que vous faites
+- Appeler le maître du jeu _puis les secours_ en cas de problème
+- Envoyer un message au mettre du jeu au moins une fois toutes les 5-10 minutes pour s'assurer que tout va bien _les tâches/éliminations font partie de ces messages_
+- Remettre la tâche que vous deviez faire comme elle était avant"""
+            allow_string += """
+            - De courir
+- De tuer les autres
+- De faire des tâches **réellement** mais elles ne compteront pas dans les tâches finales
+- De parler si jamais la personne est à côté de vous
+- De demander une réunion d'urgence **retour au point de rendez-vous obligatoire**
+- De signaler un corps découvert"""
+            forbid_string += """- De saboter une tâche que des élèves viennent de faire (_cacher un élément, dégrader le matériel_)
+- De crier pour parler à quelqu'un qui est loin
+- D'envoyer un message à quelqu'un d'autre que le maître du jeu sauf en cas d'urgence"""
+
+        if player.dead:
+            must_string += """- Rester à votre lieux de mort jusqu'à ce que vous soyez découvert ou jusqu'à la prochaine réunion demandée
+- **OBLIGATOIREMENT** porter un couvre-chef
+- Finir vos tâches
+- Vous asseoir et vous taire lorsque vous êtes tués le temps d'une réunion
+- Remettre la tâche que vous deviez faire comme elle était avant"""
+            allow_string += "- De courir"
+            forbid_string += """- De parler aux vivants
+- De signaler un corps tué
+- De demander une réunion d'urgence
+- De tuer les autres"""
+
+        string += "\n" + must_string + "\n\n" + allow_string + "\n\n" + forbid_string + "\n\n"
+
+        string += """*Réunions*
+
+- Si vous souhaitez signaler un corps, envoyez un message au maître du jeu qui se chargera d'avertir les autres de la réunion
+- Pour faire des réunions d'urgence, il faut aller voir le maître du jeu, qui sera au point central indiqué sur votre carte
+- À chaque réunion déclenchée, tous les joueurs devront **obligatoirement** arrêter leur tâche et se diriger vers le point de rendez-vous"""
+
+        string += """*Communications:*
+        
+- Vous devez pouvoir être joignable. Ainsi, vos téléphones doivent être chargés et doivent être sur le mode "sonnerie"
+- Toutes informations concernant les tâches, les signalements devront passer par message au mettre du jeu
+- Le maître du jeu enverra des messages type "groupé" pour que tout le monde puisse recevoir en même temps la notification et arrêter la tâche effectuée
+- Il faut répondre que vous êtes sur le chemin pour que l'on s'assure que vous êtes bien partis. Dans le cas contraire, le maître du jeu vous appellera dans la minute qui suit"""
+
+        send_message(player.phone, string, {"quotedMessageId": message.get("id")})
+        return
+
+
+commands.append(RulesCommand())
+
 
 def parse_player(content: str, game) -> list:
     """

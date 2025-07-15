@@ -21,9 +21,11 @@ Ce projet open source vise à rendre l'expérience Among Us accessible à tous, 
 
 ## Histoire du projet
 
-Le projet est né en 2021, lors d'une période où les vidéos sur une célèbre plateforme à propos sur la réalisation du jeu Among Us directement en réel prenaient de l'ampleur. L'objectif était de permettre à des groupes d'amis, de familles ou de collègues de jouer à Among Us sans matériel ou logiciel spécifique, simplement avec leurs téléphones ou leurs outils de communication habituels.
+Le projet est né en 2021, à une époque où les vidéos sur une célèbre plateforme montrant la réalisation du jeu Among Us en direct prenaient de l'ampleur.
+Notre premier objectif était de créer une interface simple permettant à notre groupe d'amis de jouer à Among Us dans la vraie vie, simplement avec des téléphones portables.
+Le projet a finalement pris de l'ampleur et notre objectif est désormais de permettre à des groupes d'amis, de famille ou de collègues de jouer à Among Us sans matériel ni logiciel spécifique, simplement avec leurs téléphones ou leurs outils de communication habituels.
 
-Au fil des années, le projet s'est enrichi de nouveaux modes de jeu et d'une documentation complète.
+Au fil des années, le projet s'est enrichi de nouveaux modes de jeu et d'une documentation complète !
 
 ## Fonctionnalités principales
 
@@ -79,6 +81,7 @@ Le logiciel Among Us Real ne collecte aucune donnée personnelle sans consenteme
 ## Remerciements
 
 Merci à tous les contributeurs, testeurs, joueurs et membres de la communauté qui ont permis à ce projet d'exister et d'évoluer !
+Ce projet n'existerait pas sans mes amis qui ont joué, testé et donné leur avis sur les différentes fonctionnalités. Un grand merci à eux !
 
 ## Liens utiles
 
