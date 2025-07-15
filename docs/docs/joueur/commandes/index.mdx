@@ -1,0 +1,43 @@
+---
+id: index
+slug: /joueur/commandes
+sidebar_label: Commandes
+---
+
+# Commandes du jeu
+
+Among Us Real propose de nombreuses commandes pour simplifier l'expérience sur SMS, WhatsApp, Instagram, Discord et Telegram.
+
+## Pour les joueurs
+
+### Utiliser une commande
+Envoyez simplement un message au maître du jeu en commençant par le nom de la commande, par exemple : `info`. Si la commande nécessite un argument, ajoutez-le après : `tâche 1`.
+
+Vous recevrez une réponse automatique avec les informations demandées.
+
+### La commande d'aide
+La commande `aide` vous permet de découvrir toutes les commandes disponibles. Exemple : `aide` ou `aide tâche`.
+
+## Pour les développeurs
+
+Les commandes sont définies dans le fichier `commands.py`. Pour en créer une nouvelle :
+- Créez une classe héritant de `Command` (ex : `NomCommand`).
+- Définissez les paramètres :
+  - `name` : nom de la commande
+  - `description` : description de la commande
+  - `aliasas` : autres noms possibles
+  - `usage` : mode d'emploi
+  - `exemple` : exemple d'utilisation
+- Implémentez la méthode `execute` pour le comportement de la commande.
+- Ajoutez la commande à la liste `commands`.
+
+## Liste des commandes principales
+
+```mdx-code-block
+import DocCardList from '@theme/DocCardList';
+
+<DocCardList />
+```
+
+
+N'hésitez pas à utiliser la commande `aide` pour découvrir toutes les possibilités !
