@@ -41,3 +41,5 @@ __pycache__/
 /whatsapp/.wwebjs_auth/
 /whatsapp/.wwebjs_cache/
 */.idea/
+
+/docs/node_modules
