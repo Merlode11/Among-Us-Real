@@ -18,7 +18,7 @@ const config: Config = {
   url: 'https://merlode11.github.io/',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/Among-US-Real/',
+  baseUrl: '/Among-Us-Real/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -88,7 +88,7 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/Merlode11/Among-US-real',
+          href: 'https://github.com/Merlode11/Among-US-Real',
           label: 'GitHub',
           position: 'right',
         },
@@ -128,7 +128,7 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/Merlode11/Among-US-real',
+              href: 'https://github.com/Merlode11/Among-US-Real',
             },
           ],
         },
