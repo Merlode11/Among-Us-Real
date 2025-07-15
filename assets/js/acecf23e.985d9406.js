@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkamong_us_real_docs=self.webpackChunkamong_us_real_docs||[]).push([[1903],{1912:s=>{s.exports=JSON.parse('{"blogBasePath":"/Among-US-real/blog","blogTitle":"Blog","authorsListPath":"/Among-US-real/blog/authors"}')}}]);
