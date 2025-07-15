@@ -1,4 +1,4 @@
-# Among-US-real
+# Among-US-Real
 Jouez avec vos amis à un Among Us dans la vie réelle avec ce logiciel fait pour !
 
 ## Installation
