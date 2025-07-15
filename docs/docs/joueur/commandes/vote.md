@@ -19,7 +19,6 @@ Cette commande permet d'enregistrer votre vote lors des délibérations.
   Vous avez voté contre Bob !
   ```
 
-
 :::note
 Cette commande est uniquement disponible pendant les réunions. Vous ne pouvez pas voter en dehors de ces moments.
 :::

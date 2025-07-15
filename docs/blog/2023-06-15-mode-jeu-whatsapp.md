@@ -36,7 +36,7 @@ La mise en place de ce mode s’est faite à travers les commits suivants :
    Dans le fichier de configuration :
    ```json
    {
-     "manager_type": "whatsapp",
+     "manager_type": "whatsapp"
    }
    ```
 3. **Déroulement du jeu**  
@@ -46,9 +46,9 @@ La mise en place de ce mode s’est faite à travers les commits suivants :
 
 ## 🖱️ Exemples de commandes WhatsApp
 
-- `task` : Recevoir ses tâches.
-- `done` : Signaler une tâche accomplie.
-- `vote <nom>` : Voter lors d’un meeting.
+- `task` : recevoir ses tâches.
+- `done` : signaler une tâche accomplie.
+- `vote <nom>` : voter lors d’un meeting.
 
 ## ⚠️ Points d’attention
 

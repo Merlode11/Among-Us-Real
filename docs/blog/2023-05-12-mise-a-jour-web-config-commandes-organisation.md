@@ -22,8 +22,8 @@ Revenons en détail sur l’ensemble de ces nouveautés.
 La grande nouveauté de cette mise à jour est l’introduction d’un **mode de jeu Web**.  
 Grâce à une interface ergonomique, accessible depuis n’importe quel appareil connecté, vous pouvez :
 
-- Rejoindre une partie grâce à un simple code ou QR code
-- Recevoir vos rôles, tâches et instructions en temps réel, sans SMS ni messagerie tierce
+- Rejoindre une partie grâce à un simple code ou QR code.
+- Recevoir vos rôles, tâches et instructions en temps réel, sans SMS ni messagerie tierce.
 - Interagir durant la partie (voter, valider une tâche, signaler une découverte…) via des boutons ou formulaires intuitifs
 
 #### ⚙️ Points techniques
@@ -40,16 +40,16 @@ Grâce à une interface ergonomique, accessible depuis n’importe quel appareil
 
 Un **nouveau module de configuration** avancé fait son apparition :
 
-- **Choix des modes de jeu** (Web, SMS, *ou autre bientôt…*)
-- **Définition du nombre de joueurs, d’imposteurs, de tâches…**
-- Activation ou non de modules spéciaux (votant anonyme, confirmation de mort, etc.)
+- **Choix des modes de jeu** (Web, SMS, *ou autre bientôt…*).
+- **Définition du nombre de joueurs, d’imposteurs, de tâches…**.
+- Activation ou non de modules spéciaux (votant anonyme, confirmation de mort, etc.).
 - Gestion des options de communication et des paramètres de sécurité
 
 Tout se fait désormais via une page de configuration claire, avec sauvegarde automatique des préférences et possibilité de charger des configurations pré-enregistrées.
 
 #### 📁 Nouveaux fichiers/modules
 
-- Nouvelle API backend dédiée à la gestion de la configuration
+- Nouvelle API backend dédiée à la gestion de la configuration.
 - Refonte du schéma de configuration dans le backend Python pour supporter les nouvelles options
 
 ---
@@ -70,10 +70,10 @@ Les commandes du jeu ont été **entièrement repensées** pour :
 
 #### 🖱️ Exemples de commandes Web
 
-- **Valider une tâche** : bouton “Tâche accomplie”
-- **Signaler un corps** : bouton “Signaler”
-- **Voter** : liste déroulante avec les pseudos des joueurs
-- **Demander de l’aide** : bouton “Aide” ouvrant un popup explicative
+- **Valider une tâche** : bouton “Tâche accomplie”.
+- **Signaler un corps** : bouton “Signaler”.
+- **Voter** : liste déroulante avec les pseudos des joueurs.
+- **Demander de l’aide** : bouton “Aide” ouvrant un popup explicatif
 
 ---
 
@@ -83,10 +83,10 @@ Les commandes du jeu ont été **entièrement repensées** pour :
 
 Pour accompagner toutes ces nouveautés, le code du projet a été profondément réorganisé :
 
-- **Séparation nette entre backend (Python) et frontend (Web)**
-- Création de sous-modules pour chaque mode de jeu
-- Factorisation et mutualisation des fonctions communes (gestion des parties, joueurs, rôles, tâches…)
-- Ajout de nombreux tests automatisés pour sécuriser l’évolution rapide du projet
+- **Séparation nette entre backend (Python) et frontend (Web)**.
+- Création de sous-modules pour chaque mode de jeu.
+- Factorisation et mutualisation des fonctions communes (gestion des parties, joueurs, rôles, tâches…).
+- Ajout de nombreux tests automatisés pour sécuriser l’évolution rapide du projet.
 - Documentation interne enrichie pour faciliter la contribution communautaire
 
 #### 🗂️ Structure type
@@ -103,8 +103,8 @@ Among-Us-Real/
 
 ## 5️⃣ Améliorations annexes
 
-- Correction de nombreux bugs signalés par la communauté
-- Amélioration de l’ergonomie des interfaces
+- Correction de nombreux bugs signalés par la communauté.
+- Amélioration de l’ergonomie des interfaces.
 - Ajout d’un système de logs et d’alertes pour faciliter le support
 
 ---
@@ -112,7 +112,7 @@ Among-Us-Real/
 ## ✅ Conclusion
 
 Cette période marque un tournant pour **Among Us Real**, qui devient un véritable jeu connecté, accessible à tous et adaptable à toutes vos envies.  
-Essayez dès maintenant l’interface Web, explorez les nouveaux modules de configuration, testez les commandes enrichies :  
-**Votre expérience Among Us IRL n’a jamais été aussi fluide et fun !**
+Essayez dès maintenant l’interface Web, explorez les nouveaux modules de configuration, testez les commandes enrichies :
+**Votre expérience Among Us IRL n’a jamais été aussi fluide et fun !**
 
 N’hésitez pas à consulter la [documentation](https://merlode11.github.io/Among-Us-Real/docs/accueil) ou à remonter vos retours et suggestions sur le GitHub du projet.

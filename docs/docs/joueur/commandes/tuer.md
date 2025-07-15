@@ -16,18 +16,18 @@ Cette commande permet de déclarer l'assassinat d'un joueur.
 - **Exemple d'utilisation** :
   - `tuer 124`
 - **Exemple de retour** :
-  - Quand c'est bon
+  - Quand c'est bon: 
     ```
     Le joueur Alice a bien été tué de votre part !
     ```
-  - Quand le joueur n'existe pas
-  ```
-  Ce joueur n'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.
-  ```
-  - Quand on est sous cooldown
-  ```
-  Vous ne pouvez pas tuer tout de suite
-  ```
+  - Quand le joueur n'existe pas:
+    ```
+    Ce joueur n\'a pas été trouvé ?! Merci de vérifier que la personne a bien donné son matricule.
+    ```
+  - Quand on est sous cooldown :
+    ```
+    Vous ne pouvez pas tuer tout de suite
+    ```
       
 
 :::note

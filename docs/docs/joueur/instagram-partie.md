@@ -26,11 +26,10 @@ Découvrez le mode de jeu Among Us Real sur Instagram !
 - **À savoir** :
   - Les réponses doivent être claires et respecter le format attendu.
   - Les notifications Instagram peuvent parfois avoir un léger délai.
-  - Prévoir un téléphone chargé et une connexion internet stable.
+  - Prévoyez un téléphone chargé et une connexion internet stable.
 
 :::warning
 Assurez-vous de bien suivre le compte Instagram du jeu pour recevoir toutes les notifications et instructions.
 :::
 
 Consultez la section [Commandes](/docs/joueur/commandes) pour tous les détails sur les interactions possibles.
-

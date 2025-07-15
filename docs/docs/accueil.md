@@ -56,23 +56,23 @@ Une interface web pour centraliser la gestion des parties et offrir une expérie
 
 ## Pourquoi open source ?
 
-- Favoriser l'innovation et l'amélioration continue
-- Permettre à chacun d'adapter le jeu à ses besoins
-- Garantir la transparence sur le traitement des données
-- Encourager la contribution de la communauté
+- Favoriser l'innovation et l'amélioration continue.
+- Permettre à chacun d'adapter le jeu à ses besoins.
+- Garantir la transparence sur le traitement des données.
+- Encourager la contribution de la communauté.
 
 ## Comment contribuer ?
 
-1. Forkez le dépôt GitHub
-2. Proposez vos améliorations ou corrections via des pull requests
-3. Participez aux discussions et à la rédaction de la documentation
-4. Signalez les bugs ou proposez de nouvelles fonctionnalités
+1. Forkez le dépôt GitHub.
+2. Proposez vos améliorations ou corrections via des pull requests.
+3. Participez aux discussions et à la rédaction de la documentation.
+4. Signalez les bugs ou proposez de nouvelles fonctionnalités.
 
 ## Exemples d'utilisation
 
-- Organiser une partie dans une salle de classe avec des SMS
-- Animer une soirée entre collègues via WhatsApp
-- Tester le mode Instagram lors d'un événement public
+- Organiser une partie dans une salle de classe avec des SMS.
+- Animer une soirée entre collègues via WhatsApp.
+- Tester le mode Instagram lors d'un événement public.
 
 ## Sécurité et respect de la vie privée
 

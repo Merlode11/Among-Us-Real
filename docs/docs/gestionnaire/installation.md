@@ -12,16 +12,16 @@ Bienvenue dans la documentation d'installation du projet Among Us Real !
 - **Python 3.9+** (recommandé : 3.11)
 - **pip** (gestionnaire de paquets Python)
 - **Git** (pour cloner le dépôt)
-- **Node.js** (pour la partie whatsapp)
-- Accès à internet
+- **Node.js** (pour la partie WhatsApp)
+- Accès à Internet
 
 ## Étapes d'installation
 
 ### 1. Cloner le dépôt
 
 ```bash
-git clone https://github.com/Merlode11/Among-US-real.git
-cd Among-US-real
+git clone https://github.com/Merlode11/Among-Us-Real.git
+cd Among-Us-Real
 ```
 
 Vous pouvez aussi télécharger le projet en tant qu'archive ZIP depuis GitHub et l'extraire.
@@ -41,8 +41,8 @@ npm install
 
 ### 4. Configuration du projet
 
-- Copier le fichier `config-exemple.json` en `config.json` et l'adapter à votre configuration.
-- Adapter les fichiers de tâches et de joueurs si besoin.
+- Copiez le fichier `config-exemple.json` en `config.json` et adaptez-le à votre configuration.
+- Modifiez les fichiers de tâches et de joueurs si besoin.
 
 ### 5. Lancer le jeu
 
@@ -53,8 +53,9 @@ python main.py
 ```
 
 - *Pour lancer un mode spécifique (Discord, SMS, Instagram, WhatsApp, Web), voir la documentation dédiée à chaque mode dans la section Gestionnaire.*
+
 :::danger
-Le mode spécifique peut ne pas fonctionner en fonction du lieu où vous lancez la commande. Préférez toujours lancer le mode général.
+Le mode spécifique peut ne pas fonctionner selon l'endroit où vous lancez la commande. Préférez toujours lancer le mode général.
 :::
 
 ### 6. Tester la documentation localement (optionnel)
@@ -66,7 +67,7 @@ npm run start
 
 ## Conseils supplémentaires
 
-- Vérifiez que tous les ports nécessaires sont ouverts si vous utilisez des API externes (SMS, WhatsApp, etc).
+- Vérifiez que tous les ports nécessaires sont ouverts si vous utilisez des API externes (SMS, WhatsApp, etc.).
 - Consultez la documentation de chaque mode de jeu pour les configurations spécifiques.
 - En cas de problème, consultez le README ou ouvrez une issue sur GitHub.
 

@@ -14,7 +14,7 @@ Les paramètres permettent de personnaliser en profondeur le déroulement d'une 
 - **Nombre d'ingénieurs** (`engineers`) : nombre de joueurs pouvant réparer instantanément.
 - **Nombre de scientifiques** (`scientists`) : nombre de joueurs pouvant vérifier l'état des autres.
 - **Nombre de tâches par joueur** (`tasks`) : nombre de tâches attribuées à chaque joueur.
-- **Nombre maximum de distribution d'une tâche** (`max_task_given`) : limite de répartition d'une même tâche.
+- **Nombre maximum de distributions d'une tâche** (`max_task_given`) : limite de répartition d'une même tâche.
 - **Noms personnalisés des rôles** (`names`) : personnalisez les noms affichés pour chaque rôle.
 - **Nombre de consultations pour le scientifique** (`max_dead_check`) : nombre de vérifications autorisées.
 - **Présence d'un maître du jeu** (`game_master`) : active ou non la supervision par un organisateur.
@@ -28,7 +28,7 @@ Les paramètres permettent de personnaliser en profondeur le déroulement d'une 
 - **Type d'inscription des joueurs** (`register_type`) : inscription par liste ou directe.
 - **Enregistrement automatique des inscriptions** (`save_register`) : conserve ou non les inscriptions pour les prochaines parties.
 - **Paramètres spécifiques aux modes** :
-    - **IP et port** pour SMS-gate
+    - **IP et port** pour SMS-gateway
     - **Identifiants et tokens** pour Discord, Telegram, Instagram, WhatsApp
 
 Pour plus de détails, consultez le fichier `config.json` ou l'interface de configuration.

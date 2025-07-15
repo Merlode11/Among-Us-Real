@@ -224,7 +224,7 @@ class MortCommand(Command):
             try:
                 dead = parse_player(message, game)[0]
                 if not dead.dead:
-                    game.send_info(player.phone, "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort")
+                    game.send_info(player.phone, "Ce joueur ne peut pas être déclaré comme cadavre car il n'est pas mort")
                 else:
                     game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             except (Exception,):

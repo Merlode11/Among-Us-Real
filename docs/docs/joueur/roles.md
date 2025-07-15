@@ -17,22 +17,23 @@ Dans Among Us Real, chaque joueur reçoit un rôle qui influence sa façon de jo
 
 ### 2. Imposteur {#imposteur}
 - **But** : Éliminer les innocents sans se faire démasquer.
-- **Capacités** : Peut [tuer](/docs/joueur/commandes/tuer) (`tuer`), saboter, mentir lors des réunions, [voter](/docs/joueur/commandes/vote).
+- **Capacités** : Peut [tuer](/docs/joueur/commandes/tuer) (`tuer`), saboter, mentir lors des réunions et [voter](/docs/joueur/commandes/vote).
 - **Rareté** : 1 à 3 par partie selon le nombre de joueurs.
 
 ### 3. Scientifique {#scientifique}
-- **But** : Aider les [innocents](/docs/joueur/roles#innocent) à survivre.
-- **Capacités** : Peut utiliser la commande [morts](/docs/joueur/commandes/morts) pour voir l'état des joueurs, accomplir des tâches, [voter](/docs/joueur/commandes/vote).
+- **But** : Accomplir toutes les tâches et démasquer les [imposteurs](/docs/joueur/roles#imposteur).
+- **Capacités** : Peut utiliser la commande [morts](/docs/joueur/commandes/morts) pour voir l'état des joueurs, donner des indices lors des réunions, accomplir des tâches et [voter](/docs/joueur/commandes/vote).
 - **Rareté** : Rare (optionnel, 0 ou 1 par partie).
 
 ### 4. Maître du jeu {#maitre-du-jeu}
 - **But** : Organiser et surveiller la partie.
-- **Capacités** : Attribue les rôles, gère les paramètres, arbitre les litiges.
-- **Rareté** : Unique (1 par partie, non-joueur).
+- **Capacités** : Attribue les rôles, gère les paramètres et arbitre les litiges.
 
 ## Rôles spéciaux (optionnels) {#roles-speciaux}
 
-Selon les variantes ou extensions, d'autres rôles peuvent exister (ex : Ingénieur, Ange gardien, Caméléon, etc.), chacun avec des pouvoirs spécifiques.
+Selon les variantes ou extensions, d'autres rôles peuvent exister (ex : Ingénieur, Ange gardien, Caméléon, etc.), chacun avec des pouvoirs spécifiques qui seront définis par le maître du jeu. Ces rôles ajoutent de la complexité et de la stratégie au jeu.
+
+Ils ne sont pas implémentés par défaut dans Among Us Real, mais peuvent être ajoutés par le maître du jeu selon les préférences des joueurs, en ajoutant des règles spécifiques de la partie.
 
 ## Tableau récapitulatif {#tableau-roles}
 

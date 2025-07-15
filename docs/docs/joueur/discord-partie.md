@@ -6,7 +6,7 @@ sidebar_label: Partie Discord
 
 # Mode de jeu : Partie Discord
 
-Jouez à Among Us Real sur Discord !
+Découvrez comment se déroule une partie d'Among Us Real sur Discord !
 
 - Inscription des joueurs via le bot Discord
 - Attribution des rôles et gestion des tâches
@@ -22,11 +22,10 @@ Jouez à Among Us Real sur Discord !
 - **Prérequis** :
   - Avoir un compte Discord valide.
   - Rejoindre le serveur Discord de la partie.
-  - Autoriser les messages privés du bot, depuis le serveur.
+  - Autoriser les messages privés du bot depuis le serveur.
 - **À savoir** :
   - Les commandes sont souvent précédées d'un `/` ou d'un préfixe spécifique.
   - Les salons vocaux peuvent être utilisés pour les discussions lors des réunions.
-  - Respecter les règles du serveur et du bot.
+  - Respectez les règles du serveur et du bot.
 
 Consultez la section [Commandes](/docs/joueur/commandes) pour tous les détails sur les interactions possibles.
-

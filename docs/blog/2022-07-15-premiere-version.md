@@ -17,12 +17,12 @@ Aujourd’hui marque un grand jour pour le projet **Among Us Real** : la toute p
 
 Ce commit initial pose toutes les bases du jeu, avec un système complet et automatisé de gestion de partie :
 
-- **Gestion des joueurs** (avec nom, prénom, téléphone)
+- **Gestion des joueurs** (nom, prénom, téléphone)
 - **Attribution automatique des rôles** (imposteurs, ingénieurs, scientifiques, coéquipiers)
 - **Distribution aléatoire des tâches** (cognitives, dextérité, physiques)
-- **Interface graphique (Tkinter)** pour gérer et suivre la partie
-- **Interaction par SMS** grâce à l’intégration AirMore (envoi/réception de messages)
-- **Fichiers de configuration** (`config.json`, `tasks.json`, `players-exemple.json`) pour personnaliser chaque partie
+- **Interface graphique (Tkinter)** pour gérer et suivre la partie.
+- **Interaction par SMS** grâce à l’intégration AirMore (envoi/réception de messages).
+- **Fichiers de configuration** (`config.json`, `tasks.json`, `players-exemple.json`) pour personnaliser chaque partie.
 - **Validation des tâches** en direct et suivi de la progression de chaque joueur
 
 ---
@@ -41,11 +41,11 @@ L’interface propose un suivi en temps réel de la progression et permet à l�
 
 ### 📦 Les fichiers clés ajoutés
 
-- `main.py` : cœur du jeu, gestion de la partie
-- `tasks.json` : base de données des tâches à accomplir
-- `players-exemple.json` : exemple de joueurs
-- `config.json` : personnalisation des rôles et paramètres
-- `smsManager.py` : module d’envoi/réception de SMS
+- `main.py` : cœur du jeu, gestion de la partie.
+- `tasks.json` : base de données des tâches à accomplir.
+- `players-exemple.json` : exemple de joueurs.
+- `config.json` : personnalisation des rôles et paramètres.
+- `smsManager.py` : module d’envoi/réception de SMS.
 - `requirements.txt` : dépendances Python requises
 
 ---
@@ -59,7 +59,7 @@ L’interface propose un suivi en temps réel de la progression et permet à l�
 
 ---
 
-Merci à toutes celles et ceux qui testeront cette première version. N’hésitez pas à proposer des idées d’amélioration ou à remonter des bugs sur le dépôt GitHub. 🚀
+Merci à toutes celles et ceux qui testeront cette première version. N’hésitez pas à proposer des idées d’amélioration ou à remonter des bugs sur le dépôt GitHub 🚀
 
 ---
 
