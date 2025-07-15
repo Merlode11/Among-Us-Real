@@ -38,13 +38,13 @@
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="-une-interface-moderne-et-responsive">🎨 Une interface moderne et responsive<a href="https://merlode11.github.io/Among-Us-Real/blog/lancement-nouveau-site-web#-une-interface-moderne-et-responsive" class="hash-link" aria-label="Lien direct vers 🎨 Une interface moderne et responsive" title="Lien direct vers 🎨 Une interface moderne et responsive">​</a></h2>
 <p>Le site a été conçu pour être agréable à utiliser sur ordinateur, tablette et mobile. L'interface s'adapte à tous les écrans et met en avant les contenus essentiels :</p>
 <ul>
-<li>Navigation rapide entre la documentation, le blog et les ressources</li>
-<li>Accès direct aux guides d'installation et de configuration</li>
+<li>Navigation rapide entre la documentation, le blog et les ressources.</li>
+<li>Accès direct aux guides d'installation et de configuration.</li>
 <li>Liens vers le dépôt GitHub, la communauté et les réseaux sociaux</li>
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="-un-projet-open-source-pour-et-avec-la-communauté">🤝 Un projet open source, pour et avec la communauté<a href="https://merlode11.github.io/Among-Us-Real/blog/lancement-nouveau-site-web#-un-projet-open-source-pour-et-avec-la-communaut%C3%A9" class="hash-link" aria-label="Lien direct vers 🤝 Un projet open source, pour et avec la communauté" title="Lien direct vers 🤝 Un projet open source, pour et avec la communauté">​</a></h2>
-<p>Among Us Real reste un projet <strong>open source</strong>. Le site web est lui aussi ouvert à la contribution : vous pouvez proposer des corrections, des ajouts à la documentation ou de nouveaux articles de blog via GitHub.</p>
+<p>Among Us Real reste un projet <strong>open source</strong>. Le site web est lui aussi ouvert à la contribution : vous pouvez proposer des corrections, des ajouts à la documentation ou de nouveaux articles de blog via GitHub.</p>
 <p>N'hésitez pas à partager vos retours, vos idées et à rejoindre la communauté pour faire évoluer le projet !</p>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="-accédez-au-site">🔗 Accédez au site<a href="https://merlode11.github.io/Among-Us-Real/blog/lancement-nouveau-site-web#-acc%C3%A9dez-au-site" class="hash-link" aria-label="Lien direct vers 🔗 Accédez au site" title="Lien direct vers 🔗 Accédez au site">​</a></h2>
@@ -127,17 +127,23 @@
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="️-mise-en-place">🛠️ Mise en place<a href="https://merlode11.github.io/Among-Us-Real/blog/ajout-mode-jeu-discord#%EF%B8%8F-mise-en-place" class="hash-link" aria-label="Lien direct vers 🛠️ Mise en place" title="Lien direct vers 🛠️ Mise en place">​</a></h2>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="1️⃣-créez-un-bot-discord">1️⃣ Créez un bot Discord<a href="https://merlode11.github.io/Among-Us-Real/blog/ajout-mode-jeu-discord#1%EF%B8%8F%E2%83%A3-cr%C3%A9ez-un-bot-discord" class="hash-link" aria-label="Lien direct vers 1️⃣ Créez un bot Discord" title="Lien direct vers 1️⃣ Créez un bot Discord">​</a></h3>
 <ul>
-<li>Suivez <a href="https://discordpy.readthedocs.io/en/stable/discord.html" target="_blank" rel="noopener noreferrer">le guide officiel Discord.py</a> pour créer une application et un bot.</li>
-<li>Utilisez ce lien (en remplaçant <code>YOUR_CLIENT_ID</code> par l’ID de votre bot) pour l’inviter sur votre serveur :<!-- -->
+<li>
+<p>Suivez <a href="https://discordpy.readthedocs.io/en/stable/discord.html" target="_blank" rel="noopener noreferrer">le guide officiel Discord.py</a> pour créer une application et un bot.</p>
+</li>
+<li>
+<p>Utilisez ce lien (en remplaçant <code>YOUR_CLIENT_ID</code> par l’ID de votre bot) pour l’inviter sur votre serveur :</p>
 <div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token plain">https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&amp;scope=bot&amp;permissions=8</span><br></span></code></pre></div></div>
 </li>
 </ul>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="2️⃣-configurez-among-us-real">2️⃣ Configurez Among Us Real<a href="https://merlode11.github.io/Among-Us-Real/blog/ajout-mode-jeu-discord#2%EF%B8%8F%E2%83%A3-configurez-among-us-real" class="hash-link" aria-label="Lien direct vers 2️⃣ Configurez Among Us Real" title="Lien direct vers 2️⃣ Configurez Among Us Real">​</a></h3>
 <ul>
-<li>Ajoutez le token du bot dans le fichier <code>config.json</code> :<!-- -->
+<li>
+<p>Ajoutez le token du bot dans le fichier <code>config.json</code> :</p>
 <div class="language-json codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-json codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token punctuation" style="color:rgb(248, 248, 242)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">  </span><span class="token property">"discord_token"</span><span class="token operator">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(255, 121, 198)">"VOTRE_TOKEN_BOT"</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token punctuation" style="color:rgb(248, 248, 242)">}</span><br></span></code></pre></div></div>
 </li>
-<li>Choisissez le mode Discord dans le gestionnaire (<code>"manager_type": "discord"</code>).</li>
+<li>
+<p>Choisissez le mode Discord dans le gestionnaire (<code>"manager_type": "discord"</code>).</p>
+</li>
 </ul>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="3️⃣-inscription-des-joueurs">3️⃣ Inscription des joueurs<a href="https://merlode11.github.io/Among-Us-Real/blog/ajout-mode-jeu-discord#3%EF%B8%8F%E2%83%A3-inscription-des-joueurs" class="hash-link" aria-label="Lien direct vers 3️⃣ Inscription des joueurs" title="Lien direct vers 3️⃣ Inscription des joueurs">​</a></h3>
 <ul>
@@ -159,11 +165,11 @@
 <ul>
 <li>Les joueurs doivent autoriser les messages privés du bot pour recevoir les informations.</li>
 <li>Le bot doit avoir les autorisations nécessaires sur le serveur.</li>
-<li>Le mode Discord permet une gestion fluide et moderne de vos parties Among Us IRL !</li>
+<li>Le mode Discord permet une gestion fluide et moderne de vos parties Among Us IRL !</li>
 </ul>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="️-détails-techniques">🖥️ Détails techniques<a href="https://merlode11.github.io/Among-Us-Real/blog/ajout-mode-jeu-discord#%EF%B8%8F-d%C3%A9tails-techniques" class="hash-link" aria-label="Lien direct vers 🖥️ Détails techniques" title="Lien direct vers 🖥️ Détails techniques">​</a></h2>
 <ul>
-<li>De nouveaux fichiers ont été ajoutés, notamment : <code>discord_us/commands.py</code> et <code>discord_us/discord_game_class.py</code>.</li>
+<li>De nouveaux fichiers ont été ajoutés, notamment : <code>discord_us/commands.py</code> et <code>discord_us/discord_game_class.py</code>.</li>
 <li>La classe <code>DiscordPlayer</code> a été créée pour la gestion des joueurs Discord.</li>
 <li>L’intégration Discord repose sur la librairie <code>discord.py</code> et la gestion des slash commands.</li>
 </ul>
@@ -221,12 +227,12 @@
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="️-points-techniques">⚙️ Points techniques<a href="https://merlode11.github.io/Among-Us-Real/blog/mode-jeu-instagram-enregistrement-direct#%EF%B8%8F-points-techniques" class="hash-link" aria-label="Lien direct vers ⚙️ Points techniques" title="Lien direct vers ⚙️ Points techniques">​</a></h2>
 <ul>
 <li>Intégration du bot Instagram via la bibliothèque Python <a href="https://github.com/adw0rd/instagrapi" target="_blank" rel="noopener noreferrer">Instagrapi</a>.</li>
-<li>Refonte de la logique d’inscription pour permettre l’enregistrement en live avant le démarrage de la partie.</li>
+<li>Refonte de la logique d’inscription pour permettre l’enregistrement en direct avant le démarrage de la partie.</li>
 <li>Ajout de vérifications pour empêcher l’inscription après le lancement.</li>
 </ul>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="-conclusion">✅ Conclusion<a href="https://merlode11.github.io/Among-Us-Real/blog/mode-jeu-instagram-enregistrement-direct#-conclusion" class="hash-link" aria-label="Lien direct vers ✅ Conclusion" title="Lien direct vers ✅ Conclusion">​</a></h2>
 <p>Avec ces nouveautés, Among Us Real s’ouvre à de nouveaux usages : jouez où vous voulez, rapidement, et sur vos réseaux sociaux préférés !<br>
-<!-- -->Consulte les commits pour plus de détails sur l’implémentation technique.</p>]]></content>
+<!-- -->Consultez les commits pour plus de détails sur l’implémentation technique.</p>]]></content>
         <author>
             <name>Merlode</name>
             <uri>https://github.com/Merlode11</uri>
@@ -272,7 +278,7 @@
 <li>
 <p><strong>Renseigner les identifiants du bot</strong><br>
 <!-- -->Dans le fichier de configuration :</p>
-<div class="language-json codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-json codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token punctuation" style="color:rgb(248, 248, 242)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">  </span><span class="token property">"manager_type"</span><span class="token operator">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(255, 121, 198)">"whatsapp"</span><span class="token punctuation" style="color:rgb(248, 248, 242)">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token punctuation" style="color:rgb(248, 248, 242)">}</span><br></span></code></pre></div></div>
+<div class="language-json codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-json codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token punctuation" style="color:rgb(248, 248, 242)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">  </span><span class="token property">"manager_type"</span><span class="token operator">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(255, 121, 198)">"whatsapp"</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token punctuation" style="color:rgb(248, 248, 242)">}</span><br></span></code></pre></div></div>
 </li>
 <li>
 <p><strong>Déroulement du jeu</strong></p>
@@ -285,9 +291,9 @@
 </ol>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="️-exemples-de-commandes-whatsapp">🖱️ Exemples de commandes WhatsApp<a href="https://merlode11.github.io/Among-Us-Real/blog/mode-jeu-whatsapp#%EF%B8%8F-exemples-de-commandes-whatsapp" class="hash-link" aria-label="Lien direct vers 🖱️ Exemples de commandes WhatsApp" title="Lien direct vers 🖱️ Exemples de commandes WhatsApp">​</a></h2>
 <ul>
-<li><code>task</code> : Recevoir ses tâches.</li>
-<li><code>done</code> : Signaler une tâche accomplie.</li>
-<li><code>vote &lt;nom&gt;</code> : Voter lors d’un meeting.</li>
+<li><code>task</code> : recevoir ses tâches.</li>
+<li><code>done</code> : signaler une tâche accomplie.</li>
+<li><code>vote &lt;nom&gt;</code> : voter lors d’un meeting.</li>
 </ul>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="️-points-dattention">⚠️ Points d’attention<a href="https://merlode11.github.io/Among-Us-Real/blog/mode-jeu-whatsapp#%EF%B8%8F-points-dattention" class="hash-link" aria-label="Lien direct vers ⚠️ Points d’attention" title="Lien direct vers ⚠️ Points d’attention">​</a></h2>
 <ul>
@@ -326,8 +332,8 @@
 <p>La grande nouveauté de cette mise à jour est l’introduction d’un <strong>mode de jeu Web</strong>.<br>
 <!-- -->Grâce à une interface ergonomique, accessible depuis n’importe quel appareil connecté, vous pouvez :</p>
 <ul>
-<li>Rejoindre une partie grâce à un simple code ou QR code</li>
-<li>Recevoir vos rôles, tâches et instructions en temps réel, sans SMS ni messagerie tierce</li>
+<li>Rejoindre une partie grâce à un simple code ou QR code.</li>
+<li>Recevoir vos rôles, tâches et instructions en temps réel, sans SMS ni messagerie tierce.</li>
 <li>Interagir durant la partie (voter, valider une tâche, signaler une découverte…) via des boutons ou formulaires intuitifs</li>
 </ul>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="️-points-techniques">⚙️ Points techniques<a href="https://merlode11.github.io/Among-Us-Real/blog/mise-a-jour-web-config-commandes-organisation#%EF%B8%8F-points-techniques" class="hash-link" aria-label="Lien direct vers ⚙️ Points techniques" title="Lien direct vers ⚙️ Points techniques">​</a></h4>
@@ -341,15 +347,15 @@
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="️-personnalisez-entièrement-votre-expérience">🛠️ Personnalisez entièrement votre expérience !<a href="https://merlode11.github.io/Among-Us-Real/blog/mise-a-jour-web-config-commandes-organisation#%EF%B8%8F-personnalisez-enti%C3%A8rement-votre-exp%C3%A9rience" class="hash-link" aria-label="Lien direct vers 🛠️ Personnalisez entièrement votre expérience !" title="Lien direct vers 🛠️ Personnalisez entièrement votre expérience !">​</a></h3>
 <p>Un <strong>nouveau module de configuration</strong> avancé fait son apparition :</p>
 <ul>
-<li><strong>Choix des modes de jeu</strong> (Web, SMS, <em>ou autre bientôt…</em>)</li>
-<li><strong>Définition du nombre de joueurs, d’imposteurs, de tâches…</strong></li>
-<li>Activation ou non de modules spéciaux (votant anonyme, confirmation de mort, etc.)</li>
+<li><strong>Choix des modes de jeu</strong> (Web, SMS, <em>ou autre bientôt…</em>).</li>
+<li><strong>Définition du nombre de joueurs, d’imposteurs, de tâches…</strong>.</li>
+<li>Activation ou non de modules spéciaux (votant anonyme, confirmation de mort, etc.).</li>
 <li>Gestion des options de communication et des paramètres de sécurité</li>
 </ul>
 <p>Tout se fait désormais via une page de configuration claire, avec sauvegarde automatique des préférences et possibilité de charger des configurations pré-enregistrées.</p>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="-nouveaux-fichiersmodules">📁 Nouveaux fichiers/modules<a href="https://merlode11.github.io/Among-Us-Real/blog/mise-a-jour-web-config-commandes-organisation#-nouveaux-fichiersmodules" class="hash-link" aria-label="Lien direct vers 📁 Nouveaux fichiers/modules" title="Lien direct vers 📁 Nouveaux fichiers/modules">​</a></h4>
 <ul>
-<li>Nouvelle API backend dédiée à la gestion de la configuration</li>
+<li>Nouvelle API backend dédiée à la gestion de la configuration.</li>
 <li>Refonte du schéma de configuration dans le backend Python pour supporter les nouvelles options</li>
 </ul>
 <hr>
@@ -370,20 +376,20 @@
 </ul>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="️-exemples-de-commandes-web">🖱️ Exemples de commandes Web<a href="https://merlode11.github.io/Among-Us-Real/blog/mise-a-jour-web-config-commandes-organisation#%EF%B8%8F-exemples-de-commandes-web" class="hash-link" aria-label="Lien direct vers 🖱️ Exemples de commandes Web" title="Lien direct vers 🖱️ Exemples de commandes Web">​</a></h4>
 <ul>
-<li><strong>Valider une tâche</strong> : bouton “Tâche accomplie”</li>
-<li><strong>Signaler un corps</strong> : bouton “Signaler”</li>
-<li><strong>Voter</strong> : liste déroulante avec les pseudos des joueurs</li>
-<li><strong>Demander de l’aide</strong> : bouton “Aide” ouvrant un popup explicative</li>
+<li><strong>Valider une tâche</strong> : bouton “Tâche accomplie”.</li>
+<li><strong>Signaler un corps</strong> : bouton “Signaler”.</li>
+<li><strong>Voter</strong> : liste déroulante avec les pseudos des joueurs.</li>
+<li><strong>Demander de l’aide</strong> : bouton “Aide” ouvrant un popup explicatif</li>
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="4️⃣-nouvelle-organisation-et-amélioration-structurelle">4️⃣ Nouvelle organisation et amélioration structurelle<a href="https://merlode11.github.io/Among-Us-Real/blog/mise-a-jour-web-config-commandes-organisation#4%EF%B8%8F%E2%83%A3-nouvelle-organisation-et-am%C3%A9lioration-structurelle" class="hash-link" aria-label="Lien direct vers 4️⃣ Nouvelle organisation et amélioration structurelle" title="Lien direct vers 4️⃣ Nouvelle organisation et amélioration structurelle">​</a></h2>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="️-un-logiciel-plus-clair-plus-modulaire-et-plus-maintenable">🏗️ Un logiciel plus clair, plus modulaire et plus maintenable<a href="https://merlode11.github.io/Among-Us-Real/blog/mise-a-jour-web-config-commandes-organisation#%EF%B8%8F-un-logiciel-plus-clair-plus-modulaire-et-plus-maintenable" class="hash-link" aria-label="Lien direct vers 🏗️ Un logiciel plus clair, plus modulaire et plus maintenable" title="Lien direct vers 🏗️ Un logiciel plus clair, plus modulaire et plus maintenable">​</a></h3>
 <p>Pour accompagner toutes ces nouveautés, le code du projet a été profondément réorganisé :</p>
 <ul>
-<li><strong>Séparation nette entre backend (Python) et frontend (Web)</strong></li>
-<li>Création de sous-modules pour chaque mode de jeu</li>
-<li>Factorisation et mutualisation des fonctions communes (gestion des parties, joueurs, rôles, tâches…)</li>
-<li>Ajout de nombreux tests automatisés pour sécuriser l’évolution rapide du projet</li>
+<li><strong>Séparation nette entre backend (Python) et frontend (Web)</strong>.</li>
+<li>Création de sous-modules pour chaque mode de jeu.</li>
+<li>Factorisation et mutualisation des fonctions communes (gestion des parties, joueurs, rôles, tâches…).</li>
+<li>Ajout de nombreux tests automatisés pour sécuriser l’évolution rapide du projet.</li>
 <li>Documentation interne enrichie pour faciliter la contribution communautaire</li>
 </ul>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="️-structure-type">🗂️ Structure type<a href="https://merlode11.github.io/Among-Us-Real/blog/mise-a-jour-web-config-commandes-organisation#%EF%B8%8F-structure-type" class="hash-link" aria-label="Lien direct vers 🗂️ Structure type" title="Lien direct vers 🗂️ Structure type">​</a></h4>
@@ -391,15 +397,15 @@
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="5️⃣-améliorations-annexes">5️⃣ Améliorations annexes<a href="https://merlode11.github.io/Among-Us-Real/blog/mise-a-jour-web-config-commandes-organisation#5%EF%B8%8F%E2%83%A3-am%C3%A9liorations-annexes" class="hash-link" aria-label="Lien direct vers 5️⃣ Améliorations annexes" title="Lien direct vers 5️⃣ Améliorations annexes">​</a></h2>
 <ul>
-<li>Correction de nombreux bugs signalés par la communauté</li>
-<li>Amélioration de l’ergonomie des interfaces</li>
+<li>Correction de nombreux bugs signalés par la communauté.</li>
+<li>Amélioration de l’ergonomie des interfaces.</li>
 <li>Ajout d’un système de logs et d’alertes pour faciliter le support</li>
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="-conclusion">✅ Conclusion<a href="https://merlode11.github.io/Among-Us-Real/blog/mise-a-jour-web-config-commandes-organisation#-conclusion" class="hash-link" aria-label="Lien direct vers ✅ Conclusion" title="Lien direct vers ✅ Conclusion">​</a></h2>
 <p>Cette période marque un tournant pour <strong>Among Us Real</strong>, qui devient un véritable jeu connecté, accessible à tous et adaptable à toutes vos envies.<br>
-<!-- -->Essayez dès maintenant l’interface Web, explorez les nouveaux modules de configuration, testez les commandes enrichies :<br>
-<strong>Votre expérience Among Us IRL n’a jamais été aussi fluide et fun !</strong></p>
+<!-- -->Essayez dès maintenant l’interface Web, explorez les nouveaux modules de configuration, testez les commandes enrichies :
+<strong>Votre expérience Among Us IRL n’a jamais été aussi fluide et fun !</strong></p>
 <p>N’hésitez pas à consulter la <a href="https://merlode11.github.io/Among-Us-Real/docs/accueil" target="_blank" rel="noopener noreferrer">documentation</a> ou à remonter vos retours et suggestions sur le GitHub du projet.</p>]]></content>
         <author>
             <name>Merlode</name>
@@ -440,7 +446,8 @@
 <ul>
 <li><strong>Commande SOS</strong> : Chaque joueur peut, à tout moment, envoyer la commande <code>sos</code> (ou appuyer sur le bouton “SOS” dans l’interface Web) pour signaler un problème.</li>
 <li><strong>Détection automatique d’inactivité</strong> :<br>
-<!-- -->Le logiciel surveille l’activité des joueurs :<!-- -->
+<!-- -->Détection automatique d’inactivité :
+le logiciel surveille l’activité des joueurs : :<!-- -->
 <ul>
 <li>Si un joueur ne valide aucune action pendant une période prédéfinie, une alerte est automatiquement envoyée à l’organisateur.</li>
 <li>Possibilité de paramétrer la durée d’inactivité avant déclenchement automatique.</li>
@@ -467,33 +474,33 @@
 </ul>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="️-commandes-associées-et-exemples-dutilisation">🕹️ Commandes associées et exemples d’utilisation<a href="https://merlode11.github.io/Among-Us-Real/blog/mode-urgence-reunions-temps-vote-bruits#%EF%B8%8F-commandes-associ%C3%A9es-et-exemples-dutilisation" class="hash-link" aria-label="Lien direct vers 🕹️ Commandes associées et exemples d’utilisation" title="Lien direct vers 🕹️ Commandes associées et exemples d’utilisation">​</a></h3>
 <ul>
-<li><strong>Démarrer une réunion (organisateur)</strong> :<br>
-<code>meeting</code> ou bouton “Réunion”</li>
+<li><strong>Démarrer une réunion</strong> :<br>
+<code>mort PERSONNE</code> ou bouton “Réunion”.</li>
 <li><strong>Voter (joueur)</strong> :<br>
-<code>vote NOMBRE</code></li>
+<code>vote NOMBRE</code>.</li>
 </ul>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="-signalétique-sonore">🔔 Signalétique sonore<a href="https://merlode11.github.io/Among-Us-Real/blog/mode-urgence-reunions-temps-vote-bruits#-signal%C3%A9tique-sonore" class="hash-link" aria-label="Lien direct vers 🔔 Signalétique sonore" title="Lien direct vers 🔔 Signalétique sonore">​</a></h3>
 <ul>
-<li>Début de réunion : son spécifique (ex : gong)</li>
-<li>Début de discussion : bip long</li>
-<li>Fin de discussion : double bip</li>
-<li>Début du vote : alerte sonore courte</li>
-<li>Fin du vote : son dramatique</li>
-<li>Affichage des résultats : jingle</li>
+<li>Début de réunion : son spécifique (ex : gong).</li>
+<li>Début de discussion : bip long.</li>
+<li>Fin de discussion : double bip.</li>
+<li>Début du vote : alerte sonore courte.</li>
+<li>Fin du vote : son dramatique.</li>
+<li>Affichage des résultats : jingle.</li>
 </ul>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="️-personnalisation">⚙️ Personnalisation<a href="https://merlode11.github.io/Among-Us-Real/blog/mode-urgence-reunions-temps-vote-bruits#%EF%B8%8F-personnalisation" class="hash-link" aria-label="Lien direct vers ⚙️ Personnalisation" title="Lien direct vers ⚙️ Personnalisation">​</a></h3>
 <ul>
-<li>Durée discussion/vote paramétrable dans la configuration (ex : 60s discussion, 30s vote)</li>
-<li>Possibilité de désactiver/activer les sons selon le contexte de jeu</li>
+<li>Durée discussion/vote paramétrable dans la configuration (ex : 60s discussion, 30s vote).</li>
+<li>Possibilité de désactiver/activer les sons selon le contexte de jeu.</li>
 </ul>
 <div class="language-json codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-json codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token punctuation" style="color:rgb(248, 248, 242)">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">  </span><span class="token property">"discussion_time"</span><span class="token operator">:</span><span class="token plain"> </span><span class="token number">120</span><span class="token punctuation" style="color:rgb(248, 248, 242)">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">  </span><span class="token property">"vote_time"</span><span class="token operator">:</span><span class="token plain"> </span><span class="token number">30</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token punctuation" style="color:rgb(248, 248, 242)">}</span><br></span></code></pre></div></div>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="3️⃣-bénéfices--expérience-utilisateur">3️⃣ Bénéfices &amp; expérience utilisateur<a href="https://merlode11.github.io/Among-Us-Real/blog/mode-urgence-reunions-temps-vote-bruits#3%EF%B8%8F%E2%83%A3-b%C3%A9n%C3%A9fices--exp%C3%A9rience-utilisateur" class="hash-link" aria-label="Lien direct vers 3️⃣ Bénéfices &amp; expérience utilisateur" title="Lien direct vers 3️⃣ Bénéfices &amp; expérience utilisateur">​</a></h2>
 <ul>
-<li><strong>Réactivité et sécurité</strong> : mode SOS rassurant pour tous les joueurs</li>
-<li><strong>Immersion</strong> : les réunions sont rythmées et plus proches de la version numérique du jeu</li>
-<li><strong>Simplicité</strong> : commandes claires, interface épurée</li>
-<li><strong>Adaptabilité</strong> : tout est paramétrable pour coller à votre style de jeu et à vos contraintes</li>
+<li><strong>Réactivité et sécurité</strong> : mode SOS rassurant pour tous les joueurs.</li>
+<li><strong>Immersion</strong> : les réunions sont rythmées et plus proches de la version numérique du jeu.</li>
+<li><strong>Simplicité</strong> : commandes claires, interface épurée.</li>
+<li><strong>Adaptabilité</strong> : tout est paramétrable pour coller à votre style de jeu et à vos contraintes.</li>
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="4️⃣-conseils-dutilisation">4️⃣ Conseils d’utilisation<a href="https://merlode11.github.io/Among-Us-Real/blog/mode-urgence-reunions-temps-vote-bruits#4%EF%B8%8F%E2%83%A3-conseils-dutilisation" class="hash-link" aria-label="Lien direct vers 4️⃣ Conseils d’utilisation" title="Lien direct vers 4️⃣ Conseils d’utilisation">​</a></h2>
@@ -532,12 +539,12 @@
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="-quy-a-t-il-dans-cette-première-version-">🚀 Qu’y a-t-il dans cette première version ?<a href="https://merlode11.github.io/Among-Us-Real/blog/lancement-among-us-real#-quy-a-t-il-dans-cette-premi%C3%A8re-version-" class="hash-link" aria-label="Lien direct vers 🚀 Qu’y a-t-il dans cette première version ?" title="Lien direct vers 🚀 Qu’y a-t-il dans cette première version ?">​</a></h3>
 <p>Ce commit initial pose toutes les bases du jeu, avec un système complet et automatisé de gestion de partie :</p>
 <ul>
-<li><strong>Gestion des joueurs</strong> (avec nom, prénom, téléphone)</li>
+<li><strong>Gestion des joueurs</strong> (nom, prénom, téléphone)</li>
 <li><strong>Attribution automatique des rôles</strong> (imposteurs, ingénieurs, scientifiques, coéquipiers)</li>
 <li><strong>Distribution aléatoire des tâches</strong> (cognitives, dextérité, physiques)</li>
-<li><strong>Interface graphique (Tkinter)</strong> pour gérer et suivre la partie</li>
-<li><strong>Interaction par SMS</strong> grâce à l’intégration AirMore (envoi/réception de messages)</li>
-<li><strong>Fichiers de configuration</strong> (<code>config.json</code>, <code>tasks.json</code>, <code>players-exemple.json</code>) pour personnaliser chaque partie</li>
+<li><strong>Interface graphique (Tkinter)</strong> pour gérer et suivre la partie.</li>
+<li><strong>Interaction par SMS</strong> grâce à l’intégration AirMore (envoi/réception de messages).</li>
+<li><strong>Fichiers de configuration</strong> (<code>config.json</code>, <code>tasks.json</code>, <code>players-exemple.json</code>) pour personnaliser chaque partie.</li>
 <li><strong>Validation des tâches</strong> en direct et suivi de la progression de chaque joueur</li>
 </ul>
 <hr>
@@ -553,11 +560,11 @@
 <hr>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="-les-fichiers-clés-ajoutés">📦 Les fichiers clés ajoutés<a href="https://merlode11.github.io/Among-Us-Real/blog/lancement-among-us-real#-les-fichiers-cl%C3%A9s-ajout%C3%A9s" class="hash-link" aria-label="Lien direct vers 📦 Les fichiers clés ajoutés" title="Lien direct vers 📦 Les fichiers clés ajoutés">​</a></h3>
 <ul>
-<li><code>main.py</code> : cœur du jeu, gestion de la partie</li>
-<li><code>tasks.json</code> : base de données des tâches à accomplir</li>
-<li><code>players-exemple.json</code> : exemple de joueurs</li>
-<li><code>config.json</code> : personnalisation des rôles et paramètres</li>
-<li><code>smsManager.py</code> : module d’envoi/réception de SMS</li>
+<li><code>main.py</code> : cœur du jeu, gestion de la partie.</li>
+<li><code>tasks.json</code> : base de données des tâches à accomplir.</li>
+<li><code>players-exemple.json</code> : exemple de joueurs.</li>
+<li><code>config.json</code> : personnalisation des rôles et paramètres.</li>
+<li><code>smsManager.py</code> : module d’envoi/réception de SMS.</li>
 <li><code>requirements.txt</code> : dépendances Python requises</li>
 </ul>
 <hr>
@@ -569,7 +576,7 @@
 <li>Lancez <code>main.py</code> et… amusez-vous !</li>
 </ol>
 <hr>
-<p>Merci à toutes celles et ceux qui testeront cette première version. N’hésitez pas à proposer des idées d’amélioration ou à remonter des bugs sur le dépôt GitHub. 🚀</p>
+<p>Merci à toutes celles et ceux qui testeront cette première version. N’hésitez pas à proposer des idées d’amélioration ou à remonter des bugs sur le dépôt GitHub 🚀</p>
 <hr>
 <small><p>Commit initial : <a href="https://github.com/Merlode11/Among-Us-Real/commit/2846f57ff940ca5747353424b3f69659d5670f2f" target="_blank" rel="noopener noreferrer"><code>2846f57</code></a></p></small>]]></content>
         <author>
