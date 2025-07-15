@@ -20,13 +20,13 @@ Ce mode permet de jouer à Among Us Real via WhatsApp.
 - **Authentification** : Lors du premier lancement, un QR code s'affiche dans la console ou l'interface. Scannez-le avec l'application WhatsApp du téléphone associé au compte du bot.
 - **Risques et limitations** :
   - WhatsApp n'autorise pas officiellement l'automatisation via des bots. L'utilisation d'API non officielles peut entraîner le bannissement du numéro utilisé.
-  - Ne jamais utiliser un compte principal ou important.
+  - N'utilisez jamais un compte principal ou important.
   - Les fonctionnalités peuvent cesser de fonctionner si WhatsApp modifie ses règles ou son API.
 - **Conseil** : Prévoyez un numéro jetable ou secondaire pour le bot.
 
 ## Configuration
-- Adapter le fichier `config.json` pour activer le mode WhatsApp
-- Renseigner les identifiants nécessaires dans la configuration (numéro, port, etc.)
+- Adaptez le fichier `config.json` pour activer le mode WhatsApp
+- Renseignez les identifiants nécessaires dans la configuration (numéro, port, etc.)
 
 ## Fonctionnement général
 - Les joueurs interagissent avec le bot via WhatsApp (messages texte)
@@ -35,27 +35,26 @@ Ce mode permet de jouer à Among Us Real via WhatsApp.
 - Les permissions sont gérées automatiquement
 
 ## Lancement
-- Lancer le script avec :
+- Lancez le script avec :
 ```bash
 python whatsapp/whatsapp_game_class.py
 ```
 :::danger
 Lancer le logiciel avec une commande comme celle-ci peut ne pas fonctionner correctement.
-Veuillez toujours préférer lancer le logiciel avec le main.py 
+Préférez toujours lancer le logiciel avec le main.py
 ```bash
 python main.py
 ```
 :::
 
 ## Conseils
-- Utilisez un compte WhatsApp dédié pour éviter les interférences et les risques de bannissement
-- Vérifiez la connexion à WhatsApp Web et la stabilité du réseau
-- Surveillez les éventuels messages d'erreur ou de déconnexion
-
+- Utilisez un compte WhatsApp dédié pour éviter les interférences et les risques de bannissement.
+- Vérifiez la connexion à WhatsApp Web et la stabilité du réseau.
+- Surveillez les éventuels messages d'erreur ou de déconnexion.
 
 ## Fonctionnement du fichier `whatsapp_game_class.py`
 
-Le fichier `whatsapp_game_class.py` gère toute la logique du mode WhatsApp :
+Le fichier `whatsapp_game_class.py` gère toute la logique du mode WhatsApp :
 
 - **Connexion et initialisation** :
   - Lance un serveur Flask pour recevoir les événements de WhatsApp (connexion, messages, QR code, etc.)

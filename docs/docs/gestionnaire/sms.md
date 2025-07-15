@@ -15,22 +15,21 @@ Ce mode permet de jouer à Among Us Real via SMS, en utilisant un téléphone An
 - Le téléphone connecté au même réseau que l'ordinateur
 - Le module Python `android_sms_gateway` installé (voir ci-dessous)
 
-## Installation et configuration de Android SMS Gateway
+## Installation et configuration d'Android SMS Gateway
 
 L'application [Android SMS Gateway](https://github.com/capcom6/android-sms-gateway) permet de transformer un téléphone Android en passerelle SMS accessible via une API locale ou cloud.
 
 ### Installation de l'application sur le téléphone
 1. Rendez-vous sur la page [Releases du projet](https://github.com/capcom6/android-sms-gateway/releases) et téléchargez la dernière version de l'APK.
-2. Transférez l'APK sur votre téléphone Android et installez-le (vous devrez peut-être autoriser l'installation d'applications depuis des sources inconnues).
+2. Transférez l'APK sur votre téléphone Android et installez-la (vous devrez peut-être autoriser l'installation d'applications depuis des sources inconnues).
 3. Ouvrez l'application et activez le **Local Server**. (Vous pouvez également activer le **Cloud Server** si vous souhaitez y accéder depuis l'extérieur de votre réseau local, mais cela nécessite une configuration supplémentaire et n'est pas recommandé pour les parties locales.)
 4. Notez l'adresse IP locale (ou l'URL de l'API), le port, le nom d'utilisateur et le mot de passe affichés dans l'application.
 
 Pour plus de détails, consultez la [documentation officielle](https://docs.sms-gate.app/).
 
-
 ### Configuration
 1. Connectez le téléphone au même réseau Wi-Fi que l'ordinateur.
-2. Renseignez l'IP, le port, le nom d'utilisateur et le mot de passe dans le fichier `config.json` :
+2. Renseignez l'IP, le port, le nom d'utilisateur et le mot de passe dans le fichier `config.json` :
    ```json
    {
      "ip": "192.168.1.XX",
@@ -54,28 +53,27 @@ Pour plus de détails, consultez la [documentation officielle](https://docs.sms-
 - La communication se fait exclusivement par SMS.
 
 ## Lancement
-- Lancer le script avec :
+- Lancez le script avec :
 ```bash
 python sms/sms_game_class.py
 ```
 :::danger
 Lancer le logiciel avec une commande comme celle-ci peut ne pas fonctionner correctement.
-Veuillez toujours préférer lancer le logiciel avec le main.py 
+Préférez toujours lancer le logiciel avec le main.py
 ```bash
 python main.py
 ```
 :::
 
 ## Conseils
-- Vérifiez la connexion entre le téléphone et l'ordinateur
-- Prévoyez un forfait SMS suffisant
-- Utilisez un téléphone dédié pour éviter les interférences
-- Surveillez les éventuels messages d'erreur ou de déconnexion
-
+- Vérifiez la connexion entre le téléphone et l'ordinateur.
+- Prévoyez un forfait SMS suffisant.
+- Utilisez un téléphone dédié pour éviter les interférences.
+- Surveillez les éventuels messages d'erreur ou de déconnexion.
 
 ## Fonctionnement du fichier `sms_game_class.py`
 
-Le fichier `sms_game_class.py` gère toute la logique du mode SMS :
+Le fichier `sms_game_class.py` gère toute la logique du mode SMS :
 
 - **Serveur Flask** :
   - Lance un serveur local pour recevoir les messages entrants du téléphone via un webhook.

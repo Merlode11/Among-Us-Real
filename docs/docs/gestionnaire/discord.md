@@ -10,7 +10,7 @@ title: Mode de jeu Discord
 Ce mode permet de jouer à Among Us Real via un serveur Discord.
 
 ## Prérequis
-- Un serveur Discord, pour que les joueurs puissent interagir avec le bot
+- Un serveur Discord pour que les joueurs puissent interagir avec le bot
 - Un bot Discord configuré et ajouté au serveur
 - Les droits d'administrateur sur le serveur pour ajouter le bot
 
@@ -22,12 +22,12 @@ Ce mode permet de jouer à Among Us Real via un serveur Discord.
 2. Cliquez sur "New Application" et donnez un nom à votre bot.
 3. Allez dans l'onglet "Bot" puis cliquez sur "Add Bot".
 4. Copiez le **token** du bot (à placer dans le champ `discord_token` de votre `config.json`).
-5. Dans l'onglet "OAuth2 > URL Generator", sélectionnez les scopes `bot` et `applications.commands`, puis les permissions nécessaires (généralement : envoyer des messages, gérer les messages, lire l'historique, etc.).
+5. Dans l'onglet "OAuth2 > URL Generator", sélectionnez les scopes `bot` et `applications.commands`, puis les permissions nécessaires (envoyer des messages, gérer les messages, lire l'historique, etc.).
 6. Copiez l'URL générée et ouvrez-la dans votre navigateur pour inviter le bot sur votre serveur Discord.
 
 ## Configuration
-- Adapter le fichier `config.json` pour activer le mode Discord
-- Renseigner le token du bot dans la configuration (champ `discord_token`)
+- Adaptez le fichier `config.json` pour activer le mode Discord.
+- Renseignez le token du bot dans la configuration (champ `discord_token`).
 
 ## Fonctionnement général
 - Les joueurs interagissent avec le bot via des commandes slash Discord
@@ -45,7 +45,7 @@ python discord_us/discord_game_class.py
 ```
 :::danger
 Lancer le logiciel avec une commande comme celle-ci peut ne pas fonctionner correctement.
-Veuillez toujours préférer lancer le logiciel avec le main.py 
+Veuillez toujours préférer lancer le logiciel avec le main.py
 ```bash
 python main.py
 ```
@@ -82,3 +82,4 @@ Le fichier `discord_game_class.py` gère toute la logique du mode Discord :
 :::note
 Pour toute personnalisation avancée, consultez le code source du fichier `discord_game_class.py` et la documentation des commandes dans `discord_us/commands.py`.
 :::
+

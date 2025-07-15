@@ -39,15 +39,15 @@ Chaque article est tagué pour faciliter la recherche par thème (fonctionnalit�
 ## 🎨 Une interface moderne et responsive
 
 Le site a été conçu pour être agréable à utiliser sur ordinateur, tablette et mobile. L'interface s'adapte à tous les écrans et met en avant les contenus essentiels :
-- Navigation rapide entre la documentation, le blog et les ressources
-- Accès direct aux guides d'installation et de configuration
+- Navigation rapide entre la documentation, le blog et les ressources.
+- Accès direct aux guides d'installation et de configuration.
 - Liens vers le dépôt GitHub, la communauté et les réseaux sociaux
 
 ---
 
 ## 🤝 Un projet open source, pour et avec la communauté
 
-Among Us Real reste un projet **open source**. Le site web est lui aussi ouvert à la contribution : vous pouvez proposer des corrections, des ajouts à la documentation ou de nouveaux articles de blog via GitHub.
+Among Us Real reste un projet **open source**. Le site web est lui aussi ouvert à la contribution : vous pouvez proposer des corrections, des ajouts à la documentation ou de nouveaux articles de blog via GitHub.
 
 N'hésitez pas à partager vos retours, vos idées et à rejoindre la communauté pour faire évoluer le projet !
 
@@ -58,4 +58,3 @@ N'hésitez pas à partager vos retours, vos idées et à rejoindre la communaut�
 Rendez-vous sur [merlode11.github.io](https://merlode11.github.io/Among-Us-Real/) pour découvrir le nouveau site, la documentation et le blog.
 
 Bonne visite et bon jeu à tous !
-

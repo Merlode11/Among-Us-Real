@@ -14,11 +14,11 @@ Cette commande permet de visualiser l'état des joueurs dans la partie, indiquan
   - `morts`
 - **Exemple d'utilisation** :
   - `morts`
-- **Exemple de retour** :
+- **Exemples de retour** :
   - Quand il reste des demandes :
     ```
-    Voici les états de chaque joueur:
-    - Alice (mort)
+    Voici les états de chaque joueur :
+    - Alice (morte)
     - Bob (vivant)
     - Charlie (mort)
     Il vous reste 2/3 demandes.
@@ -28,4 +28,4 @@ Cette commande permet de visualiser l'état des joueurs dans la partie, indiquan
     Vous avez utilisé toutes vos demandes !
     ```
 
-Cette commande va permettre de surveiller l'évolution de la partie et d'anticiper les stratégies.
+Cette commande est utile pour le rôle [**scientifique**](/docs/joueur/roles#scientifique) afin de suivre l'état des joueurs et d'aider à la détection des imposteurs.

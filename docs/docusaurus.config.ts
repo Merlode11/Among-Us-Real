@@ -22,7 +22,7 @@ const config: Config = {
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
-    organizationName: 'Merlode11', // Usually your GitHub org/user name.
+    organizationName: 'Merlode11', // Usually your GitHub org/username.
     projectName: 'Among-Us-Real', // Usually your repo name.
     deploymentBranch: 'gh-pages', // Branche de déploiement
 
@@ -46,7 +46,7 @@ const config: Config = {
                     // Please change this to your repo.
                     // Remove this to remove the "edit this page" links.
                     editUrl:
-                        'https://github.com/Merlode11/Among-Us-Real/blob/master/docs/docs/',
+                        'https://github.com/Merlode11/Among-Us-Real/blob/master/docs/',
                 },
                 blog: {
                     blogTitle: 'Blog',
@@ -61,7 +61,7 @@ const config: Config = {
                     // Please change this to your repo.
                     // Remove this to remove the "edit this page" links.
                     editUrl:
-                        'https://github.com/Merlode11/Among-Us-Real/blob/master/docs/blog/',
+                        'https://github.com/Merlode11/Among-Us-Real/blob/master/docs/',
                     // Useful options to enforce blogging best practices
                     onInlineTags: 'warn',
                     onInlineAuthors: 'warn',
@@ -78,6 +78,11 @@ const config: Config = {
     themeConfig: {
         // Replace with your project's social card
         image: 'img/among-us-youtube-banner.jpg',
+        colorMode: {
+            defaultMode: 'dark',
+            disableSwitch: false,
+            respectPrefersColorScheme: true,
+        },
         navbar: {
             title: 'Among Us Real',
             logo: {

@@ -14,7 +14,7 @@ Cette commande permet d'obtenir des informations détaillées sur une tâche à 
     - `tâche 1`
 - **Exemple d'utilisation** :
     - `tâche 2`
-- **Exemple de retour** :
+- **Exemples de retour** :
   ```
   Réparer l'électricité
   Lieu : Salle électrique
@@ -22,11 +22,9 @@ Cette commande permet d'obtenir des informations détaillées sur une tâche à 
   Activée : Oui
   Tâche terminée !
   ```
-- **Exemple de retour pour une errur** :
+- **Exemple de retour pour une erreur** :
   ```
-    Veuillez entrer un numéro de tâche valide !
-    ```
-
-La commande `tâche` permet d'obtenir des informations détaillées sur une tâche à réaliser.
+  Veuillez entrer un numéro de tâche valide !
+  ```
 
 Vous recevez alors la description, le lieu et les étapes de la tâche à accomplir.

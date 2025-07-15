@@ -21,8 +21,8 @@ Cette commande permet d'obtenir de l'aide sur les commandes disponibles dans le 
     ```
     Voici toutes les commandes disponibles:
     task NOMBRE: Permet de voir la description d'une tâche
-    info Permet de voir les tâches restantes
-    deads Voir les états de chaque joueur
+    info: Permet de voir les tâches restantes
+    deads: Voir les états de chaque joueur
     mort PERSONNE: Annonce à l'organisateur la découverte d'un corps
     done NOMBRE: Valide une tâche comme faite
     help (COMMANDE): Obtenir toutes les commandes et de l'aide pour chacune
@@ -32,7 +32,7 @@ Cette commande permet d'obtenir de l'aide sur les commandes disponibles dans le 
     ```
   - Pour `aide tache` :
     ```
-    Voici la page d'aide pour la commande [task](/docs/joueur/commandes/tache):
+    Voici la page d'aide pour la commande task:
     Permet de voir la description d'une tâche
     Alias: tâche, détail, detail, task, tache
     Utilisation: task NOMBRE (exemple: task 1)

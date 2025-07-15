@@ -6,7 +6,9 @@ sidebar_label: info
 
 # Commande `info`
 
-Cette commande permet d'obtenir des informations sur votre progression, notamment de vos tâches, dans la partie.
+Cette commande permet d'obtenir des informations sur votre progression, notamment de vos tâches, dans la partie :
+- Tâches restantes
+- Identifiant du joueur
 
 - **Alias** : `restant`, `last`, `reste`
 - **Utilisation** :
@@ -21,9 +23,5 @@ Cette commande permet d'obtenir des informations sur votre progression, notammen
   Il reste 0/15 tâches pour les Membres d'équipage.
   Votre identifiant est 244.
   ```
-
-La commande `info` donne des informations sur votre progression dans la partie :
-- Tâches restantes
-- Identifiant du joueur
 
 Pratique pour faire le point sur votre situation à tout moment.

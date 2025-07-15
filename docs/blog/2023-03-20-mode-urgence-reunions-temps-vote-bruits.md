@@ -31,7 +31,8 @@ Le **mode d’urgence** permet désormais de réagir rapidement, d’alerter l�
 
 - **Commande SOS** : Chaque joueur peut, à tout moment, envoyer la commande `sos` (ou appuyer sur le bouton “SOS” dans l’interface Web) pour signaler un problème.
 - **Détection automatique d’inactivité** :  
-  Le logiciel surveille l’activité des joueurs :  
+  Détection automatique d’inactivité : 
+  le logiciel surveille l’activité des joueurs : :  
   - Si un joueur ne valide aucune action pendant une période prédéfinie, une alerte est automatiquement envoyée à l’organisateur.
   - Possibilité de paramétrer la durée d’inactivité avant déclenchement automatique.
 - **Journal des SOS** :  
@@ -65,24 +66,24 @@ Les réunions sont centrales dans l’expérience Among Us. Cette mise à jour l
 
 ### 🕹️ Commandes associées et exemples d’utilisation
 
-- **Démarrer une réunion (organisateur)** :  
-  `meeting` ou bouton “Réunion”  
+- **Démarrer une réunion** :  
+  `mort PERSONNE` ou bouton “Réunion”.
 - **Voter (joueur)** :  
-  `vote NOMBRE`  
+  `vote NOMBRE`.
 
 ### 🔔 Signalétique sonore
 
-- Début de réunion : son spécifique (ex : gong)
-- Début de discussion : bip long
-- Fin de discussion : double bip
-- Début du vote : alerte sonore courte
-- Fin du vote : son dramatique
-- Affichage des résultats : jingle
+- Début de réunion : son spécifique (ex : gong).
+- Début de discussion : bip long.
+- Fin de discussion : double bip.
+- Début du vote : alerte sonore courte.
+- Fin du vote : son dramatique.
+- Affichage des résultats : jingle.
 
 ### ⚙️ Personnalisation
 
-- Durée discussion/vote paramétrable dans la configuration (ex : 60s discussion, 30s vote)
-- Possibilité de désactiver/activer les sons selon le contexte de jeu
+- Durée discussion/vote paramétrable dans la configuration (ex : 60s discussion, 30s vote).
+- Possibilité de désactiver/activer les sons selon le contexte de jeu.
 
 ```json
 {
@@ -95,10 +96,10 @@ Les réunions sont centrales dans l’expérience Among Us. Cette mise à jour l
 
 ## 3️⃣ Bénéfices & expérience utilisateur
 
-- **Réactivité et sécurité** : mode SOS rassurant pour tous les joueurs
-- **Immersion** : les réunions sont rythmées et plus proches de la version numérique du jeu
-- **Simplicité** : commandes claires, interface épurée
-- **Adaptabilité** : tout est paramétrable pour coller à votre style de jeu et à vos contraintes
+- **Réactivité et sécurité** : mode SOS rassurant pour tous les joueurs.
+- **Immersion** : les réunions sont rythmées et plus proches de la version numérique du jeu.
+- **Simplicité** : commandes claires, interface épurée.
+- **Adaptabilité** : tout est paramétrable pour coller à votre style de jeu et à vos contraintes.
 
 ---
 

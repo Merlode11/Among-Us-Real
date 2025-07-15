@@ -12,7 +12,7 @@ Dans Among Us Real, une partie se déroule en plusieurs phases distinctes, chacu
 
 ### 1. Préparation {#phase-preparation}
 - Les joueurs s'inscrivent et rejoignent la partie. 
-- Le [maître du jeu](/docs/joueur/roles#maitre-du-jeu) configure les paramètres (nombre d'[imposteurs](/docs/joueur/roles#imposteur), rôles spéciaux, etc).
+- Le [maître du jeu](/docs/joueur/roles#maitre-du-jeu) configure les paramètres (nombre d'[imposteurs](/docs/joueur/roles#imposteur), rôles spéciaux, etc.)
 - Une fois que tous les joueurs sont prêts, la partie commence. Les rôles ([Innocents](/docs/joueur/roles#innocent), [Imposteurs](/docs/joueur/roles#imposteur), [Scientifique](/docs/joueur/roles#scientifique), etc.) sont attribués de manière aléatoire ou selon les préférences du [maître du jeu](/docs/joueur/roles#maitre-du-jeu).
 
 ### 2. Phase de jeu libre {#phase-libre}
@@ -20,15 +20,20 @@ Dans Among Us Real, une partie se déroule en plusieurs phases distinctes, chacu
 - Les discussions sont interdites sauf si une réunion est déclenchée.
 
 ### 3. Découverte d'un corps ou demande {#phase-decouverte}
-- Lorsqu'un joueur découvre un corps ou vient faire sa demande de réunion, une réunion est déclenchée.
+- Lorsqu'un joueur découvre un corps ou fait une demande de réunion au point de rendez-vous, une réunion est déclenchée.
 
 ### 4. Les réunions : déroulement et interactions {#phase-reunion}
 
 Les réunions sont des moments clés dans Among Us Real, déclenchées lorsqu'un joueur découvre un corps ou fait une demande de réunion. Elles permettent aux joueurs d'échanger, de débattre et de voter pour éliminer un suspect. Voici le déroulement détaillé des réunions :
 
 #### Déclenchement d'une réunion {#reunion-declenchement}
-- Un joueur signale un corps ([mort](/docs/joueur/commandes/mort)) ou viennent au lieu de réunion pour demander une réunion.
+- Un joueur signale un corps ([mort](/docs/joueur/commandes/mort)) ou se rend au lieu de rendez-vous pour demander une réunion.
 - Tous les joueurs sont informés et la partie est mise en pause.
+
+#### Phase d'arrivée {#reunion-arrivee}
+- Tous les joueurs se rassemblent en présentiel.
+- Ils doivent donner leur mot de passe au maître du jeu pour confirmer leur présence.
+- Une fois tous les joueurs présents, la réunion peut commencer.
 
 #### Phase de discussion {#reunion-discussion}
 - Tous les joueurs peuvent discuter librement, en présentiel.
@@ -46,7 +51,7 @@ Les réunions sont des moments clés dans Among Us Real, déclenchées lorsqu'un
 
 #### Signalétique sonore et visuelle pendant la réunion {#reunion-signaux}
 
-Pour rendre la phase de réunion plus immersive et claire, des sons et des images spécifiques sont utilisés à chaque étape :
+Pour rendre la phase de réunion plus immersive et claire, des sons et des images spécifiques sont utilisés à chaque étape sur l'ordinateur de l'organisateur, où tourne actuellement le logiciel. :
 
 - **Début de la réunion** : Un son d’alerte (par exemple, le célèbre bruit de “emergency meeting”) retentit et une image dédiée (comme un panneau "Réunion d'urgence" affiché à l’écran ou projeté) s’affiche pour rassembler tous les joueurs.
 - **Décompte du temps de discussion** : Un minuteur visuel apparaît, souvent accompagné d’un signal sonore à chaque minute ou lors des 10 dernières secondes, pour rappeler le temps restant.
@@ -84,7 +89,7 @@ Cette signalétique sonore et visuelle permet à tous les participants de bien s
 
 :::tip
 - Communiquez efficacement lors des réunions.
-- Soyez attentif aux comportements suspects.
+- Soyez attentifs aux comportements suspects.
 - Les imposteurs doivent être discrets et stratégiques.
 :::
 
@@ -96,8 +101,8 @@ En cas de situation d'urgence ou de crise dans la partie, un joueur peut utilise
 
 **Déroulement d'une gestion de crise :**
 - Lorsqu'un SOS est déclenché, tous les joueurs sont informés de la gestion de crise en cours.
-- La partie va être temporairement suspendue.
-- L'[organisateur](/docs/joueur/roles#maitre-du-jeu) ou le [maître du jeu](/docs/joueur/roles#maitre-du-jeu) prend en charge la résolution du problème.
+- La partie est temporairement suspendue.
+- Le [maître du jeu](/docs/joueur/roles#maitre-du-jeu) prend en charge la résolution du problème.
 - Une fois la crise résolue, la partie reprend normalement.
 
 :::warning

@@ -22,19 +22,22 @@ Grande nouveauté : le mode de jeu **Discord** est désormais disponible dans 
 ### 1️⃣ Créez un bot Discord
 
 - Suivez [le guide officiel Discord.py](https://discordpy.readthedocs.io/en/stable/discord.html) pour créer une application et un bot.
-- Utilisez ce lien (en remplaçant `YOUR_CLIENT_ID` par l’ID de votre bot) pour l’inviter sur votre serveur :
+- Utilisez ce lien (en remplaçant `YOUR_CLIENT_ID` par l’ID de votre bot) pour l’inviter sur votre serveur :
+
   ```
   https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&scope=bot&permissions=8
   ```
 
 ### 2️⃣ Configurez Among Us Real
 
-- Ajoutez le token du bot dans le fichier `config.json` :
+- Ajoutez le token du bot dans le fichier `config.json` :
+
   ```json
   {
     "discord_token": "VOTRE_TOKEN_BOT"
   }
   ```
+
 - Choisissez le mode Discord dans le gestionnaire (`"manager_type": "discord"`).
 
 ### 3️⃣ Inscription des joueurs
@@ -58,11 +61,11 @@ Toutes les interactions sont traitées par le bot, qui communique en DM avec cha
 
 - Les joueurs doivent autoriser les messages privés du bot pour recevoir les informations.
 - Le bot doit avoir les autorisations nécessaires sur le serveur.
-- Le mode Discord permet une gestion fluide et moderne de vos parties Among Us IRL !
+- Le mode Discord permet une gestion fluide et moderne de vos parties Among Us IRL !
 
 ## 🖥️ Détails techniques
 
-- De nouveaux fichiers ont été ajoutés, notamment : `discord_us/commands.py` et `discord_us/discord_game_class.py`.
+- De nouveaux fichiers ont été ajoutés, notamment : `discord_us/commands.py` et `discord_us/discord_game_class.py`.
 - La classe `DiscordPlayer` a été créée pour la gestion des joueurs Discord.
 - L’intégration Discord repose sur la librairie `discord.py` et la gestion des slash commands.
 

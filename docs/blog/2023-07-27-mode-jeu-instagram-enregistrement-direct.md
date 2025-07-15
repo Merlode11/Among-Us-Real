@@ -58,10 +58,10 @@ Assurez-vous de suivre les consignes de sécurité et de confidentialité pour l
 ## ⚙️ Points techniques
 
 - Intégration du bot Instagram via la bibliothèque Python [Instagrapi](https://github.com/adw0rd/instagrapi).
-- Refonte de la logique d’inscription pour permettre l’enregistrement en live avant le démarrage de la partie.
+- Refonte de la logique d’inscription pour permettre l’enregistrement en direct avant le démarrage de la partie.
 - Ajout de vérifications pour empêcher l’inscription après le lancement.
 
 ## ✅ Conclusion
 
 Avec ces nouveautés, Among Us Real s’ouvre à de nouveaux usages : jouez où vous voulez, rapidement, et sur vos réseaux sociaux préférés !  
-Consulte les commits pour plus de détails sur l’implémentation technique.
+Consultez les commits pour plus de détails sur l’implémentation technique.

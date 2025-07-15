@@ -12,11 +12,11 @@ Ce mode permet de jouer à Among Us Real via une interface web accessible depuis
 ## Prérequis
 - Un navigateur web moderne
 - Accès au serveur hébergeant le jeu
-- **Tous les joueurs doivent être connectés sur le même réseau local** (LAN) que le serveur pour accéder à l'interface web (sauf si le serveur est accessible publiquement via internet, **non supporté**)
+- **Tous les joueurs doivent être connectés au même réseau local** (LAN) que le serveur pour accéder à l'interface web (sauf si le serveur est accessible publiquement via Internet, **non supporté**)
 
 ## Configuration
-- Adapter le fichier `config.json` pour activer le mode Web
-- Vérifier le port utilisé (par défaut : 80) et l'adresse IP du serveur
+- Adaptez le fichier `config.json` pour activer le mode Web
+- Vérifiez le port utilisé (par défaut : 80) et l'adresse IP du serveur
 
 ## Fonctionnement général
 - Les joueurs se connectent à l'interface web via l'adresse IP du serveur (ex : `http://192.168.1.10/`)
@@ -26,28 +26,28 @@ Ce mode permet de jouer à Among Us Real via une interface web accessible depuis
 - La communication se fait uniquement via l'interface web
 
 ## Lancement
-- Lancer le serveur web avec :
+- Lancez le serveur web avec :
 ```bash
 python web/web_game_class.py
 ```
 :::danger
 Lancer le logiciel avec une commande comme celle-ci peut ne pas fonctionner correctement.
-Veuillez toujours préférer lancer le logiciel avec le main.py 
+Préférez toujours lancer le logiciel avec le main.py
 ```bash
 python main.py
 ```
 :::
 
 ## Conseils
-- Vérifiez que le port utilisé n'est pas bloqué par un pare-feu
-- Utilisez un navigateur à jour
-- Assurez-vous que tous les joueurs sont bien sur le même réseau local
+- Vérifiez que le port utilisé n'est pas bloqué par un pare-feu.
+- Utilisez un navigateur à jour.
+- Assurez-vous que tous les joueurs sont bien sur le même réseau local.
 
 ---
 
 ## Fonctionnement du fichier `web_game_class.py`
 
-Le fichier `web_game_class.py` gère toute la logique du mode Web :
+Le fichier `web_game_class.py` gère toute la logique du mode Web :
 
 - **Serveur Flask** : Lance un serveur web local qui gère toutes les routes nécessaires au jeu (accueil, page joueur, réunion, pause, fin, API pour les actions de jeu, etc.)
 - **Gestion des joueurs** :

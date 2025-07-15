@@ -287,7 +287,7 @@ class MortCommand(Command):
             try:
                 if not dead.dead:
                     await interaction.response.send_message(content=
-                                                            "Ce joueur ne peux pas être déclaré comme cadavre car il n'est pas mort", ephemeral=is_guild(interaction))
+                                                            "Ce joueur ne peut pas être déclaré comme cadavre car il n'est pas mort", ephemeral=is_guild(interaction))
                 else:
                     game.start_meeting(f"Un cadavre a été signalé par {player.get_name()}.")
             except (Exception,):

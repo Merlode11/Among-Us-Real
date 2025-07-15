@@ -5,15 +5,20 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
+import {useRef} from 'react';
+// @ts-ignore
+import AmongUsSound from '@site/static/among-us-sound.mp3';
 import styles from './index.module.css';
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
+  const audioRef = useRef<HTMLAudioElement>(null);
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
+      <audio ref={audioRef} src={AmongUsSound} preload="auto" />
       <div className="container">
         <Heading as="h1" className="hero__title">
-          {siteConfig.title}
+          <AmongUsClickable audioRef={audioRef}>{siteConfig.title}</AmongUsClickable>
         </Heading>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
         <div className={styles.buttons}>
@@ -28,13 +33,36 @@ function HomepageHeader() {
   );
 }
 
+function playAmongUsSound(audioRef: React.RefObject<HTMLAudioElement>) {
+  if (audioRef.current) {
+    audioRef.current.currentTime = 0;
+    audioRef.current.play();
+  }
+}
+
+function AmongUsClickable({children, audioRef}: {children: ReactNode, audioRef: React.RefObject<HTMLAudioElement>}) {
+  return (
+    <span
+      style={{cursor: 'pointer'}}
+      onClick={() => playAmongUsSound(audioRef)}
+      title="Jouer le son Among Us"
+    >
+      {children}
+    </span>
+  );
+}
+
 function ProjectIntro() {
+  const audioRef = useRef<HTMLAudioElement>(null);
   return (
     <section className={styles.introSection}>
+      <audio ref={audioRef} src={AmongUsSound} preload="auto" />
       <div className="container">
-        <Heading as="h2">Qu'est-ce que Among Us Real ?</Heading>
+        <Heading as="h2">
+          Qu'est-ce que <AmongUsClickable audioRef={audioRef}>Among Us Real</AmongUsClickable> ?
+        </Heading>
         <p>
-          Among Us Real est une adaptation communautaire et open source du célèbre jeu Among Us, conçue pour être jouée en présentiel ou à distance, sur SMS, WhatsApp, Discord, Instagram, Web, et plus encore. Le projet permet d'organiser des parties dans la vraie vie, en s'appuyant sur des outils numériques pour gérer les rôles, les tâches, les votes et la communication entre joueurs.
+          <AmongUsClickable audioRef={audioRef}>Among Us Real</AmongUsClickable> est une adaptation communautaire et open source du célèbre jeu <AmongUsClickable audioRef={audioRef}>Among Us</AmongUsClickable>, conçue pour être jouée en présentiel ou à distance, sur SMS, WhatsApp, Discord, Instagram, Web, et plus encore. Le projet permet d'organiser des parties dans la vraie vie, en s'appuyant sur des outils numériques pour gérer les rôles, les tâches, les votes et la communication entre joueurs.
         </p>
         <ul>
           <li>Accessible à tous, même sans ordinateur ou console</li>
