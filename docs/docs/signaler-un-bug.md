@@ -123,7 +123,7 @@ Après avoir envoyé votre issue :
 
 ## Ressources utiles
 
-- [Documentation officielle](/accueil)
+- [Documentation officielle](/docs/accueil)
 - [Liste des issues](https://github.com/Merlode11/Among-Us-Real/issues)
 - [Créer un signalement de bug](https://github.com/Merlode11/Among-Us-Real/issues/new?template=signaler-un-bug.md)
 
