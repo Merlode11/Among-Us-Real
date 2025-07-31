@@ -15,6 +15,7 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 const sidebars: SidebarsConfig = {
     docs: [
         'accueil',
+        'signaler-un-bug',
         {
             type: 'category',
             label: 'Joueur',

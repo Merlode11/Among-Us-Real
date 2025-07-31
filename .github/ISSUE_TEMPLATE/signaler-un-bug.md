@@ -8,20 +8,28 @@ assignees: Merlode11
 ---
 
 **Décrivez le bug**
-Une description claire et concise de ce qu'est le bug.
+Une description claire et concise de ce qu'est le bug. Précisez :
+- Où et quand le bug apparaît (plateforme, version, contexte)
+- Les messages d'erreur affichés
+- Les conséquences du bug sur le jeu ou l'utilisation
 
 **Reproduire**
-Étapes pour reproduire le problème
-1. Aller sur '...'
-2. Cliquer sur '....'
-3. Descendre tout en bas '....'
-4. L'erreur est apparue
+Étapes pour reproduire le problème, en détaillant chaque action :
+1. Où se trouve le bug (ex : page, fonctionnalité, mode de jeu)
+2. Actions exactes réalisées (cliquer, saisir, etc.)
+3. Résultat obtenu à chaque étape
+4. À quel moment le bug survient
 
 **Comportement attendu**
-Une description claire et concise de ce que vous attendiez.
+Décrivez précisément ce que vous attendiez à la place du bug. Expliquez la différence entre le résultat obtenu et le résultat attendu.
 
 **Screenshots**
-Si c'est possible, joignez des captures d'écran pour que nous comprenions mieux
+Ajoutez des captures d'écran ou vidéos montrant le bug, les messages d'erreur ou le contexte. Cela aide à mieux comprendre le problème.
 
 **Autres informations**
-Ajoutez toutes les autres remarques à propos du bogue ici
+Ajoutez toutes les autres remarques à propos du bogue ici, par exemple :
+- Version du jeu ou du site
+- Système d'exploitation et navigateur
+- Logs ou fichiers joints
+- Fréquence du bug (toujours, parfois, rare)
+- Toute tentative de correction déjà effectuée
