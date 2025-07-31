@@ -15,6 +15,7 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 const sidebars: SidebarsConfig = {
     docs: [
         'accueil',
+        'faq',
         'signaler-un-bug',
         {
             type: 'category',
