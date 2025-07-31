@@ -1,11 +1,6 @@
 import json
 from tkinter import *
 from tkinter import messagebox, ttk
-from sms.sms_game_class import SMSGame
-from web.web_game_class import WebGame
-from whatsapp.whatsapp_game_class import WhatsAppGame
-from instagram.instagram_game_class import InstagramGame
-from discord_us.discord_game_class import DiscordGame
 import os
 from config_settings import config_settings
 from player_config import player_config
@@ -140,14 +135,19 @@ def main():
         """
         window.destroy()
         if config["manager_type"] == "sms":
+            from sms.sms_game_class import SMSGame
             SMSGame(game_master)
         elif config["manager_type"] == "web":
+            from web.web_game_class import WebGame
             WebGame(game_master)
         elif config["manager_type"] == "whatsapp":
+            from whatsapp.whatsapp_game_class import WhatsAppGame
             WhatsAppGame(game_master)
         elif config["manager_type"] == "instagram":
+            from instagram.instagram_game_class import InstagramGame
             InstagramGame(game_master)
         elif config["manager_type"] == "discord":
+            from discord_us.discord_game_class import DiscordGame
             DiscordGame(game_master)
         else:
             messagebox.showerror("Erreur", "Le gestionnaire de jeu n'est pas reconnu", parent=window)
