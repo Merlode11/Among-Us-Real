@@ -7,4 +7,4 @@ requests~=2.32.5
 instagrapi~=2.2.1
 MarkupSafe~=3.0.3
 discord~=2.3.2
-android_sms_gateway~=2.1.0
+android_sms_gateway~=3.0.0
