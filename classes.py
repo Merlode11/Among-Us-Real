@@ -342,7 +342,7 @@ def set_task(task_dict: dict) -> BasicTask or ActivateBasicTask or ValidateBasic
         raise TypeError(f"La tâche '{task_dict.get('name', '')}' n'a pas de type correct: {task_dict.get('type')}")
 
 
-# Show a phone number with "+33768330645" and "0768330645"
+# Show a phone number with "+33XXXXXXXXX" and "0XXXXXXXXX"
 def show_phone_number(number: str) -> str:
     if number.endswith("c.us"): 
         return f"+{number[:2]} {number[2]} {number[3:5]} {number[5:7]} {number[7:9]} {number[9:11]}"
@@ -354,4 +354,4 @@ def show_phone_number(number: str) -> str:
 
 
 if __name__ == "__main__":
-    print(show_phone_number("+33768330645"))
+    print(show_phone_number("+33600000000"))
